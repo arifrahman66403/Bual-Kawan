@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class KisTracking extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'kis_tracking';
+
+    protected $fillable = [
+        'pengajuan_id',
+        'catatan',
+        'status',
+        'created_by',
+        'edited_by',
+        'deleted_by',
+    ];
+
+    public function pengunjung()
+    {
+        return $this->belongsTo(KisPengunjung::class, 'pengajuan_id', 'uid');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(KisUser::class, 'created_by');
+    }
+}
