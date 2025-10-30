@@ -12,7 +12,8 @@ class KisQrCodeController extends Controller
 {
     public function index()
     {
-        $data = KisQrCode::with('pengunjung')->get();
+        $data = KisQrCode::with('pengunjung')->latest()->get();
+            return view('qr.index', compact('qrCodes'));
 
         return response()->json([
             'success' => true,

@@ -20,18 +20,15 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     })->name('super.dashboard');
 });
 
-// ==== ADMIN (bisa buat QR code) ====
-Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
-    Route::get('/admin/qr', [KisQrCodeController::class, 'index'])->name('admin.qr.index');
-    Route::post('/admin/qr', [KisQrCodeController::class, 'store'])->name('admin.qr.store');
-    Route::delete('/admin/qr/{id}', [KisQrCodeController::class, 'destroy'])->name('admin.qr.destroy');
-});
+Route::middleware(['auth', 'role:operator|admin|superadmin'])->group(function () {
+    // === QR CODE ===
+    Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
+    Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
+    Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
 
-// ==== OPERATOR (scan & tracking) ====
-Route::middleware(['auth', 'role:operator,superadmin'])->group(function () {
-    Route::get('/operator/tracking', [KisTrackingController::class, 'index'])->name('operator.tracking.index');
-    Route::post('/operator/scan', [KisTrackingController::class, 'scan'])->name('operator.tracking.scan');
-    Route::put('/operator/tracking/{id}/update', [KisTrackingController::class, 'update'])->name('operator.tracking.update');
+    // === TRACKING ===
+    Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');
+    Route::post('/tracking/scan', [KisTrackingController::class, 'scan'])->name('tracking.scan');
 });
 
 Route::prefix('admin')->group(function () {
