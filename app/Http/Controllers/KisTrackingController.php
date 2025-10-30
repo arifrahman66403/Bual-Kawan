@@ -55,6 +55,39 @@ class KisTrackingController extends Controller
         //
     }
 
+    // Saat QR discan oleh Operator
+    public function scan(Request $request)
+    {
+        $request->validate([
+            'kode_qr' => 'required|string'
+        ]);
+
+        // Cek QR valid
+        $qr = KisQrCode::where('kode_qr', $request->kode_qr)->first();
+        if (!$qr) {
+            return response()->json(['message' => 'QR tidak ditemukan'], 404);
+        }
+
+        // Cek tracking pengunjung
+        $tracking = KisTracking::firstOrNew(['pengunjung_id' => $qr->pengunjung_id]);
+
+        if ($tracking->status == 'disetujui' || !$tracking->exists) {
+            $tracking->status = 'kunjungan';
+            $tracking->waktu_masuk = Carbon::now();
+        } elseif ($tracking->status == 'kunjungan') {
+            $tracking->status = 'selesai';
+            $tracking->waktu_keluar = Carbon::now();
+        }
+
+        $tracking->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status kunjungan diperbarui menjadi ' . $tracking->status,
+            'data' => $tracking
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
