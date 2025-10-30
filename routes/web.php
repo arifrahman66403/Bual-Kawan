@@ -8,6 +8,13 @@ use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\Admin\LoginAdminController;
 use App\Http\Controllers\Admin\DashboardController;
 
+
+Route::get('/login-as/{role}', function ($role) {
+    Auth::loginUsingId(1); // pakai user id=1
+    Auth::user()->role = $role;
+    return redirect('/');
+});
+
 // Login Admin
 Route::get('/', [LoginAdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginAdminController::class, 'login'])->name('admin.login.submit');
