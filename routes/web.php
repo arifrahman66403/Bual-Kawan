@@ -11,23 +11,27 @@ use App\Http\middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Auth;
 
 
-Route::get('/login-as/{role}', function ($role) {
-    Auth::loginUsingId(1); // pakai user id=1
-    Auth::user()->role = $role;
-    return redirect('/');
+// Route Login Admin (Area publik)
+Route::get('/', [LoginAdminController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [LoginAdminController::class, 'login']);
+Route::post('/admin/logout', [LoginAdminController::class, 'logout'])->name('logout'); // Gunakan nama route 'logout'
+
+// --- DASHBOARD SUPERADMIN ---
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
+    // ... route superadmin lainnya
 });
 
-// Login Admin
-Route::get('/', [LoginAdminController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [LoginAdminController::class, 'login'])->name('admin.login.submit');
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-Route::post('/admin/logout', [LoginAdminController::class, 'logout'])->name('admin.logout');
+// --- DASHBOARD ADMIN ---
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    // ... route admin lainnya
+});
 
-// ==== SUPERADMIN (akses semua) ====
-Route::middleware(['auth', 'role:superadmin'])->group(function () {
-    Route::get('/super/dashboard', function () {
-        return view('super.dashboard');
-    })->name('super.dashboard');
+// --- DASHBOARD OPERATOR ---
+Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator.')->group(function () {
+    Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
+    // ... route operator lainnya
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
