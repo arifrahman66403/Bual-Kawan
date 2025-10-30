@@ -30,7 +30,7 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     })->name('super.dashboard');
 });
 
-Route::middleware(['auth', 'role:operator|admin|superadmin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     // === QR CODE ===
     Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');

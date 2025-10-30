@@ -6,7 +6,6 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nama Pengunjung</th>
                     <th>Kode QR</th>
                     <th>QR Code</th>
                     <th>Berlaku</th>
@@ -16,8 +15,7 @@
             <tbody>
                 @foreach($qrCodes as $qr)
                 <tr>
-                    <td>{{ $qr->pengunjung->nama }}</td>
-                    <td>{{ $qr->kode_qr }}</td>
+                    <td>{{ $qr->qr_code }}</td>
                     <td><img src="{{ asset($qr->path_qr) }}" width="100"></td>
                     <td>{{ $qr->berlaku_mulai }} - {{ $qr->berlaku_sampai }}</td>
                     <td>{{ ucfirst($qr->status) }}</td>

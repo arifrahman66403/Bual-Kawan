@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class KisUser extends Model
+class KisUser extends Authenticatable
 {
     use HasFactory, SoftDeletes;
 
@@ -21,6 +22,12 @@ class KisUser extends Model
     ];
 
     protected $hidden = ['pass'];
+
+    // Override method untuk autentikasi
+    public function getAuthPassword()
+    {
+        return $this->pass;
+    }
 
     // Relasi
     public function pengunjungDibuat()
@@ -51,5 +58,10 @@ class KisUser extends Model
     public function log()
     {
         return $this->hasMany(KisLog::class, 'user_id');
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }

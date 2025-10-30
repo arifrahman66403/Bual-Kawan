@@ -13,6 +13,7 @@ class KisQrCodeController extends Controller
     public function index()
     {
         $data = KisQrCode::with('pengunjung')->latest()->get();
+        $qrCodes = $data;
             return view('qr.index', compact('qrCodes'));
 
         return response()->json([

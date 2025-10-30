@@ -16,7 +16,7 @@
   </nav>
 
   <div class="container mt-5">
-    <h2>Selamat datang, {{ Auth::guard('admin')->user()->name }}</h2>
+    <h2>Selamat datang, {{ Auth::user()->nama }}</h2>
     <p>Ini adalah halaman dashboard admin.</p>
   </div>
 </body>

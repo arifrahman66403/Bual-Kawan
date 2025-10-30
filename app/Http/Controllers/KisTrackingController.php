@@ -22,7 +22,7 @@ class KisTrackingController extends Controller
         // Admin hanya lihat tracking di unitnya
         elseif (Auth::user()->hasRole('admin')) {
             $trackings = KisTracking::with('pengunjung')
-                ->where('unit_id', Auth::user()->unit_id)
+                ->where('pengajuan_id', Auth::user()->pengajuan_id)
                 ->latest()
                 ->get();
         }
@@ -34,10 +34,7 @@ class KisTrackingController extends Controller
                 ->get();
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $trackings,
-        ]);
+        return view('tracking.index', compact('trackings'));
     }
 
     /**
