@@ -5,13 +5,8 @@ use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\Admin\LoginAdminController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
 // Login Admin
-Route::get('/admin/login', [LoginAdminController::class, 'showLoginForm'])->name('admin.login');
+Route::get('/', [LoginAdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginAdminController::class, 'login'])->name('admin.login.submit');
 
 Route::prefix('admin')->group(function () {
