@@ -64,7 +64,7 @@ Melalui antarmuka berbasis web, pengguna dapat melakukan pengajuan, memantau sta
 
 ## 👨‍💻 Pengembang
 
-Proyek ini dikembangkan oleh **Arif Rahman** sebagai implementasi sistem manajemen tamu digital modern untuk instansi dan lembaga pemerintahan.
+Proyek ini dikembangkan sebagai implementasi sistem manajemen tamu digital modern untuk instansi dan lembaga pemerintahan.
 
 ---
 
