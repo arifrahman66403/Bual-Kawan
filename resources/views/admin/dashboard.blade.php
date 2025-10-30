@@ -1,12 +1,17 @@
 <x-layout title="Admin Dashboard">
-  <span class="navbar-brand">Admin Dashboard</span>
-  <form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button class="btn btn-outline-light">Logout</button>
-  </form>
-
-  <div class="container mt-5">
-    <h2>Selamat datang, {{ Auth::user()->nama }}</h2>
-    <p>Ini adalah halaman dashboard admin.</p>
-  </div>
+    <div class="container-fluid pt-4">
+        <h1 class="h3 mb-4 text-gray-800">🛡️ Admin Dashboard</h1>
+        <p>Akses Anda: Validasi dan Data Master. Fokus: Pengajuan Pengunjung.</p>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card bg-warning text-dark shadow">
+                    <div class="card-body">
+                        <div class="h5">Pengajuan Baru: {{ $pengajuanCount ?? 0 }}</div>
+                        <a href="{{ route('admin.pengajuan.index') }}" class="text-dark fw-bold">Lihat Detail &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="{{ route('admin.pengunjung.index') }}" class="btn btn-secondary">Data Master Pengunjung</a>
+    </div>
 </x-layout>
