@@ -16,22 +16,32 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); // Gunakan nama route 'logout'
 
-// --- DASHBOARD SUPERADMIN ---
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
-    // ... route superadmin lainnya
+    Route::get('/users', [SuperAdminController::class, 'manageUsers'])->name('users.index');
+    // Tambahkan route CRUD untuk user di sini
 });
 
-// --- DASHBOARD ADMIN ---
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    // ... route admin lainnya
+    
+    // Manajemen Pengajuan dan Data Master Pengunjung
+    Route::get('/pengajuan', [AdminController::class, 'pendingList'])->name('pengajuan.index');
+    Route::post('/pengajuan/approve/{id}', [AdminController::class, 'approvePengunjung'])->name('pengajuan.approve');
+    
+    // Data Master Pengunjung
+    Route::get('/pengunjung', [AdminController::class, 'allPengunjung'])->name('pengunjung.index');
+    // Route CRUD lainnya
 });
 
-// --- DASHBOARD OPERATOR ---
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator.')->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
-    // ... route operator lainnya
+    
+    // Fungsi Scan QR
+    Route::post('/scan', [OperatorController::class, 'processScan'])->name('scan');
+    
+    // Riwayat
+    Route::get('/riwayat', [OperatorController::class, 'riwayatScan'])->name('riwayat');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
