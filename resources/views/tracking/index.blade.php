@@ -1,4 +1,3 @@
-<x-layout title="Tracking Kunjungan">
     <div class="container py-4">
         <h3 class="mb-4 fw-bold">Tracking Kunjungan</h3>
 
@@ -31,4 +30,3 @@
             </tbody>
         </table>
     </div>
-</x-layout>

@@ -1,4 +1,3 @@
-<x-layout title="Buat QR Code">
     <div class="container py-4">
         <h3 class="mb-4 fw-bold text-center">Buat QR Code Baru</h3>
 
@@ -27,4 +26,4 @@
             <button type="submit" class="btn btn-success">Generate QR</button>
         </form>
     </div>
-</x-layout>
+
