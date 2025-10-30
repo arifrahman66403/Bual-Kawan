@@ -8,10 +8,11 @@ use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\Admin\LoginAdminController;
 use App\Http\Controllers\Admin\DashboardController;
 
-Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
 // Login Admin
 Route::get('/', [LoginAdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginAdminController::class, 'login'])->name('admin.login.submit');
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::post('/admin/logout', [LoginAdminController::class, 'logout'])->name('admin.logout');
 
 // ==== SUPERADMIN (akses semua) ====
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
