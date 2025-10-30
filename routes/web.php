@@ -5,16 +5,16 @@ use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
-use App\Http\Controllers\Admin\LoginAdminController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Auth;
 
 
 // Route Login Admin (Area publik)
-Route::get('/', [LoginAdminController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [LoginAdminController::class, 'login']);
-Route::post('/admin/logout', [LoginAdminController::class, 'logout'])->name('logout'); // Gunakan nama route 'logout'
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); // Gunakan nama route 'logout'
 
 // --- DASHBOARD SUPERADMIN ---
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {

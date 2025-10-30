@@ -10,24 +10,16 @@ use Carbon\Carbon;
 
 class KisTrackingController extends Controller
 {
-    /**
-     * Menampilkan daftar tracking (khusus role tertentu)
-     */
     public function index()
     {
-        // Superadmin bisa lihat semua
         if (Auth::user()->hasRole('superadmin')) {
             $trackings = KisTracking::with('pengunjung')->latest()->get();
-        }
-        // Admin hanya lihat tracking di unitnya
-        elseif (Auth::user()->hasRole('admin')) {
+        } elseif (Auth::user()->hasRole('admin')) {
             $trackings = KisTracking::with('pengunjung')
                 ->where('pengajuan_id', Auth::user()->pengajuan_id)
                 ->latest()
                 ->get();
-        }
-        // Operator hanya lihat tracking aktif hari ini
-        else {
+        } else {
             $trackings = KisTracking::with('pengunjung')
                 ->whereDate('created_at', Carbon::today())
                 ->latest()
@@ -37,36 +29,44 @@ class KisTrackingController extends Controller
         return view('tracking.index', compact('trackings'));
     }
 
-    /**
-     * Proses scan QR Code untuk update status kunjungan
-     */
     public function scan(Request $request)
     {
         $request->validate([
-            'kode_qr' => 'required|string'
+            'kode_qr' => 'required|string',
         ]);
 
         // 🔍 Cek QR Code valid
-        $qr = KisQrCode::where('kode_qr', $request->kode_qr)->first();
+        $qr = KisQrCode::where('qr_code', $request->kode_qr)->first();
 
         if (!$qr) {
             return response()->json([
                 'success' => false,
-                'message' => 'QR tidak ditemukan'
+                'message' => 'QR tidak ditemukan',
             ], 404);
         }
 
-        // 🕒 Ambil atau buat tracking baru
-        $tracking = KisTracking::firstOrNew(['pengunjung_id' => $qr->pengunjung_id]);
+        // 🚨 Cek apakah pengajuan_id ada
+        if (empty($qr->pengajuan_id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'QR Code tidak memiliki pengajuan_id yang valid',
+            ], 422);
+        }
 
-        // 💡 Update status berdasarkan kondisi
+        // 🕒 Ambil atau buat tracking baru
+        $tracking = KisTracking::firstOrNew(['pengajuan_id' => $qr->pengajuan_id]);
+
+        // 💡 Update status
         if (!$tracking->exists || $tracking->status == 'disetujui') {
             $tracking->status = 'kunjungan';
-            $tracking->waktu_masuk = Carbon::now();
+            $tracking->created_at = Carbon::now();
         } elseif ($tracking->status == 'kunjungan') {
             $tracking->status = 'selesai';
-            $tracking->waktu_keluar = Carbon::now();
+            $tracking->updated_at = Carbon::now();
         }
+
+        // 🩵 Pastikan pengajuan_id tetap terisi
+        $tracking->pengajuan_id = $qr->pengajuan_id;
 
         // Simpan perubahan
         $tracking->save();
@@ -74,7 +74,7 @@ class KisTrackingController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Status kunjungan diperbarui menjadi ' . $tracking->status,
-            'data' => $tracking
+            'data' => $tracking,
         ]);
     }
 }

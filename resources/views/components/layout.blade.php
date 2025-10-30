@@ -109,13 +109,18 @@
             
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+                    <a href="{{ route('dashboard') }}" class="nav-link active">
                         <i class="bi bi-house-door-fill me-2"></i> Dashboard
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('tracking.index') }}" class="nav-link">
                         <i class="bi bi-qr-code-scan me-2"></i> Tracking Kunjungan
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('qr.index') }}" class="nav-link">
+                        <i class="bi bi-qr-code me-2"></i> Manajemen QR Code
                     </a>
                 </li>
                 
