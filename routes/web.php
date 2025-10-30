@@ -7,6 +7,8 @@ use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\Admin\LoginAdminController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\middleware\RoleMiddleware;
+use Illuminate\Support\Facades\Auth;
 
 
 Route::get('/login-as/{role}', function ($role) {
