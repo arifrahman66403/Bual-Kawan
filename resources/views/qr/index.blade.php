@@ -1,3 +1,4 @@
+<x-layout title="Daftar QR Code">
     <div class="container py-4">
         <h3 class="mb-4 fw-bold">Daftar QR Code</h3>
 
@@ -24,4 +25,4 @@
             </tbody>
         </table>
     </div>
-
+</x-layout>

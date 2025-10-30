@@ -1,3 +1,4 @@
+<x-layout title="Tracking Kunjungan Pengunjung">
 <div class="container py-5">
     
     <div class="card shadow-lg border-0">
@@ -80,3 +81,4 @@
         </div>
     </div>
 </div>
+</x-layout>
