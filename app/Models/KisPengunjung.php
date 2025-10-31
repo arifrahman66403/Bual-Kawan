@@ -15,6 +15,8 @@ class KisPengunjung extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    protected $guarded = ['id'];
+
     protected $fillable = [
         'uid',
         'kode_daerah',

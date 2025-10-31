@@ -65,7 +65,7 @@
                             <td>{{ $kunjungan->satuan_kerja ?? 'Koordinasi' }}</td> 
                             <td>{{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('Y-m-d') }}</td>
                             <td>
-                                <a href="{{ route('kunjungan.detail', $kunjungan->id) }}" class="btn btn-sm btn-outline-primary">Detail</a>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
                             </td>
                         </tr>
                         @empty
@@ -78,7 +78,6 @@
             </div>
 
             <div class="d-flex justify-content-center mt-3">
-                {{ $kunjunganAktif->links('vendor.pagination.bootstrap-5') }}
             </div>
 
         </div>

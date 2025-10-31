@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Models\KisDokumen;
+use App\Models\KisPesertaKunjungan;
 use App\Models\KisPengunjung;
+use Illuminate\Support\Str;
 
 class GuestController extends Controller
 {
@@ -56,10 +61,11 @@ class GuestController extends Controller
         // Mulai Transaksi Database
         DB::beginTransaction();
 
-        try {
+         try {
             // 2. Simpan Data KisPengunjung
             $pengunjung = KisPengunjung::create([
                 'uid' => Str::uuid(),
+                // ... (data pengunjung)
                 'kode_daerah' => $request->kode_daerah,
                 'nama_instansi' => $request->nama_instansi,
                 'satuan_kerja' => $request->satuan_kerja,
@@ -70,41 +76,56 @@ class GuestController extends Controller
                 'wa_perwakilan' => $request->wa_perwakilan,
                 'status' => 'pengajuan',
                 'kode_qr' => 'QR-' . Str::random(8), 
-                'created_by' => null,
+                'created_by' => null, // Guest
+                // Pastikan semua kolom NOT NULL diisi atau diizinkan NULL
             ]);
+
+            // PENTING: Lakukan pengecekan UID sebelum digunakan
+            $pengunjungUid = $pengunjung->uid;
+
+            if (empty($pengunjungUid)) {
+                // Jika UID gagal terambil, hentikan transaksi
+                throw new \Exception("Gagal mengambil UID pengunjung yang baru dibuat.");
+            }
 
             // 3. Simpan File SPT (KisDokumen)
             if ($request->hasFile('file_spt')) {
+                // Pastikan direktori 'public/spt' sudah ada atau dapat dibuat
                 $file = $request->file('file_spt');
-                $path = $file->store('public/spt'); // Simpan di folder storage/app/public/spt
-
-                KisDokumen::create([
-                    'pengunjung_id' => $pengunjung->id, // Menggunakan ID auto-increment
-                    'file_spt' => Storage::url($path), // Simpan path yang bisa diakses publik
-                    'created_by' => null,
+                // Menggunakan putFile untuk penamaan file yang lebih aman
+                $path = Storage::putFile('public/spt', $file); 
+            
+            KisDokumen::create([
+                    'pengunjung_id' => $pengunjungUid, // Menggunakan ID auto-increment yang baru dibuat
+                    'file_spt' => $path, // Simpan path internal storage
+                    'created_by' => null, // Guest
                 ]);
             }
             
             // 4. Simpan Data Peserta Kunjungan (Perwakilan Utama)
             KisPesertaKunjungan::create([
-                'pengunjung_id' => $pengunjung->id,
+                'pengunjung_id' => $pengunjungUid, // Kunci asing harus menggunakan ID auto-increment
                 'nama' => $request->nama_perwakilan,
                 'nip' => $request->nip,
                 'jabatan' => $request->jabatan,
                 'email' => $request->email_perwakilan,
                 'wa' => $request->wa_perwakilan,
-                // Kolom file_ttd (jika ada inputnya di form)
-                'created_by' => null,
+                'created_by' => null, // Guest
             ]);
 
-            DB::commit(); // Commit transaksi
+            DB::commit(); // Komit transaksi
+            
+            // Hapus baris debugging jika ada
+            // dd("Berhasil disimpan!"); 
 
-            return redirect()->route('guest.index')->with('success', 'Pengajuan kunjungan Anda berhasil dikirim. Silakan tunggu konfirmasi Admin.');
+            return redirect()->route('guest.index')->with('success', 'Pengajuan kunjungan Anda berhasil dikirim dan menunggu verifikasi Admin.');
 
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback jika ada error
-            // Log error $e
-            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Coba lagi.');
+        // BARIS DEBUGGING (HAPUS BARIS INI SETELAH TESTING)
+            // dd($e->getMessage()); 
+            
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Error: ' . $e->getMessage());
         }
     }
 }
