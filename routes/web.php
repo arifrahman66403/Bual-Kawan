@@ -19,6 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); // Gu
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
     Route::get('/users', [SuperAdminController::class, 'manageUsers'])->name('users.index');
+    Route::get('/log', [LogController::class, 'index'])->name('log.index');
     // Tambahkan route CRUD untuk user di sini
 });
 
