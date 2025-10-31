@@ -11,6 +11,9 @@ class TrackingController extends Controller
     // Menampilkan semua tracking
     public function index()
     {
+        $trackings = \App\Models\KisTracking::with('pengunjung')->latest()->get();
+        return view('admin.index', compact('trackings'));
+
         $data = KisTracking::with('pengunjung')->get();
         return response()->json($data);
     }
