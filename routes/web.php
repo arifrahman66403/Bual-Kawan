@@ -7,6 +7,9 @@ use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Operator\OperatorController;
+use App\Http\Controllers\SuperAdmin\SuperAdminController;
 use App\Http\middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Auth;
 

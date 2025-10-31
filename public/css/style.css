@@ -1,0 +1,421 @@
+/* Aksen Warna Gen Z & Dark Mode Variables */
+:root {
+    --genz-primary: #6c5ce7; /* Purple */
+    --genz-secondary: #00cec9; /* Teal */
+    --color-pink: #ff6b81;
+    --color-yellow: #ff9f43;
+    --color-green: #1dd1a1;
+
+    --light-bg: #f5f7fa;
+    --light-card-bg: #ffffff;
+    --light-text: #212529;
+    --light-border: #e0e0e0;
+
+    /* Default: Light Mode */
+    --body-bg: var(--light-bg);
+    --card-bg: var(--light-card-bg);
+    --text-color: var(--light-text);
+    --muted-text: #6c757d;
+
+    /* Gradient Colors for Light Mode Navbar */
+    --nav-start-light: #00cec9; /* Teal */
+    --nav-end-light: #6c5ce7; /* Purple */
+
+    --navbar-text: #fff; /* Teks default putih di Navbar */
+}
+
+/* DARK MODE */
+.dark-mode {
+    --body-bg: #1f1d2e; /* Dark Purple */
+    --card-bg: #27253d; /* Darker Card */
+    --text-color: #f5f7fa;
+    --muted-text: #a0a0b0;
+    --light-border: #444;
+
+    /* Gradient Colors for Dark Mode Navbar */
+    --nav-start-dark: #323050; /* Darker Purple */
+    --nav-end-dark: #1f1d2e; /* Very Dark Purple */
+
+    --navbar-text: #f5f7fa; /* Teks default light di Dark Mode Navbar */
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    padding-top: 60px;
+    /* Padding bawah untuk Bottom Nav di mobile */
+    padding-bottom: 70px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* --- Navbar Style Ciamik: GRADIENT --- */
+.navbar {
+    /* Light Mode Gradient */
+    background: linear-gradient(
+        90deg,
+        var(--nav-start-light),
+        var(--nav-end-light)
+    );
+    border-bottom: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1020;
+    transition: background 0.3s;
+}
+/* Dark Mode Gradient */
+.dark-mode .navbar {
+    background: linear-gradient(
+        90deg,
+        var(--nav-start-dark),
+        var(--nav-end-dark)
+    );
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Teks dan Ikon di dalam Navbar */
+.navbar-brand .text-color,
+.dropdown-toggle span {
+    color: var(--navbar-text) !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+.navbar-brand img {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.8));
+}
+
+/* Tombol Dark Mode di Navbar */
+.navbar #darkModeToggle {
+    color: var(--navbar-text) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+.navbar #darkModeToggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Card & Shadow Modern */
+.card {
+    border: none;
+    border-radius: 16px;
+    background-color: var(--card-bg);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Statistic Cards (Full Color) --- */
+.stat-card-bg {
+    color: #fff !important;
+}
+.stat-card-1 {
+    background-color: var(--color-pink);
+}
+.stat-card-2 {
+    background-color: var(--color-green);
+}
+.stat-card-3 {
+    background-color: var(--color-yellow);
+}
+.stat-card-4 {
+    background-color: var(--genz-primary);
+}
+.stat-card-bg .big-number {
+    color: #fff;
+}
+.stat-card-bg .text-muted-genz {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+}
+
+/* --- Menu Navigasi (Desktop Floating Icon) --- */
+@media (max-width: 991.98px) {
+    .desktop-nav-icons {
+        display: none !important;
+    }
+}
+.nav-link-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    margin: 0 8px;
+    background-color: #fff;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease-in-out;
+    color: var(--text-color);
+    text-decoration: none;
+    flex-grow: 1;
+    max-width: 200px;
+    font-weight: 600;
+}
+.dark-mode .nav-link-icon {
+    background-color: var(--card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Warna Ikon Menu Individual */
+.nav-link-icon i {
+    color: var(--genz-primary);
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+    transition: transform 0.3s;
+}
+#nav-pengajuan i {
+    color: var(--color-pink);
+}
+#nav-riwayat i {
+    color: var(--color-yellow);
+}
+#nav-admin i {
+    color: var(--genz-secondary);
+}
+.nav-link-icon.active {
+    background-color: var(--genz-primary);
+    color: #fff !important;
+    box-shadow: 0 6px 15px rgba(108, 92, 231, 0.5);
+    transform: translateY(-2px);
+}
+.nav-link-icon.active i {
+    color: #fff;
+}
+.nav-link-icon:hover:not(.active) {
+    transform: scale(1.05);
+    background-color: var(--light-bg);
+}
+.dark-mode .nav-link-icon:hover:not(.active) {
+    background-color: #33334f;
+}
+
+/* --- BOTTOM NAVIGATION (MOBILE ONLY) --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(
+        --card-bg
+    ); /* Menggunakan warna card BG untuk Bottom Nav */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1010;
+    display: none; /* Default hidden */
+}
+/* Tampilkan hanya di mobile (di bawah breakpoint lg) */
+@media (max-width: 991.98px) {
+    .bottom-nav {
+        display: flex;
+    }
+}
+
+.bottom-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 8px 5px;
+    text-decoration: none;
+    color: var(--muted-text);
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-radius: 8px; /* Ditambahkan untuk efek background aktif */
+}
+.bottom-nav-link i {
+    font-size: 1.3rem;
+    margin-bottom: 2px;
+    color: var(--muted-text);
+    transition: color 0.2s;
+}
+
+/* Logika Warna Ikon & Teks saat hover/aktif */
+.bottom-nav-link.active,
+.bottom-nav-link:hover {
+    color: var(--genz-primary);
+}
+.bottom-nav-link.active i {
+    color: var(--genz-primary);
+}
+
+/* BACKGROUND KHUSUS MENU MOBILE AKTIF */
+.bottom-nav-link.active {
+    transform: translateY(-2px); /* Efek sedikit terangkat */
+}
+
+/* Warna Background Aktif Sesuai Tema (Soft Accent) */
+#mobile-nav-dashboard.active {
+    background-color: rgba(108, 92, 231, 0.1); /* Ungu 10% */
+}
+#mobile-nav-pengajuan.active {
+    background-color: rgba(255, 107, 129, 0.1); /* Pink 10% */
+}
+#mobile-nav-riwayat.active {
+    background-color: rgba(255, 159, 67, 0.1); /* Yellow 10% */
+}
+#mobile-nav-admin.active {
+    background-color: rgba(0, 206, 201, 0.1); /* Teal 10% */
+}
+
+/* Aturan Hover dan Active umum */
+.bottom-nav-link:hover {
+    background-color: rgba(128, 128, 128, 0.05); /* Hover ringan */
+}
+
+/* Penyesuaian Dark Mode untuk background aktif */
+.dark-mode .bottom-nav-link.active {
+    background-color: rgba(
+        255,
+        255,
+        255,
+        0.1
+    ); /* Background light dengan opacity rendah di Dark Mode */
+}
+
+/* Style Tambahan Umum */
+.big-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--genz-primary);
+}
+.text-muted-genz {
+    color: var(--muted-text) !important;
+    font-size: 0.85rem;
+}
+
+.btn-genz {
+    background-color: var(--genz-primary);
+    border-color: var(--genz-primary);
+    color: #fff;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.btn-genz:hover {
+    background-color: #5d4ae1;
+    border-color: #5d4ae1;
+    color: #fff;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border: 2px solid var(--navbar-text);
+}
+
+/* Footer Style */
+.app-footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    border-top: 1px solid var(--light-border);
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted-text);
+}
+
+/* Modal Logout Style */
+.logout-icon-box {
+    font-size: 3rem;
+    color: #dc3545; /* Merah */
+    margin-bottom: 15px;
+    animation: pulse-red 1s infinite alternate;
+}
+
+@keyframes pulse-red {
+    from {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+}
+
+/* --- Tweak Tabel Pengajuan (Jika digunakan di halaman lain) --- */
+.pengajuan-table th {
+    border-bottom: 2px solid var(--light-border);
+    color: var(--muted-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.dark-mode .pengajuan-table th {
+    border-bottom: 2px solid #444;
+}
+
+.pengajuan-table td {
+    padding: 12px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--light-border);
+}
+.dark-mode .pengajuan-table td {
+    border-bottom: 1px solid #333;
+}
+
+/* Responsif Table untuk Mobile */
+@media (max-width: 767.98px) {
+    /* Sembunyikan Header Tabel */
+    .pengajuan-table thead {
+        display: none;
+    }
+
+    /* Ubah Baris menjadi Blok */
+    .pengajuan-table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border-radius: 12px;
+        background-color: var(--card-bg);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 10px;
+    }
+    .dark-mode .pengajuan-table tbody tr {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Ubah Cell (TD) menjadi Blok */
+    .pengajuan-table td {
+        display: block;
+        text-align: right;
+        border: none;
+        padding: 5px 10px;
+    }
+
+    /* Tambahkan Label untuk Mobile */
+    .pengajuan-table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    /* Penyesuaian tampilan khusus */
+    .pengajuan-table td:nth-child(1) {
+        /* Kolom # */
+        font-size: 0.8rem;
+        color: var(--muted-text);
+        border-bottom: 1px dashed var(--light-border);
+        margin-bottom: 5px;
+        padding-bottom: 8px;
+    }
+    .dark-mode .pengajuan-table td:nth-child(1) {
+        border-bottom: 1px dashed #444;
+    }
+    .pengajuan-table td:nth-child(2) {
+        /* Kolom Pengaju */
+        text-align: left !important;
+        padding-top: 0;
+    }
+    .pengajuan-table td:nth-child(5) {
+        /* Kolom Status */
+        text-align: left;
+    }
+    .pengajuan-table td:nth-child(6) {
+        /* Kolom Aksi */
+        text-align: left;
+        padding-top: 15px;
+    }
+    .pengajuan-table td .badge {
+        font-size: 0.9rem;
+    }
+}
