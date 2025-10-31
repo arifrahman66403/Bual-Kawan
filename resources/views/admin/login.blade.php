@@ -1,4 +1,3 @@
-user-select: none;
 
 <!DOCTYPE html>
 <html lang="id">
