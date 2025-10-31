@@ -36,7 +36,7 @@
             </span>
           </td>
           <td>
-            <form action="{{ route('pengunjung.status', $p->id) }}" method="POST" class="d-flex gap-1">
+            <form action="{{ route('pengunjung.status', $p->uid) }}" method="POST" class="d-flex gap-1">
               @csrf
               <select name="status" class="form-select form-select-sm" required>
                 <option value="">Pilih</option>

@@ -23,6 +23,22 @@ class KisUser extends Authenticatable
 
     protected $hidden = ['pass'];
 
+    // method untuk cek role
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOperator(): bool
+    {
+        return $this->role === 'operator';
+    }
+
     // Override method untuk autentikasi
     public function getAuthPassword()
     {

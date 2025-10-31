@@ -1,10 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\KisTracking;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\KisQrCode;
 use App\Models\KisPengunjung;
+use App\Models\KisTracking;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class TrackingController extends Controller
 {
@@ -65,7 +71,10 @@ class TrackingController extends Controller
             $filePath = 'public/qr_codes/' . $fileName;
 
             // Buat QR Code dan simpan ke storage
-            QrCode::format('png')->size(250)->generate($qrString, storage_path('app/' . $filePath));
+            QrCode::format('png')
+                ->size(250)
+                ->errorCorrection('H')
+                ->generate($qrString, storage_path('app/' . $filePath));
 
             KisQrCode::updateOrCreate(
                 ['pengunjung_id' => $pengunjung->uid],

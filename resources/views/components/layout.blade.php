@@ -44,7 +44,7 @@
       </div>
       <div class="modal-footer justify-content-center border-0 p-3">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-        <a href="login.php" class="btn btn-danger">Ya, Logout</a>
+        <a href="{{ route('logout') }}" class="btn btn-danger">Ya, Logout</a>
       </div>
     </div>
   </div>
