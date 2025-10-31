@@ -15,6 +15,11 @@ use App\Http\middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Auth;
 
 
+Route::get('/', [GuestController::class, 'index'])->name('guest.index');
+// Form Pengajuan Kunjungan (Tambah Kunjungan)
+Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
+Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
+
 // Route Login Admin (Area publik)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -38,6 +43,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/pengunjung', [AdminController::class, 'allPengunjung'])->name('pengunjung.index');
     // Route CRUD lainnya
 });
+
+
 
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
