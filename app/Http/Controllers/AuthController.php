@@ -93,12 +93,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        // Arahkan kembali ke halaman login admin dengan pesan notifikasi
-        return redirect()->route('login')->with('info', 'Anda telah berhasil keluar (logout).');
+        return redirect('/login')->with('success', 'Anda telah berhasil logout.');
     }
     
     /**

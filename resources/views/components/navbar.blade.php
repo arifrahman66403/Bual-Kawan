@@ -18,7 +18,7 @@
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="#" data-bs-toggle="pill" data-bs-target="#profil" onclick="setActiveNav('profil')"><i class="bi bi-person-circle me-2"></i> Profil Pribadi</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right me-2"></i> Log Out</a></li>
+                    <li><a class="dropdown-item text-danger" href="{{ route('logout') }}" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right me-2"></i> Log Out</a></li>
                 </ul>
             </div>
         </div>
