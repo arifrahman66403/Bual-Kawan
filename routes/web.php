@@ -56,7 +56,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
     Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
-    Route::get('/pengunjung', [KisPengunjungController::class, 'index'])->name('admin.pengunjung.index');
+    Route::get('/pengunjung', [KisPengunjungController::class, 'index'])->name('pengunjung.index');
     Route::get('/pengunjung/{id}', [KisPengunjungController::class, 'show'])->name('pengunjung.show');
     Route::post('/pengunjung/{uid}/status', [TrackingController::class, 'update'])->name('pengunjung.status');
     Route::get('/admin/verifikasi', [KisPengunjungController::class, 'verifyList'])->name('admin.verify');
