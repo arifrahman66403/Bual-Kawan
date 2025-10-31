@@ -22,6 +22,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); // Gu
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
     Route::get('/users', [SuperAdminController::class, 'manageUsers'])->name('users.index');
+    Route::get('/log', [LogController::class, 'index'])->name('log.index');
     // Tambahkan route CRUD untuk user di sini
 });
 
@@ -39,6 +40,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator.')->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
+    Route::get('/pengunjung', [PengunjungController::class, 'create'])->name('pengunjung.create');
+    Route::post('/pengunjung', [PengunjungController::class, 'store'])->name('pengunjung.store');
     
     // Fungsi Scan QR
     Route::post('/scan', [OperatorController::class, 'processScan'])->name('scan');
@@ -52,6 +55,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
     Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
+    Route::get('/pengunjung', [PengunjungController::class, 'index'])->name('admin.pengunjung.index');
+    Route::get('/pengunjung/{id}', [PengunjungController::class, 'show'])->name('pengunjung.show');
+    Route::post('/pengunjung/{id}/status', [TrackingController::class, 'update'])->name('admin.pengunjung.status');
+    Route::get('/verifikasi', [PengunjungController::class, 'verifyList'])->name('admin.verify');
+    Route::get('/tracking', [TrackingController::class, 'index'])->name('admin.index');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');
