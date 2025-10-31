@@ -34,7 +34,7 @@ class KisUserPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(KisUser $kisUser, KisUser $kisUser): bool
+    public function update(KisUser $kisUser, KisUser $model): bool
     {
         return false;
     }
@@ -42,7 +42,7 @@ class KisUserPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(KisUser $kisUser, KisUser $kisUser): bool
+    public function delete(KisUser $kisUser, KisUser $model): bool
     {
         return false;
     }
@@ -50,7 +50,7 @@ class KisUserPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(KisUser $kisUser, KisUser $kisUser): bool
+    public function restore(KisUser $kisUser, KisUser $model): bool
     {
         return false;
     }
@@ -58,7 +58,7 @@ class KisUserPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(KisUser $kisUser, KisUser $kisUser): bool
+    public function forceDelete(KisUser $kisUser, KisUser $model): bool
     {
         return false;
     }
