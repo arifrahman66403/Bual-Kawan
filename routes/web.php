@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\QrCodeController;
-use App\Http\Controllers\Admin\TrackingController;
+use App\Http\Controllers\Admin\PengajuanController;
 use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\AuthController;
@@ -67,9 +67,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
     Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
-    Route::get('/pengunjung', [KisPengunjungController::class, 'index'])->name('pengunjung.index');
-    Route::get('/pengunjung/{id}', [KisPengunjungController::class, 'show'])->name('pengunjung.show');
-    Route::post('/pengunjung/{uid}/status', [TrackingController::class, 'update'])->name('pengunjung.status');
+    Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan.index');
+    Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
+    Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
     Route::get('/admin/verifikasi', [KisPengunjungController::class, 'verifyList'])->name('admin.verify');
     Route::get('/admin/riwayat', [TrackingController::class, 'index'])->name('admin.riwayat');
 
