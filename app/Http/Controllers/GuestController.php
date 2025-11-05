@@ -17,12 +17,11 @@ class GuestController extends Controller
      */
     public function index()
     {
-        // Ambil data kunjungan yang aktif (disetujui atau sedang kunjungan)
+        // Menggunakan view namespace 'kunjungan' sesuai preferensi Anda
         $kunjunganAktif = KisPengunjung::whereIn('status', ['disetujui', 'sedang kunjungan'])
                                        ->latest('tgl_kunjungan')
                                        ->paginate(5);
                                        
-        // Asumsi View Daftar Kunjungan Aktif Anda adalah 'kunjungan.kunjungan_aktif'
         return view('kunjungan.kunjungan_aktif', compact('kunjunganAktif'));
     }
 
@@ -31,18 +30,16 @@ class GuestController extends Controller
      */
     public function showCreateForm()
     {
-        // Asumsi View Form Anda adalah 'kunjungan.tambah_kunjungan'
         return view('kunjungan.tambah_kunjungan');
     }
 
     /**
-     * Memproses dan menyimpan data pengajuan kunjungan dari guest ke 3 tabel (Pengunjung, Dokumen, Peserta).
+     * Memproses dan menyimpan data pengajuan kunjungan ke 3 tabel.
      */
     public function storeKunjungan(Request $request)
     {
         // 1. Validasi Data
         $request->validate([
-            // KisPengunjung fields
             'kode_daerah' => 'required|string|max:255',
             'nama_instansi' => 'required|string|max:255',
             'satuan_kerja' => 'required|string|max:255',
@@ -51,22 +48,17 @@ class GuestController extends Controller
             'nama_perwakilan' => 'required|string|max:255',
             'email_perwakilan' => 'required|email|max:255',
             'wa_perwakilan' => 'required|string|max:20',
-            
-            // File SPT (KisDokumen)
             'file_spt' => 'nullable|file|mimes:pdf|max:2048', 
-            
-            // KisPesertaKunjungan (Perwakilan sebagai peserta utama)
             'jabatan' => 'required|string|max:255',
             'nip' => 'nullable|string|max:255',
         ]);
         
-        // Mulai Transaksi Database
         DB::beginTransaction();
 
         try {
             // 2. Simpan Data KisPengunjung
             $pengunjung = KisPengunjung::create([
-                'uid' => Str::uuid(), // Generate UID (PK)
+                'uid' => Str::uuid(), 
                 'kode_daerah' => $request->kode_daerah,
                 'nama_instansi' => $request->nama_instansi,
                 'satuan_kerja' => $request->satuan_kerja,
@@ -75,65 +67,110 @@ class GuestController extends Controller
                 'nama_perwakilan' => $request->nama_perwakilan,
                 'email_perwakilan' => $request->email_perwakilan,
                 'wa_perwakilan' => $request->wa_perwakilan,
-                'status' => 'pengajuan', // Status awal: Pengajuan
-                'kode_qr' => 'QR-' . Str::random(8), // Generate Kode QR
-                'created_by' => null, // Guest
+                'status' => 'pengajuan', 
+                'kode_qr' => 'QR-' . Str::random(8), 
+                'created_by' => null,
             ]);
 
-            // Ambil UID Pengunjung untuk kunci asing
             $pengunjungUid = $pengunjung->uid;
 
-            // Pengecekan keamanan (Walau jarang, ini menghentikan error 1048)
-            if (empty($pengunjungUid)) {
-                throw new \Exception("Kegagalan internal saat membuat ID pengunjung.");
-            }
-            
             // 3. Simpan File SPT (KisDokumen)
             if ($request->hasFile('file_spt')) {
                 $file = $request->file('file_spt');
-                $path = Storage::putFile('public/spt', $file); // Simpan file
+                $path = Storage::putFile('public/spt', $file); 
 
                 KisDokumen::create([
-                    'pengunjung_id' => $pengunjungUid, // Kunci asing (UUID)
+                    'uid' => Str::uuid(), // FIX: Tambahkan UID untuk KisDokumen
+                    'pengunjung_id' => $pengunjungUid, 
                     'file_spt' => $path, 
-                    'created_by' => null, // Guest
+                    'created_by' => null, 
                 ]);
             }
             
             // 4. Simpan Data Peserta Kunjungan (Perwakilan Utama)
             KisPesertaKunjungan::create([
                 'uid' => Str::uuid(), // Wajib: Generate UID (PK) untuk Peserta Kunjungan
-                'pengunjung_id' => $pengunjungUid, // Kunci asing (UUID)
+                'pengunjung_id' => $pengunjungUid, 
                 'nama' => $request->nama_perwakilan,
                 'nip' => $request->nip,
                 'jabatan' => $request->jabatan,
                 'email' => $request->email_perwakilan,
                 'wa' => $request->wa_perwakilan,
-                'created_by' => null, // Guest
+                'created_by' => null, 
             ]);
 
-            DB::commit(); // Komit transaksi
-
-            // 5. Redirect ke halaman index dengan pesan sukses
+            DB::commit(); 
             return redirect()->route('kunjungan.index')->with('success', 'Pengajuan kunjungan berhasil dikirim! Silakan tunggu konfirmasi dari Admin.');
 
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback jika ada error
-            
-            // Log::error('Guest submission failed: ' . $e->getMessage()); // Opsional: Tambahkan Log
-            
-            // Tampilkan error (Untuk debugging)
+            DB::rollBack(); 
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi. Debug: ' . $e->getMessage());
         }
     }
     
+    /**
+     * Menampilkan Detail Laporan Kunjungan.
+     */
     public function showDetail($id)
     {
-        // Temukan KisPengunjung berdasarkan UID dan muat relasi peserta dan dokumen
+        // FIX: Hapus 'file_spt' dari array with()
         $pengunjung = KisPengunjung::where('uid', $id)
-                                    ->with(['peserta', 'dokumen', 'file_spt'])
+                                    ->with(['peserta', 'dokumen'])
                                     ->firstOrFail();
                                     
         return view('kunjungan.detail', compact('pengunjung'));
+    }
+
+    // ==========================================================
+    // LOGIKA TAMBAH PESERTA ROMBONGAN (SETELAH PENGAJUAN)
+    // ==========================================================
+
+    /**
+     * Menampilkan form untuk menambah anggota rombongan.
+     * @param string $id (UID KisPengunjung)
+     */
+    public function showAddPesertaForm($id)
+    {
+        $pengunjung = KisPengunjung::where('uid', $id)->firstOrFail();
+        
+        // Asumsi View Anda adalah 'kunjungan.tambah_peserta'
+        return view('kunjungan.tambah_peserta', compact('pengunjung'));
+    }
+
+    /**
+     * Memproses penyimpanan anggota rombongan baru.
+     * @param Request $request
+     * @param string $id (UID KisPengunjung)
+     */
+    public function storePeserta(Request $request, $id)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'nip' => 'nullable|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'wa' => 'required|string|max:20',
+        ]);
+
+        $pengunjung = KisPengunjung::where('uid', $id)->firstOrFail();
+        $pengunjungUid = $pengunjung->uid;
+
+        try {
+            KisPesertaKunjungan::create([
+                'uid' => Str::uuid(), // Wajib: Generate UID (PK)
+                'pengunjung_id' => $pengunjungUid, 
+                'nama' => $request->nama,
+                'nip' => $request->nip,
+                'jabatan' => $request->jabatan,
+                'email' => $request->email,
+                'wa' => $request->wa,
+                'created_by' => null, 
+            ]);
+
+            return redirect()->route('kunjungan.detail', $pengunjungUid)->with('success', 'Anggota rombongan berhasil ditambahkan!');
+
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Gagal menambahkan peserta. Debug: ' . $e->getMessage());
+        }
     }
 }

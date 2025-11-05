@@ -33,6 +33,11 @@
 </head>
 <body>
 
+@php
+    // Dapatkan record peserta pertama dari rombongan (asumsi perwakilan)
+    $perwakilanPeserta = $pengunjung->peserta->first(); 
+@endphp
+
 <div class="container py-5">
     <div class="detail-card shadow-lg mx-auto p-5" style="max-width: 1000px;">
         
