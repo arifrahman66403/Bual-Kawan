@@ -22,8 +22,8 @@ class GuestController extends Controller
                                        ->latest('tgl_kunjungan')
                                        ->paginate(5);
                                        
-        // Asumsi View Daftar Kunjungan Aktif Anda adalah 'guest.kunjungan_aktif'
-        return view('guest.kunjungan_aktif', compact('kunjunganAktif'));
+        // Asumsi View Daftar Kunjungan Aktif Anda adalah 'kunjungan.kunjungan_aktif'
+        return view('kunjungan.kunjungan_aktif', compact('kunjunganAktif'));
     }
 
     /**
@@ -31,8 +31,8 @@ class GuestController extends Controller
      */
     public function showCreateForm()
     {
-        // Asumsi View Form Anda adalah 'guest.tambah_kunjungan'
-        return view('guest.tambah_kunjungan');
+        // Asumsi View Form Anda adalah 'kunjungan.tambah_kunjungan'
+        return view('kunjungan.tambah_kunjungan');
     }
 
     /**
@@ -115,7 +115,7 @@ class GuestController extends Controller
             DB::commit(); // Komit transaksi
 
             // 5. Redirect ke halaman index dengan pesan sukses
-            return redirect()->route('guest.index')->with('success', 'Pengajuan kunjungan berhasil dikirim! Silakan tunggu konfirmasi dari Admin.');
+            return redirect()->route('kunjungan.index')->with('success', 'Pengajuan kunjungan berhasil dikirim! Silakan tunggu konfirmasi dari Admin.');
 
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback jika ada error
@@ -131,9 +131,9 @@ class GuestController extends Controller
     {
         // Temukan KisPengunjung berdasarkan UID dan muat relasi peserta dan dokumen
         $pengunjung = KisPengunjung::where('uid', $id)
-                                    ->with(['peserta', 'dokumen'])
+                                    ->with(['peserta', 'dokumen', 'file_spt'])
                                     ->firstOrFail();
                                     
-        return view('guest.detail', compact('pengunjung'));
+        return view('kunjungan.detail', compact('pengunjung'));
     }
 }
