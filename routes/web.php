@@ -20,6 +20,7 @@ Route::get('/', [GuestController::class, 'index'])->name('guest.index');
 // Form Pengajuan Kunjungan (Tambah Kunjungan)
 Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
+Route::get('/kunjungan/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
 
 // Route Login Admin (Area publik)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
