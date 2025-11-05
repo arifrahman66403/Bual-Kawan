@@ -28,7 +28,7 @@ class PengajuanController extends Controller
                                     ->paginate(10);
 
         // Pastikan Anda memiliki view ini: resources/views/admin/pengajuan/verifikasi.blade.php
-        return view('admin.pengajuan.verifikasi', compact('pengunjungs'));
+        return view('admin.verify', compact('pengunjungs'));
     }
 
     /**

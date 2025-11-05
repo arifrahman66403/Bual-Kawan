@@ -67,11 +67,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
     Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
-    Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan.index');
+    Route::get('/admin/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan');
     Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
     Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
-    Route::get('/admin/verifikasi', [KisPengunjungController::class, 'verifyList'])->name('admin.verify');
-    Route::get('/admin/riwayat', [TrackingController::class, 'index'])->name('admin.riwayat');
+    Route::get('/admin/verifikasi', [PengajuanController::class, 'verifyList'])->name('admin.verify');
+    Route::get('/admin/riwayat', [PengajuanController::class, 'index'])->name('admin.riwayat');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');

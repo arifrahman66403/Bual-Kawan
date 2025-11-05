@@ -9,11 +9,11 @@
                 :active="request()->routeIs('admin.dashboard')" />
 
             <x-nav-link 
-                href="{{ route('admin.verify') }}" 
+                href="{{ route('admin.pengajuan') }}" 
                 icon="bi-send-plus" 
                 label="Pengajuan" 
                 id="pengajuan"
-                :active="request()->routeIs('admin.verify')" />
+                :active="request()->routeIs('admin.pengajuan')" />
 
             <x-nav-link 
                 href="{{ route('admin.riwayat') }}" 
