@@ -36,7 +36,7 @@
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
 
-                <form method="GET" action="{{ route('guest.index') }}">
+                <form method="GET" action="{{ route('kunjungan.index') }}">
                     <div class="input-group" style="width: 300px;">
                         <input type="text" name="search" class="form-control" placeholder="Cari nama / instansi..." value="{{ request('search') }}">
                         <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>

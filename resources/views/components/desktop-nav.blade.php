@@ -16,7 +16,7 @@
                 :active="request()->routeIs('admin.verify')" />
 
             <x-nav-link 
-                href="{{ route('login') }}" 
+                href="{{ route('admin.riwayat') }}" 
                 icon="bi-clock-history" 
                 label="Riwayat Tamu" 
                 id="riwayat"

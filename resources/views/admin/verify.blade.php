@@ -1,6 +1,6 @@
 <x-layout title="Verifikasi Pengunjung">
-      <div class="tab-pane fade show active" id="pengajuan" role="tabpanel">
-        <h2 class="mb-4 fw-bold text-color">Daftar Pengajuan Kunjungan 📋</h2>
+  <div class="tab-pane fade show active" id="pengajuan" role="tabpanel">
+    <h2 class="mb-4 fw-bold text-color">Daftar Pengajuan Kunjungan 📋</h2>
 
         <!-- Filter -->
         <div class="card p-3 mb-4 filter-status-box">
@@ -32,69 +32,157 @@
           </div>
 
           <div class="table-responsive">
-            <table class="table table-hover align-middle table-borderless pengajuan-table" id="dataPengajuan">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Pengaju / Instansi</th>
-                  <th class="d-none d-md-table-cell">Tujuan Kunjungan</th>
-                  <th>Tanggal & Waktu</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($pengunjungs as $no => $p)
-                <tr data-status="{{ ucfirst($p->status) }}">
-                  <td>{{ $no+1 }}</td>
-                  <td>
-                    <span class="fw-semibold text-color">{{ $p->nama_perwakilan }}</span>
-                    <div class="text-muted-genz">{{ $p->nama_instansi }}</div>
-                  </td>
-                  <td class="d-none d-md-table-cell">{{ $p->tujuan }}</td>
-                  <td>{{ \Carbon\Carbon::parse($p->tgl_kunjungan)->format('d M Y') }}</td>
-                  <td>
-                    <span class="badge 
-                      @if($p->status=='pengajuan') bg-secondary 
-                      @elseif($p->status=='disetujui') bg-success 
-                      @elseif($p->status=='kunjungan') bg-info 
-                      @elseif($p->status=='selesai') bg-primary
-                      @else bg-dark @endif">
-                      {{ ucfirst($p->status) }}
-                    </span>
-                  </td>
-                  <td class="text-nowrap">
-                    <!-- Tombol Detail -->
-                    <button class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></button>
+        <table class="table table-hover align-middle table-borderless pengajuan-table" id="dataPengajuan">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pengaju / Instansi</th>
+              <th class="d-none d-md-table-cell">Tujuan Kunjungan</th>
+              <th>Tanggal & Waktu</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($pengunjungs as $no => $p)
+            <tr data-status="{{ ucfirst($p->status) }}">
+              <td>{{ $no+1 }}</td>
+              <td>
+                <span class="fw-semibold text-color">{{ $p->nama_perwakilan }}</span>
+                <div class="text-muted-genz">{{ $p->nama_instansi }}</div>
+              </td>
+              <td class="d-none d-md-table-cell">{{ $p->tujuan }}</td>
+              <td>{{ \Carbon\Carbon::parse($p->tgl_kunjungan)->format('d M Y') }}</td>
+              <td>
+                <span class="badge 
+                  @if($p->status=='pengajuan') bg-secondary 
+                  @elseif($p->status=='disetujui') bg-success 
+                  @elseif($p->status=='kunjungan') bg-info 
+                  @elseif($p->status=='selesai') bg-primary
+                  @else bg-dark @endif">
+                  {{ ucfirst($p->status) }}
+                </span>
+              </td>
 
-                    <!-- Tombol Setujui -->
-                    <form action="{{ route('pengunjung.status', $p->uid) }}" method="POST" class="d-inline">
-                      @csrf
-                      <input type="hidden" name="status" value="disetujui">
-                      <button type="submit" class="btn btn-sm btn-success ms-1" title="Setujui">
-                        <i class="bi bi-check2-circle"></i> Terima
-                      </button>
-                    </form>
+              <!-- Tombol Aksi (tidak memakai data-bs-toggle / data-bs-target) -->
+              <td class="text-nowrap">
+                <!-- Tombol Detail (boleh tetap) -->
+                <button class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></button>
 
-                    <!-- Tombol Tolak -->
-                    <form action="{{ route('pengunjung.status', $p->uid) }}" method="POST" class="d-inline">
-                      @csrf
-                      <input type="hidden" name="status" value="ditolak">
-                      <button type="submit" class="btn btn-sm btn-danger ms-1" title="Tolak">
-                        <i class="bi bi-x-circle"></i> Tolak
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
+                <!-- Tombol Setujui: hanya data-* attributes, buka modal lewat JS -->
+                <button type="button"
+                        class="btn btn-sm btn-success ms-1 btn-action"
+                        data-status="disetujui"
+                        data-id="{{ $p->uid }}"
+                        data-icon="bi-check-circle text-success"
+                        data-message="Apakah kamu yakin ingin MENYETUJUI pengajuan ini?">
+                  <i class="bi bi-check2-circle"></i> Terima
+                </button>
+
+                <!-- Tombol Tolak -->
+                <button type="button"
+                        class="btn btn-sm btn-danger ms-1 btn-action"
+                        data-status="ditolak"
+                        data-id="{{ $p->uid }}"
+                        data-icon="bi-x-circle text-danger"
+                        data-message="Apakah kamu yakin ingin MENOLAK pengajuan ini?">
+                  <i class="bi bi-x-circle"></i> Tolak
+                </button>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-3 d-flex justify-content-center">
+        <!-- Links -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       Single Modal (LETakkan hanya SEKALI di luar loop)
+       ====================================================== -->
+  <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="actionModalLabel">Konfirmasi Aksi</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body text-center">
+          <div class="action-icon mb-3">
+            <i id="modalIcon" class="bi fs-1"></i>
           </div>
+          <p id="modalMessage" class="fs-5 fw-semibold"></p>
+          <p class="text-muted">ID Pengajuan: <span id="modalIdDisplay" class="fw-bold"></span></p>
+        </div>
 
-          <!-- Pagination -->
-          <div class="mt-3 d-flex justify-content-center">
-          </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+
+          <!-- Form yang akan dikirim ketika user klik Lanjutkan -->
+          <form id="modalActionForm" method="POST" class="d-inline">
+            @csrf
+            <input type="hidden" name="status" id="modalStatusValue">
+            <button type="submit" class="btn" id="modalConfirmButton">Lanjutkan</button>
+          </form>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       Script: isi modal + buka modal hanya lewat JS (NO data-bs attributes)
+       ====================================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const modalEl = document.getElementById('actionModal');
+      if (!modalEl) return;
+
+      // Buat instance Bootstrap modal (fungsi show/hide)
+      const bsModal = new bootstrap.Modal(modalEl, {});
+
+      const modalIcon = document.getElementById('modalIcon');
+      const modalMessage = document.getElementById('modalMessage');
+      const modalIdDisplay = document.getElementById('modalIdDisplay');
+      const modalConfirmButton = document.getElementById('modalConfirmButton');
+      const modalStatusValue = document.getElementById('modalStatusValue');
+      const modalForm = document.getElementById('modalActionForm');
+
+      // Pastikan ada tombol-tombol aksi
+      document.querySelectorAll('.btn-action').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = this.dataset.id;
+          const status = this.dataset.status;
+          const icon = this.dataset.icon;
+          const message = this.dataset.message;
+
+          // Isi modal dinamis
+          modalIcon.className = `bi fs-1 ${icon}`;
+          modalMessage.textContent = message;
+          modalIdDisplay.textContent = id;
+
+          // Set warna / kelas tombol konfirmasi
+          modalConfirmButton.className = `btn ${status === 'disetujui' ? 'btn-success' : 'btn-danger'}`;
+
+          // Set nilai hidden input dan form action (sesuaikan route)
+          modalStatusValue.value = status;
+          modalForm.action = `/pengunjung/status/${id}`; // <-- pastikan route sesuai
+
+          // Buka modal (sekali, tanpa konflik)
+          bsModal.show();
+        });
+      });
+
+      // (Opsional) — saat form disubmit, bisa tambahkan loading state
+      modalForm.addEventListener('submit', function() {
+        modalConfirmButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+      });
+    });
+  </script>
 
 </x-layout>

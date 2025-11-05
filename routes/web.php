@@ -16,7 +16,7 @@ use App\Http\middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Auth;
 
 
-Route::get('/', [GuestController::class, 'index'])->name('guest.index');
+Route::get('/', [GuestController::class, 'index'])->name('kunjungan.index');
 // Form Pengajuan Kunjungan (Tambah Kunjungan)
 Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 
-Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function () {
+Route::middleware(['auth', 'role:operator'])->prefix('/operator')->name('operator.')->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
     Route::get('/pengunjung', [KisPengunjungController::class, 'create'])->name('pengunjung.create');
     Route::post('/pengunjung', [KisPengunjungController::class, 'store'])->name('pengunjung.store');
@@ -71,7 +71,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/pengunjung/{id}', [KisPengunjungController::class, 'show'])->name('pengunjung.show');
     Route::post('/pengunjung/{uid}/status', [TrackingController::class, 'update'])->name('pengunjung.status');
     Route::get('/admin/verifikasi', [KisPengunjungController::class, 'verifyList'])->name('admin.verify');
-    Route::get('/tracking', [TrackingController::class, 'index'])->name('admin.index');
+    Route::get('/admin/riwayat', [TrackingController::class, 'index'])->name('admin.riwayat');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');

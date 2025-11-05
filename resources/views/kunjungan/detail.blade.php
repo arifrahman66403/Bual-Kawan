@@ -181,7 +181,7 @@
         </div>
         
         <div class="text-end mt-4">
-             <a href="{{ route('guest.index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
+             <a href="{{ route('kunjungan.index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
         </div>
         
         @endif
