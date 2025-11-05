@@ -15,6 +15,11 @@ use App\Http\middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Auth;
 
 
+Route::get('/', [GuestController::class, 'index'])->name('guest.index');
+// Form Pengajuan Kunjungan (Tambah Kunjungan)
+Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
+Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
+
 // Route Login Admin (Area publik)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -39,6 +44,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Route CRUD lainnya
 });
 
+
+
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
     Route::get('/pengunjung', [KisPengunjungController::class, 'create'])->name('pengunjung.create');
@@ -56,7 +63,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
     Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
-    Route::get('/pengunjung', [KisPengunjungController::class, 'index'])->name('admin.pengunjung.index');
+    Route::get('/pengunjung', [KisPengunjungController::class, 'index'])->name('pengunjung.index');
     Route::get('/pengunjung/{id}', [KisPengunjungController::class, 'show'])->name('pengunjung.show');
     Route::post('/pengunjung/{uid}/status', [TrackingController::class, 'update'])->name('pengunjung.status');
     Route::get('/admin/verifikasi', [KisPengunjungController::class, 'verifyList'])->name('admin.verify');
