@@ -131,7 +131,7 @@ class GuestController extends Controller
     {
         // Temukan KisPengunjung berdasarkan UID dan muat relasi peserta dan dokumen
         $pengunjung = KisPengunjung::where('uid', $id)
-                                    ->with(['peserta', 'dokumen', 'file_spt'])
+                                    ->with(['peserta', 'dokumen'])
                                     ->firstOrFail();
                                     
         return view('kunjungan.detail', compact('pengunjung'));
