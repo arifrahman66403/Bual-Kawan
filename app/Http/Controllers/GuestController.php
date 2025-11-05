@@ -127,11 +127,13 @@ class GuestController extends Controller
         }
     }
     
-    // Anda bisa tambahkan method showDetail() di sini
     public function showDetail($id)
     {
-        $pengunjung = KisPengunjung::where('uid', $id)->firstOrFail();
-        // Ambil data relasi lainnya (dokumen, peserta)
+        // Temukan KisPengunjung berdasarkan UID dan muat relasi peserta dan dokumen
+        $pengunjung = KisPengunjung::where('uid', $id)
+                                    ->with(['peserta', 'dokumen'])
+                                    ->firstOrFail();
+                                    
         return view('guest.detail', compact('pengunjung'));
     }
 }
