@@ -21,6 +21,8 @@ Route::get('/', [GuestController::class, 'index'])->name('guest.index');
 Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
 Route::get('/kunjungan/detail/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
+Route::get('/kunjungan/{id}/tambah-peserta', [GuestController::class, 'showAddPesertaForm'])->name('peserta.create');
+Route::post('/kunjungan/{id}/peserta', [GuestController::class, 'storePeserta'])->name('peserta.store');
 
 // Route Login Admin (Area publik)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
