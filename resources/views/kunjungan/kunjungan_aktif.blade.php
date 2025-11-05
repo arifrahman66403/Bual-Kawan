@@ -65,7 +65,7 @@
                             <td>{{ $kunjungan->satuan_kerja ?? 'Koordinasi' }}</td> 
                             <td>{{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('Y-m-d') }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
+                                <a href="{{ route('kunjungan.detail', $kunjungan->uid) }}" class="btn btn-sm btn-outline-primary">Detail</a>
                             </td>
                         </tr>
                         @empty

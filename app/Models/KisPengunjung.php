@@ -35,7 +35,7 @@ class KisPengunjung extends Model
     ];
 
     // Relasi
-    public function pesertaKunjungan()
+    public function peserta()
     {
         return $this->hasMany(KisPesertaKunjungan::class, 'pengunjung_id', 'uid');
     }
