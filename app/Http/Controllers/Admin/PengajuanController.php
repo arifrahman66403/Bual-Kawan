@@ -99,13 +99,13 @@ class PengajuanController extends Controller
                        ? '✅ Pengajuan berhasil **DISETUJUI** dan QR Code telah dibuat.' 
                        : '❌ Pengajuan berhasil **DITOLAK**.';
 
-            return redirect()->route('admin.pengajuan.index')->with('success', $message);
+            return redirect()->route('admin.pengajuan')->with('success', $message);
 
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('admin.pengajuan.index')->with('error', 'Data pengajuan tidak ditemukan.');
+            return redirect()->route('admin.pengajuan')->with('error', 'Data pengajuan tidak ditemukan.');
         } catch (\Exception $e) {
             // Ini akan menangkap kegagalan lain, termasuk kegagalan QR Code/Database
-            return redirect()->route('admin.pengajuan.index')->with('error', 'Terjadi kesalahan sistem saat memproses verifikasi: ' . $e->getMessage());
+            return redirect()->route('admin.pengajuan')->with('error', 'Terjadi kesalahan sistem saat memproses verifikasi: ' . $e->getMessage());
         }
     }
 }

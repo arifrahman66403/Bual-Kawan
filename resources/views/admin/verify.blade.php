@@ -171,7 +171,7 @@
 
           // Set nilai hidden input dan form action (sesuaikan route)
           modalStatusValue.value = status;
-          modalForm.action = `/pengunjung/status/${id}`; // <-- pastikan route sesuai
+          modalForm.action = `pengajuan/${id}/status`; // <-- pastikan route sesuai
 
           // Buka modal (sekali, tanpa konflik)
           bsModal.show();

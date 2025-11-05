@@ -7,6 +7,7 @@ use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\Admin\RiwayatController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\KisPengunjungController;
 use App\Http\Controllers\Admin\AdminController;
@@ -70,8 +71,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan');
     Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
     Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
-    Route::get('/admin/verifikasi', [PengajuanController::class, 'verifyList'])->name('admin.verify');
-    Route::get('/admin/riwayat', [PengajuanController::class, 'index'])->name('admin.riwayat');
+    Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');
