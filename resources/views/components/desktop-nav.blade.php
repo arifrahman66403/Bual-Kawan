@@ -20,14 +20,14 @@
                 icon="bi-clock-history" 
                 label="Riwayat Tamu" 
                 id="riwayat"
-                :active="request()->routeIs('riwayat')" />
+                :active="request()->routeIs('admin.riwayat')" />
 
             <x-nav-link 
                 href="{{ route('login') }}" 
                 icon="bi-people" 
                 label="Admin" 
                 id="admin"
-                :active="request()->routeIs('admin')" />
+                :active="request()->routeIs('admin.pengguna')" />
         </div>
     </div>
 </div>
