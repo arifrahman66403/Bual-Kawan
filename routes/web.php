@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\TrackingController;
 use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\KisPengunjungController;
 use App\Http\Controllers\Admin\AdminController;
