@@ -141,7 +141,7 @@
                 <div class="qr-code-area mb-4">
                     {{-- Asumsi Anda menggunakan library untuk generate QR Code dari $pengunjung->kode_qr --}}
                     {{-- Contoh menggunakan URL: --}}
-                    {{-- <img src="{{ route('qrcode.generate', $pengunjung->kode_qr) }}" alt="QR Code"> --}}
+                    {{-- <img src="{{ asset($pengunjung->kisQrCode->qr_code ?? '') }}" alt="QR Code" width="150"> --}}
                     <div style="width: 150px; height: 150px; background-color: #ddd; margin: auto;"></div>
                     <p class="mt-2 text-muted small">Kode: {{ $pengunjung->kode_qr }}</p>
                 </div>
