@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Color\Color;
 
 class PengajuanController extends Controller
@@ -66,19 +66,21 @@ class PengajuanController extends Controller
                 $fileName = 'qr_' . $pengunjung->uid . '.png';
                 $filePath = storage_path('app/public/qr_codes/' . $fileName);
 
-                // === Generate QR Code untuk versi 6.x ===
-                $qrCode = new QrCode($qrString);
-                $qrCode->setEncoding(new Encoding('UTF-8'));
-                $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh());
-                $qrCode->setSize(250);
-                $qrCode->setMargin(10);
-                $qrCode->setForegroundColor(new Color(0, 0, 0));
-                $qrCode->setBackgroundColor(new Color(255, 255, 255));
+                // ✅ Versi 6.x pakai constructor baru (tanpa setter)
+                $qrCode = new QrCode(
+                    data: $qrString,
+                    encoding: new Encoding('UTF-8'),
+                    errorCorrectionLevel: ErrorCorrectionLevel::High,
+                    size: 250,
+                    margin: 10,
+                    foregroundColor: new Color(0, 0, 0),
+                    backgroundColor: new Color(255, 255, 255)
+                );
 
                 $writer = new PngWriter();
                 $result = $writer->write($qrCode);
 
-                // Simpan hasil ke file
+                // Simpan ke file
                 $result->saveToFile($filePath);
 
                 // Simpan metadata ke database
