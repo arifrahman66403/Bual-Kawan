@@ -12,11 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\Label\Label;
-use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Color\Color;
 
 class PengajuanController extends Controller
@@ -61,27 +60,28 @@ class PengajuanController extends Controller
                 'created_by' => Auth::id() ?? 1,
             ]);
 
-            // === BUAT QR CODE (pakai GD backend, TANPA imagick) ===
+            // === BUAT QR CODE (pakai GD backend, TANPA imagick) === 
             if ($newStatus === 'disetujui') {
                 $qrString = 'SINGGAH-' . strtoupper(Str::random(10));
                 $fileName = 'qr_' . $pengunjung->uid . '.png';
                 $filePath = storage_path('app/public/qr_codes/' . $fileName);
 
-                // === Generate QR Code (versi endroid/qr-code v5) ===
-                $result = Builder::create()
-                    ->writer(new PngWriter())
-                    ->data($qrString)
-                    ->encoding(new Encoding('UTF-8'))
-                    ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-                    ->size(250)
-                    ->margin(5)
-                    ->backgroundColor(new Color(255, 255, 255))
-                    ->foregroundColor(new Color(0, 0, 0))
-                    ->build();
+                // === Generate QR Code untuk versi 6.x ===
+                $qrCode = new QrCode($qrString);
+                $qrCode->setEncoding(new Encoding('UTF-8'));
+                $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh());
+                $qrCode->setSize(250);
+                $qrCode->setMargin(10);
+                $qrCode->setForegroundColor(new Color(0, 0, 0));
+                $qrCode->setBackgroundColor(new Color(255, 255, 255));
 
-                // Simpan QR ke file
+                $writer = new PngWriter();
+                $result = $writer->write($qrCode);
+
+                // Simpan hasil ke file
                 $result->saveToFile($filePath);
 
+                // Simpan metadata ke database
                 KisQrCode::updateOrCreate(
                     ['pengunjung_id' => $pengunjung->uid],
                     [
