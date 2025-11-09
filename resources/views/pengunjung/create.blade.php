@@ -29,7 +29,7 @@
       <input type="email" name="email_perwakilan" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label>WA Perwakilan</label>
+      <label>No WA Perwakilan</label>
       <input type="text" name="wa_perwakilan" class="form-control" required>
     </div>
 
