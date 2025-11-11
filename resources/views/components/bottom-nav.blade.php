@@ -1,21 +1,34 @@
+
 <div class="bottom-nav d-lg-none">
-    <a href="dashboard.php" class="bottom-nav-link active" id="mobile-nav-dashboard">
-        <i class="bi bi-speedometer2"></i>
-        Dashboard
-    </a>
-    
-    <a href="pengajuan.php" class="bottom-nav-link" id="mobile-nav-pengajuan">
-        <i class="bi bi-send-plus"></i>
-        Pengajuan
-    </a>
-    
-    <a href="riwayat.php" class="bottom-nav-link" id="mobile-nav-riwayat">
-        <i class="bi bi-clock-history"></i>
-        Riwayat
-    </a>
-    
-    <a href="admin.php" class="bottom-nav-link" id="mobile-nav-admin">
-        <i class="bi bi-people"></i>
-        Admin
-    </a>
+    <x-nav-link 
+        href="{{ route('admin.dashboard') }}" 
+        class="bottom-nav-link"
+        icon="bi-speedometer2" 
+        label="Dashboard" 
+        id="mobile-nav-dashboard"
+        :active="request()->routeIs('admin.dashboard')" />
+
+    <x-nav-link 
+        href="{{ route('admin.pengajuan') }}" 
+        class="bottom-nav-link"
+        icon="bi-send-plus" 
+        label="Pengajuan" 
+        id="mobile-nav-pengajuan"
+        :active="request()->routeIs('admin.pengajuan')" />
+
+    <x-nav-link 
+        href="{{ route('admin.riwayat') }}" 
+        class="bottom-nav-link"
+        icon="bi-clock-history" 
+        label="Riwayat"
+        id="mobile-nav-riwayat"
+        :active="request()->routeIs('admin.riwayat')" />
+
+    <x-nav-link 
+        href="{{ route('login') }}" 
+        class="bottom-nav-link"
+        icon="bi-people" 
+        label="Admin" 
+        id="mobile-nav-admin"
+        :active="request()->routeIs('admin.pengguna')" />
 </div>

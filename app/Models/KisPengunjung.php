@@ -47,7 +47,7 @@ class KisPengunjung extends Model
 
     public function dokumen()
     {
-        return $this->hasMany(KisDokumen::class, 'pengunjung_id', 'uid');
+        return $this->hasOne(KisDokumen::class, 'pengunjung_id', 'uid');
     }
 
     public function qrCode()

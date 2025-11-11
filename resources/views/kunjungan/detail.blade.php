@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Kunjungan - {{ $pengunjung->nama_instansi ?? 'Loading' }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body { background-color: #f8f9fa; }
@@ -14,7 +14,7 @@
         }
         .detail-label {
             font-weight: 500;
-            color: #6c757d; /* Abu-abu */
+            color: #6c757d;
         }
         .detail-value {
             font-weight: bold;
@@ -34,7 +34,6 @@
 <body>
 
 @php
-    // Dapatkan record peserta pertama dari rombongan (asumsi perwakilan)
     $perwakilanPeserta = $pengunjung->peserta->first(); 
 @endphp
 
@@ -75,13 +74,11 @@
                 
                 <div class="mb-3">
                     <div class="detail-label">Tanggal Kunjungan:</div>
-                    {{-- Format tanggal agar lebih rapi --}}
                     <div class="detail-value">{{ \Carbon\Carbon::parse($pengunjung->tgl_kunjungan)->format('Y-m-d') }}</div>
                 </div>
                 
                 <div class="mb-3">
                     <div class="detail-label">File SPT:</div>
-                    {{-- Cek apakah relasi dokumen ada dan file_spt tersedia --}}
                     <div class="detail-value">
                         @if ($pengunjung->dokumen && $pengunjung->dokumen->file_spt)
                             <a href="{{ Storage::url($pengunjung->dokumen->file_spt) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -102,11 +99,6 @@
                     <div class="detail-label">Nama:</div>
                     <div class="detail-value">{{ $pengunjung->nama_perwakilan ?? '-' }}</div>
                 </div>
-                
-                {{-- Ambil data NIP, Jabatan dari Peserta Kunjungan (asumsi perwakilan adalah peserta pertama) --}}
-                @php
-                    $perwakilanPeserta = $pengunjung->peserta->first();
-                @endphp
                 
                 <div class="mb-3">
                     <div class="detail-label">NIP:</div>
@@ -136,14 +128,22 @@
         <div class="row">
             <div class="col-md-4 text-center border-end">
                 <h4 class="section-title mt-0">QR Code (untuk absen)</h4>
-                
-                {{-- Tempat menaruh QR Code yang di-generate --}}
+
+                {{-- ✅ Tampilkan QR Code dari database --}}
                 <div class="qr-code-area mb-4">
-                    {{-- Asumsi Anda menggunakan library untuk generate QR Code dari $pengunjung->kode_qr --}}
-                    {{-- Contoh menggunakan URL: --}}
-                    {{-- <img src="{{ route('qrcode.generate', $pengunjung->kode_qr) }}" alt="QR Code"> --}}
-                    <div style="width: 150px; height: 150px; background-color: #ddd; margin: auto;"></div>
-                    <p class="mt-2 text-muted small">Kode: {{ $pengunjung->kode_qr }}</p>
+                    @if ($pengunjung->qrCode && $pengunjung->qrCode->qr_code)
+                        <img src="{{ asset($pengunjung->qrCode->qr_code) }}" 
+                             alt="QR Code Kunjungan"
+                             width="200"
+                             height="200"
+                             class="border rounded shadow-sm">
+                        <p class="mt-2 text-muted small">
+                            Berlaku hingga: 
+                            {{ \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d M Y H:i') }}
+                        </p>
+                    @else
+                        <div class="alert alert-warning py-2">QR Code belum dibuat.</div>
+                    @endif
                 </div>
             </div>
             
@@ -181,7 +181,7 @@
         </div>
         
         <div class="text-end mt-4">
-             <a href="{{ route('guest.index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
+             <a href="{{ route('kunjungan.index') }}" class="btn btn-secondary">Kembali ke Daftar</a>
         </div>
         
         @endif

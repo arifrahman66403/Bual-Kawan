@@ -141,8 +141,8 @@
             {{-- Tombol Aksi --}}
             <hr class="mt-4 mb-3">
             <div class="d-flex justify-content-end gap-2">
-                {{-- Menggunakan route guest.index yang merupakan Daftar Kunjungan Aktif --}}
-                <a href="{{ route('guest.index') }}" class="btn btn-outline-secondary">Batal</a>
+                {{-- Menggunakan route kunjungan.index yang merupakan Daftar Kunjungan Aktif --}}
+                <a href="{{ route('kunjungan.index') }}" class="btn btn-outline-secondary">Batal</a>
                 <button type="submit" class="btn btn-success btn-success-custom">
                     <i class="bi bi-save-fill me-2"></i> Simpan
                 </button>
