@@ -17,10 +17,10 @@ class OperatorController extends Controller
     
     public function processScan(Request $request)
     {
-        $request->validate(['kode_qr' => 'required|string']);
-        $qrCode = $request->kode_qr;
+        $request->validate(['qr_code' => 'required|string']);
+        $qrCode = $request->qr_code;
 
-        $pengunjung = KisPengunjung::where('kode_qr', $qrCode)->first();
+        $pengunjung = KisPengunjung::where('qr_code', $qrCode)->first();
 
         if (!$pengunjung) {
             return back()->with('error', 'Kode QR tidak valid atau tidak terdaftar.');

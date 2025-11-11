@@ -26,7 +26,7 @@
                             <i class="bi bi-send-fill me-1"></i> Proses Check-in/out
                         </button>
                     </div>
-                    @error('kode_qr')
+                    @error('qr_code')
                         <div class="text-danger mt-2">{{ $message }}</div>
                     @enderror
                 </form>
