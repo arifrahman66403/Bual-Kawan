@@ -12,7 +12,7 @@ class KisUserPolicy
      */
     public function viewAny(KisUser $kisUser): bool
     {
-        return false;
+        return $kisUser->role === 'superadmin' || $kisUser->role === 'admin';
     }
 
     /**
@@ -20,7 +20,7 @@ class KisUserPolicy
      */
     public function view(KisUser $kisUser, KisUser $model): bool
     {
-        return false;
+        return $kisUser->role === 'superadmin' || $kisUser->role === 'admin';
     }
 
     /**
@@ -28,7 +28,7 @@ class KisUserPolicy
      */
     public function create(KisUser $kisUser): bool
     {
-        return false;
+        return $kisUser->role === 'superadmin';
     }
 
     /**
@@ -36,7 +36,7 @@ class KisUserPolicy
      */
     public function update(KisUser $kisUser, KisUser $model): bool
     {
-        return false;
+        return $kisUser->role === 'superadmin' || ($kisUser->role === 'admin' && $model->role !== 'superadmin');
     }
 
     /**
@@ -44,7 +44,7 @@ class KisUserPolicy
      */
     public function delete(KisUser $kisUser, KisUser $model): bool
     {
-        return false;
+        return $kisUser->role === 'superadmin';
     }
 
     /**
@@ -52,7 +52,7 @@ class KisUserPolicy
      */
     public function restore(KisUser $kisUser, KisUser $model): bool
     {
-        return false;
+        return $kisUser->role === 'superadmin';
     }
 
     /**
@@ -60,6 +60,6 @@ class KisUserPolicy
      */
     public function forceDelete(KisUser $kisUser, KisUser $model): bool
     {
-        return false;
+        return $kisUser->role === 'superadmin';
     }
 }
