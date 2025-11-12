@@ -1,44 +1,4 @@
 <x-layout title="Admin Dashboard">
-    <?php
-
-        // Contoh simulasi data otentikasi. Di aplikasi nyata, ini diambil dari sesi.
-        $is_authenticated = true;
-        // ... [kode otentikasi lainnya] ...
-
-        if (!$is_authenticated) {
-            header("Location: login.php");
-            exit();
-        }
-
-        // ----------------------------------------------------
-        // === LOGIKA PENGHITUNGAN STATISTIK HARI INI ===
-        // ----------------------------------------------------
-
-        // 1. Panggil koneksi database (Asumsi $conn ada di functions.php)
-        require_once 'functions.php'; 
-
-        $total_tamu_hari_ini = 0;
-        $tanggal_hari_ini = date('Y-m-d'); // Format tanggal MySQL
-
-        // Query untuk menghitung jumlah baris di kis_pengunjung dengan tgl_kunjungan hari ini
-        $sql_tamu_hari_ini = "SELECT COUNT(uid) AS total 
-                            FROM kis_pengunjung 
-                            WHERE DATE(tgl_kunjungan) = ? AND status = 'Approved'"; // Hanya hitung yang Approved/Disetujui
-
-        if ($stmt = $conn->prepare($sql_tamu_hari_ini)) {
-            // Bind parameter untuk mencegah SQL Injection
-            $stmt->bind_param("s", $tanggal_hari_ini);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($row = $result->fetch_assoc()) {
-                $total_tamu_hari_ini = $row['total'];
-            }
-            $stmt->close();
-        } 
-        // ----------------------------------------------------
-    ?>
-<!DOCTYPE html>
      <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
         <h2 class="mb-4 fw-bold text-color">Statistik Kunjungan $Flash$ ✨</h2>
         
@@ -46,7 +6,7 @@
             <div class="col-lg-3 col-6">
                 <div class="card p-3 stat-card-bg stat-card-1">
                     <i class="bi bi-calendar-check fs-4 mb-2"></i>
-                    <div class="big-number">45</div>
+                    <div class="big-number">{{ $total_tamu_hari_ini }}</div>
                     <div class="text-muted-genz">Total Tamu Hari Ini</div>
                 </div>
             </div>
@@ -54,20 +14,20 @@
                 <div class="card p-3 stat-card-bg stat-card-2">
                     <i class="bi bi-graph-up fs-4 mb-2"></i>
                     <div class="big-number">+12%</div>
-                    <div class="text-muted-genz">Kenaikan Kunjungan (vs $L$ Week)</div>
+                    <div class="text-muted-genz">Kenaikan Kunjungan</div>
                 </div>
             </div>
             <div class="col-lg-3 col-6">
                 <div class="card p-3 stat-card-bg stat-card-3">
                     <i class="bi bi-hourglass-split fs-4 mb-2"></i>
                     <div class="big-number">15 Min</div>
-                    <div class="text-muted-genz">Rata-rata Durasi Tamu</div>
+                    <div class="text-muted-genz">Rata-rata Durasi</div>
                 </div>
             </div>
             <div class="col-lg-3 col-6">
                 <div class="card p-3 stat-card-bg stat-card-4">
                     <i class="bi bi-people fs-4 mb-2"></i>
-                    <div class="big-number">3.2K</div>
+                    <div class="big-number">{{ $total_tamu_semua }}</div>
                     <div class="text-muted-genz">Total Tamu Sepanjang Masa</div>
                 </div>
             </div>

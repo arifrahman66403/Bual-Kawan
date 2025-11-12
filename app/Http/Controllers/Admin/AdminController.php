@@ -11,9 +11,23 @@ class AdminController extends Controller
 {
     public function index()
     {
-        // Contoh statistik untuk Dashboard Admin
-        $pengajuanCount = KisPengunjung::where('status', 'pengajuan')->count();
-        return view('admin.dashboard', compact('pengajuanCount'));
+        // Hitung statistik
+        $tanggal_hari_ini = date('Y-m-d');
+        
+        $total_tamu_hari_ini = KisPengunjung::whereDate('tgl_kunjungan', $tanggal_hari_ini)
+                                            ->where('status', 'disetujui')
+                                            ->count();
+        
+        $total_tamu_semua = KisPengunjung::count();
+        
+        // Data 7 hari terakhir (untuk chart)
+        $chart_data = KisPengunjung::selectRaw('DATE(tgl_kunjungan) as tanggal, COUNT(*) as total')
+                                   ->where('status', 'disetujui')
+                                   ->whereBetween('tgl_kunjungan', [now()->subDays(6), now()])
+                                   ->groupBy('tanggal')
+                                   ->get();
+        
+        return view('admin.dashboard', compact('total_tamu_hari_ini', 'total_tamu_semua', 'chart_data'));
     }
 
     public function pendingList()
