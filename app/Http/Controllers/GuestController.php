@@ -77,7 +77,7 @@ class GuestController extends Controller
             // 3. Simpan File SPT (KisDokumen)
             if ($request->hasFile('file_spt')) {
                 $file = $request->file('file_spt');
-                $path = Storage::putFile('public/spt', $file); 
+                $path = Storage::disk('public')->putFile('spt', $file); // Ubah ke disk('public') 
 
                 KisDokumen::create([
                     'uid' => Str::uuid(), // FIX: Tambahkan UID untuk KisDokumen

@@ -107,7 +107,7 @@ class AuthController extends Controller
     protected function redirectToDashboard(string $role)
     {
         if ($role === 'superadmin') {
-            return redirect()->route('superadmin.dashboard');
+            return redirect()->route('admin.dashboard');
         } elseif ($role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($role === 'operator') {

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 4eb6077a0036e00994b0328d24d22ca772d71771
 <!DOCTYPE html>
 <html lang="id">
 <head>
