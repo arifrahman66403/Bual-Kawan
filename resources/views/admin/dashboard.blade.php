@@ -1,4 +1,44 @@
 <x-layout title="Admin Dashboard">
+    <?php
+
+        // Contoh simulasi data otentikasi. Di aplikasi nyata, ini diambil dari sesi.
+        $is_authenticated = true;
+        // ... [kode otentikasi lainnya] ...
+
+        if (!$is_authenticated) {
+            header("Location: login.php");
+            exit();
+        }
+
+        // ----------------------------------------------------
+        // === LOGIKA PENGHITUNGAN STATISTIK HARI INI ===
+        // ----------------------------------------------------
+
+        // 1. Panggil koneksi database (Asumsi $conn ada di functions.php)
+        require_once 'functions.php'; 
+
+        $total_tamu_hari_ini = 0;
+        $tanggal_hari_ini = date('Y-m-d'); // Format tanggal MySQL
+
+        // Query untuk menghitung jumlah baris di kis_pengunjung dengan tgl_kunjungan hari ini
+        $sql_tamu_hari_ini = "SELECT COUNT(uid) AS total 
+                            FROM kis_pengunjung 
+                            WHERE DATE(tgl_kunjungan) = ? AND status = 'Approved'"; // Hanya hitung yang Approved/Disetujui
+
+        if ($stmt = $conn->prepare($sql_tamu_hari_ini)) {
+            // Bind parameter untuk mencegah SQL Injection
+            $stmt->bind_param("s", $tanggal_hari_ini);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($row = $result->fetch_assoc()) {
+                $total_tamu_hari_ini = $row['total'];
+            }
+            $stmt->close();
+        } 
+        // ----------------------------------------------------
+    ?>
+<!DOCTYPE html>
      <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
         <h2 class="mb-4 fw-bold text-color">Statistik Kunjungan $Flash$ ✨</h2>
         
