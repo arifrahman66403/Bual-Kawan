@@ -1,4 +1,4 @@
-<x-layout title="Dashboard Operator">
+<x-layout-admin title="Dashboard Operator">
     <div class="container-fluid pt-4">
         <h1 class="h3 mb-4 text-gray-800">Scan 📲 Kunjungan</h1>
         
@@ -124,4 +124,4 @@
             }
         });
     </script>
-</x-layout>
+</x-layout-admin>

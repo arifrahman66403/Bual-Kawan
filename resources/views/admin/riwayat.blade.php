@@ -1,4 +1,4 @@
-<x-layout title="Riwayat Tracking">
+<x-layout-admin title="Riwayat Tracking">
 
   <!-- Judul -->
   <h2 class="mb-4 fw-bold text-color">Riwayat Perubahan Status Kunjungan 🔄</h2>
@@ -69,4 +69,4 @@
 
   </div>
 
-</x-layout>
+</x-layout-admin>

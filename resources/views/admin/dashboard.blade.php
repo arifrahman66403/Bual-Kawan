@@ -1,4 +1,4 @@
-<x-layout title="Admin Dashboard">
+<x-layout-admin title="Admin Dashboard">
      <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
         <h2 class="mb-4 fw-bold text-color">Statistik Kunjungan $Flash$ ✨</h2>
         

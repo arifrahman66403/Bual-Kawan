@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout-admin>
     <style>
         /* Page background and hero */
         .superadmin-hero{

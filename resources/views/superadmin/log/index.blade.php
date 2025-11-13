@@ -1,4 +1,4 @@
-<x-layout title="Log Aktivitas">
+<x-layout-admin title="Log Aktivitas">
 <div class="container py-4">
   <h3 class="fw-bold mb-4">Log Aktivitas Sistem</h3>
 
@@ -25,4 +25,4 @@
     </tbody>
   </table>
 </div>
-</x-layout>
+</x-layout-admin>

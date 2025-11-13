@@ -1,4 +1,4 @@
-<x-layout title="Bual Kawan - Dashboard">
+<x-layout-admin title="Bual Kawan - Dashboard">
     <div class="container py-4">
         <h3 class="mb-4 fw-bold">Daftar QR Code</h3>
 
@@ -25,4 +25,4 @@
             </tbody>
         </table>
     </div>
-</x-layout>
+</x-layout-admin>

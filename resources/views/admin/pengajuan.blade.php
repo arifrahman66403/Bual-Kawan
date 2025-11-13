@@ -1,4 +1,4 @@
-<x-layout title="Verifikasi Pengunjung">
+<x-layout-admin title="Verifikasi Pengunjung">
   <div class="tab-pane fade show active" id="pengajuan" role="tabpanel">
     <h2 class="mb-4 fw-bold text-color">Daftar Pengajuan Kunjungan 📋</h2>
       @if (session('success'))
@@ -191,4 +191,4 @@
   });
 </script>
 
-</x-layout>
+</x-layout-admin>
