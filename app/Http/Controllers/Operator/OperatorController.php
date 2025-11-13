@@ -35,17 +35,17 @@ class OperatorController extends Controller
             return back()->with('error', 'Pengunjung belum disetujui atau kunjungan sudah selesai.');
         }
 
-        // Ambil tracking terakhir untuk pengajuan ini
-        $last = KisTracking::where('pengajuan_id', $pengunjung->uid)
-                    ->orderByDesc('id')
+        // Cari tracking aktif hari ini (status 'kunjungan')
+        $active = KisTracking::where('pengajuan_id', $pengunjung->uid)
+                    ->where('status', 'kunjungan')
+                    ->whereDate('created_at', Carbon::today())
                     ->first();
 
-        // Jika tidak ada record terakhir atau terakhir sudah selesai / masih di status pengajuan,
-        // artinya lakukan CHECK-IN
-        if (! $last || in_array($last->status, ['selesai', 'disetujui'])) {
+        if (! $active) {
+            // CHECK-IN
             $tracking = new KisTracking();
             $tracking->pengajuan_id = $pengunjung->uid;
-            $tracking->catatan = 'Sedang kunjungan';
+            $tracking->catatan = 'Check-in oleh operator';
             $tracking->status = 'kunjungan';
             $tracking->created_by = Auth::id();
             $tracking->save();
@@ -56,21 +56,16 @@ class OperatorController extends Controller
             return back()->with('success', 'Check-in berhasil! Selamat datang.');
         }
 
-        // Jika record terakhir masih 'kunjungan', maka lakukan CHECK-OUT
-        if ($last->status === 'kunjungan') {
-            $last->catatan = 'Kunjungan selesai';
-            $last->status = 'selesai';
-            $last->edited_by = Auth::id();
-            $last->save();
+        // CHECK-OUT (update record aktif)
+        $active->catatan = 'Check-out oleh operator';
+        $active->status = 'selesai';
+        $active->edited_by = Auth::id();
+        $active->save();
 
-            $pengunjung->status = 'selesai';
-            $pengunjung->save();
+        $pengunjung->status = 'selesai';
+        $pengunjung->save();
 
-            return back()->with('success', 'Check-out berhasil!');
-        }
-
-        // Fallback aman
-        return back()->with('error', 'Status tracking tidak diketahui.');
+        return back()->with('success', 'Check-out berhasil!');
     }
 
     public function riwayatScan()
