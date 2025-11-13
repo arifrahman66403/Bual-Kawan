@@ -1,0 +1,18 @@
+<div class="mobile-bottom" aria-hidden="true">
+    <div class="menu" role="navigation" aria-label="Mobile navigation">
+      <button id="mb-home" data-href="https://bualkawan.siakkab.go.id/index.php"><i class="fas fa-home"></i><small>Home</small></button>
+      
+      <button id="mb-tentang"><i class="fas fa-info-circle"></i><small>Tentang</small></button>
+      
+      <button id="mb-berita" data-href="https://bualkawan.siakkab.go.id/berita.html"><i class="fas fa-newspaper"></i><small>Berita</small></button>
+      
+      <button id="mb-bukutamu" data-href="{{ route('kunjungan.kunjungan_aktif')}}"><i class="fas fa-pen"></i><small>Buku Tamu</small></button>
+      
+      <button id="mb-stat" data-href="https://bualkawan.siakkab.go.id/statistik.html"><i class="fas fa-chart-bar"></i><small>Statistik</small></button>
+    </div>
+
+    <div class="mobile-submenu" id="mobileSubmenu" role="menu" aria-hidden="true">
+      <div class="item" onclick="location.href='https://bualkawan.siakkab.go.id/profil.html'"><i class="fas fa-user"></i> Profil</div>
+      <div class="item" onclick="location.href='https://bualkawan.siakkab.go.id/visi-misi.html'"><i class="fas fa-bullseye"></i> Visi Misi</div>
+    </div>
+</div>

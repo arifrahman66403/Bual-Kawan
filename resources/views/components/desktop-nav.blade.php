@@ -11,7 +11,7 @@
     
     <div class="nav-item"><a href="https://bualkawan.siakkab.go.id/berita.html"><i class="fas fa-newspaper"></i> Berita</a></div>
 
-    <div class="nav-item"><a href="https://bualkawan.siakkab.go.id/buku-tamu.html"><i class="fas fa-pen"></i> Buku Tamu</a></div>
+    <div class="nav-item"><a href="{{ route('kunjungan.kunjungan_aktif')}}"><i class="fas fa-pen"></i> Buku Tamu</a></div>
 
     <div class="nav-item"><a href="https://bualkawan.siakkab.go.id/statistik.html"><i class="fas fa-chart-bar"></i> Statistik</a></div>
 </nav>
