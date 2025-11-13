@@ -14,10 +14,10 @@
 </head>
 <body id="body">
 
-<x-navbar></x-navbar>
+<x-navbar-admin></x-navbar-admin>
 
 <div class="container-fluid py-4">
-    <x-desktop-nav />
+    <x-desktop-nav-admin />
 
     <div class="tab-content">
 
@@ -28,9 +28,9 @@
     </div>
 </div>
 
-<x-footer></x-footer>
+<x-footer-admin></x-footer-admin>
 
-<x-bottom-nav />
+<x-bottom-nav-admin />
 
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered">

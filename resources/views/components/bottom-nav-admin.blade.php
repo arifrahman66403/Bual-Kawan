@@ -1,6 +1,6 @@
 
 <div class="bottom-nav d-lg-none">
-    <x-nav-link 
+    <x-nav-link-admin 
         href="{{ route('admin.dashboard') }}" 
         class="bottom-nav-link"
         icon="bi-speedometer2" 
@@ -8,7 +8,7 @@
         id="mobile-nav-dashboard"
         :active="request()->routeIs('admin.dashboard')" />
 
-    <x-nav-link 
+    <x-nav-link-admin 
         href="{{ route('admin.pengajuan') }}" 
         class="bottom-nav-link"
         icon="bi-send-plus" 
@@ -16,7 +16,7 @@
         id="mobile-nav-pengajuan"
         :active="request()->routeIs('admin.pengajuan')" />
 
-    <x-nav-link 
+    <x-nav-link-admin 
         href="{{ route('admin.riwayat') }}" 
         class="bottom-nav-link"
         icon="bi-clock-history" 
@@ -24,7 +24,7 @@
         id="mobile-nav-riwayat"
         :active="request()->routeIs('admin.riwayat')" />
 
-    <x-nav-link 
+    <x-nav-link-admin 
         href="{{ route('login') }}" 
         class="bottom-nav-link"
         icon="bi-people" 
