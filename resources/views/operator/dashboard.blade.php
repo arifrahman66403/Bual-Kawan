@@ -21,7 +21,7 @@
                 <form id="scanForm" action="{{ route('operator.scan') }}" method="POST">
                     @csrf
                     <div class="input-group input-group-lg mx-auto" style="max-width: 500px;">
-                        <input type="text" name="kode_qr" class="form-control input-focus" placeholder="Masukkan Kode QR..." autofocus required>
+                        <input type="text" name="qr_code" class="form-control input-focus" placeholder="Masukkan Kode QR..." autofocus required>
                         <button id="submitBtn" class="btn btn-primary" type="submit">
                             <i class="bi bi-send-fill me-1"></i> Proses Check-in/out
                         </button>
@@ -102,21 +102,28 @@
         document.addEventListener('DOMContentLoaded', function(){
             const form = document.getElementById('scanForm');
             const overlay = document.getElementById('loadingOverlay');
-            const input = form.querySelector('input[name="kode_qr"]');
+            // FIX: pilih input dengan nama yang benar
+            const input = form ? form.querySelector('input[name="qr_code"]') : null;
             const btn = document.getElementById('submitBtn');
             const scanLine = document.querySelector('.scan-line');
 
+            // safety: jika elemen tidak ada, hentikan script supaya tidak menyebabkan error
+            if (!form || !input || !btn) return;
+
             // Toggle scanning animation while input focused
-            input.addEventListener('focus', function(){ if(scanLine) scanLine.style.animationPlayState = 'running'; });
-            input.addEventListener('blur', function(){ if(scanLine) scanLine.style.animationPlayState = 'paused'; });
+            input.addEventListener('focus', function(){ if (scanLine) scanLine.style.animationPlayState = 'running'; });
+            input.addEventListener('blur', function(){ if (scanLine) scanLine.style.animationPlayState = 'paused'; });
 
             // On submit show overlay and disable button to give effect
             form.addEventListener('submit', function(e){
-                // let the form submit normally; show visual feedback immediately
                 btn.disabled = true;
+                btn.dataset.origHtml = btn.innerHTML;
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Memproses...';
                 overlay.style.display = 'flex';
             });
+
+            // ensure autofocus focuses input in some browsers
+            setTimeout(()=> { try { input.focus(); } catch(e){} }, 50);
 
             // Start scan-line for initial autofocus when page loads
             if (document.activeElement === input && scanLine) {

@@ -1,0 +1,16 @@
+<header class="header-full">
+<div class="header-inner">
+    <div class="logo">
+    <img src="logo-bualkawan2.png" alt="logo">
+    <div class="brand">Buku Tamu Singgah</div>
+    </div>
+
+    <div class="header-spacer"></div>
+
+    <div class="header-center-wrap">
+        <x-desktop-nav/>
+    </div>
+
+    <div class="header-spacer" style="width:20px"></div>
+</div>
+</header>

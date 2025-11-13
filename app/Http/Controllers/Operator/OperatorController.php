@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\KisTracking;
-use App\Models\KisPengunjung; 
+use App\Models\KisPengunjung;
+use App\Models\KisQrCode; // added
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,50 +21,60 @@ class OperatorController extends Controller
         $request->validate(['qr_code' => 'required|string']);
         $qrCode = $request->qr_code;
 
-        $pengunjung = KisPengunjung::where('qr_code', $qrCode)->first();
+        $qr = KisQrCode::where('qr_code', $qrCode)
+                ->with('pengunjung')
+                ->first();
 
-        if (!$pengunjung) {
+        if (! $qr || ! $qr->pengunjung) {
             return back()->with('error', 'Kode QR tidak valid atau tidak terdaftar.');
         }
-        if ($pengunjung->status !== 'disetujui' && $pengunjung->status !== 'sedang kunjungan') {
-             return back()->with('error', 'Pengunjung belum disetujui atau kunjungan sudah selesai.');
-        }
-        
-        $tracking = KisTracking::where('pengunjung_id', $pengunjung->id)
-                                ->whereDate('waktu_masuk', Carbon::today())
-                                ->whereNull('waktu_keluar') 
-                                ->first();
 
-        if (!$tracking) {
+        $pengunjung = $qr->pengunjung;
+
+        if (! in_array($pengunjung->status, ['disetujui', 'kunjungan'])) {
+            return back()->with('error', 'Pengunjung belum disetujui atau kunjungan sudah selesai.');
+        }
+
+        // cari record hari ini yang belum checkout (edited_by null)
+        $tracking = KisTracking::where('pengajuan_id', $pengunjung->uid)
+                    ->whereDate('created_at', Carbon::today())
+                    ->whereNull('edited_by')
+                    ->first();
+
+        if (! $tracking) {
             // CHECK-IN
-            KisTracking::create([
-                'pengunjung_id' => $pengunjung->id,
-                'waktu_masuk' => Carbon::now(),
-                'status' => 'di dalam', 
-                'created_by' => Auth::id(),
-            ]);
-            $pengunjung->status = 'sedang kunjungan';
+            $tracking = new KisTracking();
+            $tracking->pengajuan_id = $pengunjung->uid;
+            $tracking->catatan = 'Sedang kunjungan';
+            $tracking->status = 'kunjungan';
+            $tracking->created_by = Auth::id(); // simpan user yang melakukan check-in
+            $tracking->save();
+
+            $pengunjung->status = 'kunjungan';
             $pengunjung->save();
+
             return back()->with('success', 'Check-in berhasil! Selamat datang.');
         } else {
             // CHECK-OUT
-            $tracking->waktu_keluar = Carbon::now();
-            $tracking->status = 'kunjungan selesai';
-            $tracking->edited_by = Auth::id();
+            $tracking->catatan = 'Kunjungan selesai';
+            $tracking->status = 'selesai';
+            $tracking->edited_by = Auth::id(); // simpan user yang melakukan check-out
             $tracking->save();
 
-            $pengunjung->status = 'kunjungan selesai';
+            $pengunjung->status = 'selesai';
             $pengunjung->save();
-            return back()->with('success', 'Check-out berhasil! Terima kasih.');
+
+            return back()->with('success', 'Check-out berhasil!');
         }
     }
 
     public function riwayatScan()
     {
-        $riwayat = KisTracking::where('created_by', Auth::id())
-                            ->with('pengunjung')
-                            ->latest()
-                            ->paginate(10);
+        $riwayat = KisTracking::with('pengunjung')
+                    ->where('created_by', Auth::id())
+                    ->whereDate('created_at', Carbon::today())
+                    ->orderByDesc('created_at')
+                    ->get();
 
         return view('operator.riwayat', compact('riwayat'));
     }
