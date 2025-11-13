@@ -6,7 +6,7 @@
       
       <button id="mb-berita" data-href="https://bualkawan.siakkab.go.id/berita.html"><i class="fas fa-newspaper"></i><small>Berita</small></button>
       
-      <button id="mb-bukutamu" data-href="{{ route('kunjungan.kunjungan_aktif')}}"><i class="fas fa-pen"></i><small>Buku Tamu</small></button>
+      <button id="mb-bukutamu" data-href="{{ route('kunjungan.index')}}"><i class="fas fa-pen"></i><small>Buku Tamu</small></button>
       
       <button id="mb-stat" data-href="https://bualkawan.siakkab.go.id/statistik.html"><i class="fas fa-chart-bar"></i><small>Statistik</small></button>
     </div>

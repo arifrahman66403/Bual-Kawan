@@ -18,7 +18,7 @@ class GuestController extends Controller
     public function index()
     {
         // Menggunakan view namespace 'kunjungan' sesuai preferensi Anda
-        $kunjunganAktif = KisPengunjung::whereIn('status', ['disetujui', 'kunjungan'])
+        $kunjunganAktif = KisPengunjung::whereIn('status', ['pengajuan', 'disetujui', 'kunjungan'])
                                        ->latest('tgl_kunjungan')
                                        ->paginate(5);
                                        
