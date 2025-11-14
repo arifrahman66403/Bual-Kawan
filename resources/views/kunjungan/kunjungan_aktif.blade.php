@@ -1,5 +1,5 @@
-<x-breadcrumb />
-<x-layout title="Buku Tamu Singgah">
+<x-breadcrumb :title="$title" />
+<x-layout title="Daftar Kunjungan">
     <div class="container py-5">
         <div class="card shadow-lg">
             <div class="card-body p-4">

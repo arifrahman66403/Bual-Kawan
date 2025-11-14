@@ -24,7 +24,8 @@ class GuestController extends Controller
                                        
         return view('kunjungan.kunjungan_aktif', [
             'kunjunganAktif' => $kunjunganAktif,
-            'title' => 'Daftar Kunjungan Aktif'
+            'title' => 'Daftar',
+            'breadcrumb' => 'Daftar Kunjungan'
         ]);
     }
 
@@ -123,7 +124,7 @@ class GuestController extends Controller
 
         return view('kunjungan.detail', [
             'pengunjung' => $pengunjung,
-            'title' => 'Detail Kunjungan'
+            'title' => 'Detail pengunjung'
         ]);
     }
 

@@ -1,3 +1,4 @@
+<x-breadcrumb :title="$title" />
 <x-layout title="Detail Kunjungan">
     <div class="container py-5">
         <div class="detail-card shadow-lg mx-auto p-5" style="max-width: 1000px;">

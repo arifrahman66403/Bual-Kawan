@@ -54,7 +54,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 
-Route::middleware(['auth', 'role:operator'])->prefix('/operator')->name('operator.')->group(function () {
+Route::middleware(['auth', 'role:operator,admin'])->prefix('/operator')->name('operator.')->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
     Route::get('/pengunjung', [KisPengunjungController::class, 'create'])->name('pengunjung.create');
     Route::post('/pengunjung', [KisPengunjungController::class, 'store'])->name('pengunjung.store');

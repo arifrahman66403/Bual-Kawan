@@ -8,20 +8,34 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, ...$roles)
+    /**
+     * Handle an incoming request.
+     * Usage in routes: ->middleware(['auth', 'role:operator,admin'])
+     */
+    public function handle(Request $request, Closure $next, $roles = null)
     {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $user = Auth::user();
 
-        // Pastikan user sudah login
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        // Superadmin always allowed
+        if ($user->role === 'superadmin') {
+            return $next($request);
         }
 
-        // Cek apakah role user termasuk dalam roles yang diizinkan
-        if (!in_array($user->role, $roles)) {
-            return response()->json(['message' => 'Forbidden'], 403);
+        // If no roles specified, deny
+        if (! $roles) {
+            abort(403);
         }
 
-        return $next($request);
+        $allowed = array_map('trim', explode(',', $roles));
+
+        if (in_array($user->role, $allowed)) {
+            return $next($request);
+        }
+
+        abort(403);
     }
 }

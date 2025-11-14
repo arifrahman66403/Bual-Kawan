@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\KisUser;
-use Illuminate\Auth\Access\Response;
 
 class KisUserPolicy
 {
@@ -20,7 +19,12 @@ class KisUserPolicy
      */
     public function view(KisUser $kisUser, KisUser $model): bool
     {
-        return $kisUser->role === 'superadmin' || $kisUser->role === 'admin';
+        if ($kisUser->role === 'superadmin' || $kisUser->role === 'admin') {
+            return true;
+        }
+
+        // operator can view only their own record
+        return $kisUser->role === 'operator' && $kisUser->id === $model->id;
     }
 
     /**
@@ -36,7 +40,16 @@ class KisUserPolicy
      */
     public function update(KisUser $kisUser, KisUser $model): bool
     {
-        return $kisUser->role === 'superadmin' || ($kisUser->role === 'admin' && $model->role !== 'superadmin');
+        if ($kisUser->role === 'superadmin') {
+            return true;
+        }
+
+        if ($kisUser->role === 'admin') {
+            return $model->role !== 'superadmin';
+        }
+
+        // operator can update only their own record
+        return $kisUser->role === 'operator' && $kisUser->id === $model->id;
     }
 
     /**
