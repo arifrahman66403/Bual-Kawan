@@ -21,6 +21,11 @@ class GuestController extends Controller
         $kunjunganAktif = KisPengunjung::whereIn('status', ['pengajuan', 'disetujui', 'kunjungan'])
                                        ->latest('tgl_kunjungan')
                                        ->paginate(5);
+          
+                                        return view('kunjungan.detail', [
+                                        'pengunjung' => $pengunjung,
+                                        'title' => 'Detail Kunjungan'
+                                    ]);                               
                                        
         return view('kunjungan.kunjungan_aktif', compact('kunjunganAktif'));
     }
@@ -117,6 +122,11 @@ class GuestController extends Controller
         $pengunjung = KisPengunjung::where('uid', $id)
                                     ->with(['peserta', 'dokumen'])
                                     ->firstOrFail();
+
+        return view('kunjungan.detail', [
+        'pengunjung' => $pengunjung,
+        'title' => 'Detail Kunjungan'
+    ]);
                                     
         return view('kunjungan.detail', compact('pengunjung'));
     }
