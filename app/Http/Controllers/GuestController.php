@@ -21,13 +21,11 @@ class GuestController extends Controller
         $kunjunganAktif = KisPengunjung::whereIn('status', ['pengajuan', 'disetujui', 'kunjungan'])
                                        ->latest('tgl_kunjungan')
                                        ->paginate(5);
-          
-                                        return view('kunjungan.detail', [
-                                        'pengunjung' => $pengunjung,
-                                        'title' => 'Detail Kunjungan'
-                                    ]);                               
                                        
-        return view('kunjungan.kunjungan_aktif', compact('kunjunganAktif'));
+        return view('kunjungan.kunjungan_aktif', [
+            'kunjunganAktif' => $kunjunganAktif,
+            'title' => 'Daftar Kunjungan Aktif'
+        ]);
     }
 
     /**
@@ -124,11 +122,9 @@ class GuestController extends Controller
                                     ->firstOrFail();
 
         return view('kunjungan.detail', [
-        'pengunjung' => $pengunjung,
-        'title' => 'Detail Kunjungan'
-    ]);
-                                    
-        return view('kunjungan.detail', compact('pengunjung'));
+            'pengunjung' => $pengunjung,
+            'title' => 'Detail Kunjungan'
+        ]);
     }
 
     // ==========================================================

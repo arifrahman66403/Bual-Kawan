@@ -1,3 +1,4 @@
+<x-breadcrumb />
 <x-layout title="Buku Tamu Singgah">
     <div class="container py-5">
         <div class="card shadow-lg">
