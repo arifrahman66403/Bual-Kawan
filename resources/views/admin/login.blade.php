@@ -6,16 +6,20 @@
   <title>Login Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
+    body {
+      background-color: #f5f5f5;
+    }
+
     .login-card {
-      width: 400px;
-      background: rgba(33, 37, 41, 0.85);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      width: 420px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       transform: translateY(20px);
       animation: float 0.8s ease-out forwards;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       perspective: 1000px;
+      border: 1px solid #e0e0e0;
     }
 
     @keyframes float {
@@ -24,7 +28,7 @@
 
     .login-card.tilt {
       transform: translateY(0) rotateX(var(--rx)) rotateY(var(--ry));
-      box-shadow: 0 20px 40px rgba(0,0,0,0.55);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
     }
 
     .shake {
@@ -83,33 +87,66 @@
   <div id="toastArea" class="toast-container"></div>
 
   <div id="card" class="card p-4 login-card">
-    <h3 class="text-center mb-3 title-float">Login Admin</h3>
+    <div class="d-flex align-items-center mb-3">
+      <div class="me-3" style="width:56px;height:56px;background:linear-gradient(135deg,#fff1 0,#fff0);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.06)">
+        <!-- simple logo -->
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <rect x="3" y="3" width="18" height="18" rx="4" fill="url(#g)"/>
+          <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.12"/><stop offset="1" stop-color="#fff" stop-opacity="0.04"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div>
+        <h4 class="mb-0">Login Admin</h4>
+        <small class="text-light-50">Masuk untuk mengelola konten & pengguna</small>
+      </div>
+    </div>
+
     <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
       @csrf
+
       <div class="mb-3">
-        <label class="text-light">Email</label>
-        <input id="email" type="email" name="email" class="form-control" required autofocus>
-        <div class="invalid-feedback text-light">Masukkan email yang valid.</div>
-      </div>
-      <div class="mb-3">
-        <label class="text-light">Password</label>
+        <label for="email" class="form-label text-light small">Email</label>
         <div class="input-group">
-          <input id="password" type="password" name="password" class="form-control" required>
-          <span class="input-group-text bg-transparent border-0">
-            <span id="togglePass" class="toggle-pass" title="Tampilkan/SEmbunyikan password">👁️</span>
-          </span>
+          <span class="input-group-text bg-transparent border-0 text-light">📧</span>
+          <input id="email" type="email" name="email" class="form-control" placeholder="nama@domain.com" required autofocus>
+          <div class="invalid-feedback text-light">Masukkan email yang valid.</div>
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <label for="password" class="form-label text-light small">Password</label>
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-0 text-light">🔒</span>
+          <input id="password" type="password" name="password" class="form-control" placeholder="Masukkan password" required>
+          <button type="button" class="btn btn-link text-light toggle-pass ps-2 pe-2" id="togglePass" title="Tampilkan/Sembunyikan password" style="text-decoration:none;">👁️</button>
           <div class="invalid-feedback text-light">Password tidak boleh kosong.</div>
         </div>
       </div>
 
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember">
+          <label class="form-check-label small text-light" for="remember">Ingat saya</label>
+        </div>
+        <a href="#" class="small text-light" style="opacity:0.9; text-decoration:underline;">Lupa password?</a>
+      </div>
+
       @if ($errors->any())
-        <div id="serverError" class="alert alert-danger">{{ $errors->first() }}</div>
+        <div id="serverError" class="alert alert-danger mb-3">{{ $errors->first() }}</div>
       @endif
 
       <button id="submitBtn" type="submit" class="btn btn-login text-light w-100 d-flex align-items-center justify-content-center">
-        <span id="btnText">Login</span>
+        <span id="btnText">Masuk</span>
       </button>
+
+      <div class="text-center mt-3">
+        <small class="text-light-50">atau kembali ke <a href="/" class="text-white" style="text-decoration:underline;">Beranda</a></small>
+      </div>
     </form>
+
+    <div class="text-center mt-3 small" style="opacity:0.78">
+      <span>Versi aplikasi 1.0 • © {{ date('Y') }}</span>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -153,12 +190,10 @@
           form.classList.add('was-validated');
           card.classList.add('shake');
           setTimeout(()=> card.classList.remove('shake'), 700);
-          // focus first invalid field
           const firstInvalid = form.querySelector(':invalid');
           if (firstInvalid) firstInvalid.focus();
           return;
         }
-        // show spinner / disable button
         submitBtn.disabled = true;
         btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Masuk...';
       });
@@ -178,7 +213,6 @@
         const toastEl = document.getElementById(toastId);
         const bsToast = new bootstrap.Toast(toastEl, { delay: 5000 });
         bsToast.show();
-        // hide original alert
         serverErrorEl.style.display = 'none';
       }
     })();
