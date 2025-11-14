@@ -1,5 +1,5 @@
 <nav class="main-nav" aria-label="Main navigation">
-    <div class="nav-item"><a href="https://bualkawan.siakkab.go.id/index.php"><i class="fas fa-home"></i> Beranda</a></div>
+    <div class="nav-item"><a href="beranda"><i class="fas fa-home"></i> Beranda</a></div>
 
     <div class="nav-item">
     <a href="javascript:void(0)" class="has-sub"><i class="fas fa-info-circle"></i> Tentang</a>

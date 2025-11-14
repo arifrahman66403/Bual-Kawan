@@ -1,6 +1,6 @@
 <div class="mobile-bottom" aria-hidden="true">
     <div class="menu" role="navigation" aria-label="Mobile navigation">
-      <button id="mb-home" data-href="https://bualkawan.siakkab.go.id/index.php"><i class="fas fa-home"></i><small>Home</small></button>
+      <button id="mb-home" data-href="beranda"><i class="fas fa-home"></i><small>Home</small></button>
       
       <button id="mb-tentang"><i class="fas fa-info-circle"></i><small>Tentang</small></button>
       
