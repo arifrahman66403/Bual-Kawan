@@ -1,4 +1,6 @@
 <x-layout title="Input Peserta Rombongan">
+    {{-- Pastikan component x-layout Anda mengimpor Carbon, Bootstrap CSS/JS, dan bi-icons --}}
+    
     <div class="container my-5">
         <h2 class="fw-bold text-color mb-3">Selamat Datang, {{ $pengunjung->nama_perwakilan }}!</h2>
         <p class="lead">Silakan input data peserta rombongan Anda untuk kunjungan dari **{{ $pengunjung->nama_instansi }}** pada tanggal **{{ Carbon\Carbon::parse($pengunjung->tgl_kunjungan)->format('d F Y') }}**.</p>
@@ -10,13 +12,11 @@
         <div class="card p-4 shadow-sm">
             <h5 class="fw-bold mb-4">Formulir Peserta Rombongan</h5>
 
-            <form action="{{ route('pengunjung.store.peserta', $pengunjung->uid) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('pengunjung.store.peserta', $pengunjung->uid) }}" method="POST">
                 @csrf
                 
                 <div id="peserta-list">
-                    <script>
-                        // Panggil fungsi addPesertaRow() saat DOM ready (JS di bawah)
-                    </script>
+                    {{-- Baris akan ditambahkan oleh JS --}}
                 </div>
                 
                 <button type="button" id="add-peserta-btn" class="btn btn-outline-genz mt-3">
@@ -59,7 +59,7 @@
                 <input type="email" class="form-control form-control-sm" name="peserta_email[]" placeholder="email@contoh.com">
             </div>
             
-            {{-- FILE TTD dan Hapus (col-md-3) --}}
+            {{-- TANDA TANGAN DIGITAL (col-md-3) --}}
             <div class="col-md-3 ttd-container"> 
                 <label class="form-label small mb-1">Tanda Tangan (Wajib)</label>
                 
@@ -75,79 +75,64 @@
             </div>
         </div>
     </template>
+
+    {{-- Script Signature Pad --}}
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    
+    {{-- Script Logika Dinamis (Perbaikan) --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Deklarasi variabel utama (HANYA SEKALI)
             const list = document.getElementById('peserta-list');
             const template = document.getElementById('peserta-row-template');
             const addButton = document.getElementById('add-peserta-btn');
+            const form = document.querySelector('form');
 
-            const addPesertaRow = () => {
-                const clone = template.content.cloneNode(true);
-                list.appendChild(clone);
-            };
-
-            // Tambahkan baris pertama secara otomatis
-            addPesertaRow();
-
-            addButton.addEventListener('click', addPesertaRow);
-
-            // Listener untuk tombol Hapus (ditempatkan di kontainer utama)
-            list.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-peserta-btn')) {
-                    // Cari elemen terdekat yang memiliki class 'peserta-item' (yaitu row utamanya)
-                    const rowToRemove = e.target.closest('.peserta-item');
-                    if (rowToRemove) {
-                        rowToRemove.remove();
-                    }
-                }
-            });
-
-            const list = document.getElementById('peserta-list');
-            const template = document.getElementById('peserta-row-template');
-            const addButton = document.getElementById('add-peserta-btn');
-            const form = document.querySelector('form'); // Ambil form utama
-
-            // Fungsi untuk menginisialisasi Signature Pad pada row baru
+            // 1. Fungsi untuk menginisialisasi Signature Pad pada row baru
             const initializeSignaturePad = (row) => {
                 const canvas = row.querySelector('.signature-pad');
                 const dataInput = row.querySelector('.ttd-data-input');
                 const clearButton = row.querySelector('.clear-signature-btn');
 
                 // Pastikan Canvas berukuran penuh
+                // Ini penting agar area tanda tangan terisi penuh
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
                 
                 const signaturePad = new SignaturePad(canvas, {
-                    backgroundColor: 'rgb(255, 255, 255)' // Warna latar belakang putih
+                    backgroundColor: 'rgb(255, 255, 255)' 
                 });
 
-                // Event listener untuk tombol Hapus TTD
+                // Event listener untuk tombol Bersihkan
                 clearButton.addEventListener('click', (e) => {
-                    e.preventDefault(); // Mencegah submit form
+                    e.preventDefault();
                     signaturePad.clear();
-                    dataInput.value = ''; // Kosongkan data tersembunyi juga
+                    dataInput.value = '';
                 });
                 
-                // Simpan instance SignaturePad ke elemen row (untuk diakses saat submit)
+                // Simpan instance SignaturePad ke elemen row untuk diakses saat submit
                 row.signaturePadInstance = signaturePad; 
             };
 
+            // 2. Fungsi Tambah Baris Peserta
             const addPesertaRow = () => {
                 const clone = template.content.cloneNode(true);
                 const newRow = clone.querySelector('.peserta-item');
                 list.appendChild(newRow);
                 
-                // Inisialisasi Signature Pad pada row yang baru dibuat
+                // Panggil inisialisasi Signature Pad untuk baris baru
                 initializeSignaturePad(newRow); 
             };
 
+            // --- Eksekusi Awal & Listener ---
+            
             // Tambahkan baris pertama secara otomatis dan inisialisasi TTD
             addPesertaRow();
 
+            // Listener untuk tombol Tambah Peserta Lagi 
             addButton.addEventListener('click', addPesertaRow);
 
-            // Listener untuk tombol Hapus (seperti sebelumnya)
+            // Listener untuk tombol Hapus (Delegation)
             list.addEventListener('click', function(e) {
                 if (e.target.classList.contains('remove-peserta-btn')) {
                     const rowToRemove = e.target.closest('.peserta-item');
@@ -157,7 +142,7 @@
                 }
             });
 
-            // === LOGIC PENTING: Menangkap Tanda Tangan saat Submit ===
+            // 3. Logic Submit Form (Wajib Cek TTD dan Konversi ke Base64)
             form.addEventListener('submit', function(e) {
                 const pesertaRows = list.querySelectorAll('.peserta-item');
                 let allValid = true;
@@ -165,27 +150,33 @@
                 pesertaRows.forEach((row, index) => {
                     const signaturePad = row.signaturePadInstance;
                     const dataInput = row.querySelector('.ttd-data-input');
+                    const namaInput = row.querySelector('input[name="peserta_nama[]"]');
                     
-                    if (signaturePad && signaturePad.isEmpty()) {
-                        // Tanda tangan WAJIB diisi
-                        alert(`Tanda tangan peserta ke-${index + 1} harus diisi.`);
-                        allValid = false;
-                        e.preventDefault();
-                        return;
+                    // Kita hanya memvalidasi dan menyimpan TTD jika Nama Peserta diisi
+                    if (namaInput.value.trim() !== "") {
+                        if (signaturePad && signaturePad.isEmpty()) {
+                            // Tanda tangan WAJIB diisi
+                            alert(`Tanda tangan peserta ${namaInput.value.trim()} harus diisi.`);
+                            allValid = false;
+                            
+                            // Scroll ke elemen yang bermasalah (opsional, untuk UX)
+                            namaInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+                        
+                        // Konversi tanda tangan (Canvas) ke format Base64 PNG
+                        const dataURL = signaturePad.toDataURL('image/png');
+                        dataInput.value = dataURL;
+                    } else {
+                        // Jika nama kosong, pastikan data TTD juga dikosongkan agar tidak diproses di backend
+                        dataInput.value = ''; 
                     }
-                    
-                    // Konversi tanda tangan (Canvas) ke format Base64 PNG
-                    const dataURL = signaturePad.toDataURL('image/png');
-                    dataInput.value = dataURL;
                 });
 
                 if (!allValid) {
-                    e.preventDefault(); // Hentikan submit jika ada yang kosong
+                    e.preventDefault(); // Hentikan submit jika ada TTD yang kosong
                 }
-                
-                // Lanjutkan submit form jika allValid = true
             });
-            
         });
     </script>
-</x-layout>    
+</x-layout>
