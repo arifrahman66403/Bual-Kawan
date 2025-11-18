@@ -8,6 +8,8 @@ use App\Models\KisQrCode;
 use App\Models\KisPengunjung;
 use App\Models\KisTracking;
 use App\Models\KisLog;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PengunjungExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -30,6 +32,17 @@ class PengajuanController extends Controller
             ->paginate(10);
 
         return view('admin.pengajuan', compact('pengunjungs'));
+    }
+
+    /**
+     * Mengekspor data riwayat tracking ke file Excel.
+     */
+    public function exportPengunjung()
+    {
+        $fileName = 'Daftar_Pengajuan_' . Carbon::now()->format('Ymd_His') . '.xlsx';
+
+        // Panggil Export Class yang sudah kita buat
+        return Excel::download(new PengunjungExport, $fileName);
     }
 
     /**

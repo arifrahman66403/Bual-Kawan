@@ -79,6 +79,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan');
     Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
     Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
+    Route::get('/admin/pengajuan/export', [PengajuanController::class, 'exportPengunjung'])->name('admin.pengajuan.export');
     Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
     Route::get('/admin/riwayat/export', [RiwayatController::class, 'exportTracking'])->name('admin.riwayat.export');
 

@@ -39,8 +39,10 @@
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
             <h5 class="fw-bold text-color mb-2 mb-md-0">Data Pengajuan Terbaru</h5>
             <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i> Export Excel</button>
-              <button class="btn btn-sm btn-genz"><i class="bi bi-plus-circle"></i> Tambah Manual</button>
+                <a href="{{ route('admin.pengajuan.export') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-download"></i> Export Excel
+                </a>
+                <button class="btn btn-sm btn-genz"><i class="bi bi-plus-circle"></i> Tambah Manual</button>
             </div>
           </div>
 
