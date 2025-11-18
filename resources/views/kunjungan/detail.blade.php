@@ -115,28 +115,39 @@
                     <p class="fw-bold">Daftar peserta:</p>
                     
                     <div class="table-responsive">
-                        <table class="table table-sm table-striped">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>No</th>
+                                    <th>No.</th>
                                     <th>Nama</th>
-                                    <th>NIP</th>
                                     <th>Jabatan</th>
+                                    <th>NIP / Kontak</th>
+                                    <th>Email</th> {{-- KOLOM EMAIL BARU --}}
+                                    <th>Tanda Tangan</th> 
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($pengunjung->peserta as $index => $peserta)
+                                @foreach ($rombongan as $index => $peserta)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $peserta->nama }}</td>
-                                    <td>{{ $peserta->nip ?? '-' }}</td>
                                     <td>{{ $peserta->jabatan ?? '-' }}</td>
+                                    <td>{{ $peserta->nip ?? $peserta->wa ?? '-' }}</td>
+                                    
+                                    {{-- EMAIL BARU --}}
+                                    <td>{{ $peserta->email ?? '-' }}</td> 
+                                    
+                                    <td>
+                                        @if ($peserta->file_ttd)
+                                            <a href="{{ Storage::url($peserta->file_ttd) }}" target="_blank" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye me-1"></i> Lihat TTD
+                                            </a>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                 </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">Tidak ada peserta rombongan yang terdaftar.</td>
-                                </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
