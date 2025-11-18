@@ -22,6 +22,8 @@ Route::view('/', 'beranda')->name('beranda');
 Route::view('/statistik', 'statistik')->name('statistik');
 Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
 Route::view('/tentang/visi-misi', 'tentang.visi-misi')->name('tentang.visi-misi');
+Route::view('/berita', 'berita.berita')->name('berita.berita');
+Route::view('/berita-detail', 'berita.berita-detail')->name('berita.detail');   
 
 Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
 // Form Pengajuan Kunjungan (Tambah Kunjungan)

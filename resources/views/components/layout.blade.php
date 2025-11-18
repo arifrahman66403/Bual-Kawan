@@ -79,6 +79,233 @@ background-position:center;background-size:cover;display:flex;align-items:flex-e
 /* ===== page container ===== */
 .page{max-width:var(--container);margin:20px auto;padding:10px 18px 100px}
 
+/* #1: Custom Styling untuk Halaman Berita */
+.article-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    font-weight: 900;
+}
+.article-meta {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+}
+.article-content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: #333;
+}
+.article-content p {
+    margin-bottom: 20px;
+    text-align: justify;
+}
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin: 15px 0;
+    box-shadow: var(--shadow);
+}
+.article-content blockquote {
+    border-left: 5px solid var(--accent);
+    padding: 10px 20px;
+    margin: 20px 0;
+    background: #eaf7ea;
+    font-style: italic;
+    color: #166443;
+}
+
+/* #7: Tag Section Styling */
+.tag-section {
+    margin-top: 25px;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.tag-section strong {
+    font-weight: 700;
+    color: #132a2a;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.05rem;
+}
+.tag-link {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--card);
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: var(--accent-dark);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.tag-link:hover {
+    background: var(--accent);
+    color: white;
+}
+
+
+/* #2: Social Share */
+.share-section {
+    margin-top: 30px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.share-section strong {
+    font-weight: 700;
+}
+.share-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    transition: transform 0.2s;
+}
+.share-button:hover {
+    transform: scale(1.1);
+}
+.share-whatsapp { background: #25D366; }
+.share-facebook { background: #1877F2; }
+.share-twitter { background: #1DA1F2; }
+.share-instagram { 
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+.share-tiktok { 
+    background: #010101; 
+}
+
+
+/* #3: Berita Terkini */
+.related-news {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+.related-news h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 25px;
+    padding-left: 10px;
+    border-left: 4px solid var(--accent);
+}
+.news-list {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.news-item {
+    flex: 1 1 30%; /* Tiga kolom di desktop */
+    min-width: 280px;
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s;
+    text-decoration: none;
+    color: inherit;
+}
+.news-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(15,20,20,0.1);
+}
+.news-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+.news-item-body {
+    padding: 15px;
+}
+.news-item h4 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0 0 8px;
+    line-height: 1.4;
+}
+.news-item-meta {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+/* #4: Kolom Komentar */
+.comment-section {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+.comment-section h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 25px;
+    padding-left: 10px;
+    border-left: 4px solid var(--accent);
+}
+.comment-form textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+.comment-form button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.comment-form button:hover {
+    background: var(--accent-dark);
+}
+.comment-list {
+    margin-top: 25px;
+    list-style: none;
+    padding: 0;
+}
+.comment-item {
+    background: var(--card);
+    padding: 15px;
+    border-radius: var(--radius);
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 10px;
+}
+.comment-author {
+    font-weight: 800;
+    color: var(--accent-dark);
+}
+.comment-date {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+.comment-body {
+    line-height: 1.6;
+}
+
 /* #1: Custom Styling untuk Halaman Profil */
 .profile-header h1 {
     font-size: 2.2rem;
@@ -504,8 +731,110 @@ footer p{margin:6px 0;color:rgba(255,255,255,0.9);font-weight:600}
         margin-right: -40px; 
     } 
 
+    /* ===== stats cards ===== */
+    .stats-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:18px}
+    .stat-card{border-radius:12px;color:#fff;padding:18px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 20px rgba(0,0,0,0.08);position:relative;overflow:hidden;min-height:96px;transition:transform .18s, box-shadow .18s}
+    .stat-card:hover{transform:translateY(-6px);box-shadow:0 14px 34px rgba(0,0,0,0.14)}
+    .stat-icon{width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(255,255,255,0.12)}
+    .stat-body{flex:1}
+    .stat-body h3{margin:0;font-size:1.45rem;font-weight:800;line-height:1}
+    .stat-body p{margin:6px 0 0;font-weight:700;opacity:0.95}
+
+    /* color variants (dashboard modern) */
+    .c-green{background:linear-gradient(135deg,#2ecc71,#27ae60)}
+    .c-blue{background:linear-gradient(135deg,#3498db,#2b6fa3)}
+    .c-purple{background:linear-gradient(135deg,#9b59b6,#6f42c1)}
+    .c-orange{background:linear-gradient(135deg,#f39c12,#d87e00)}
+    .c-pink{background:linear-gradient(135deg,#ff6b9f,#e84a9b)}
+
+    /* ===== charts area ===== */
+    .charts-grid{display:grid;gap:18px;grid-template-columns:repeat(3,1fr);margin-top:8px}
+    .chart-card{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);min-height:240px;display:flex;flex-direction:column}
+    .chart-card h4{margin:0 0 8px;font-size:1rem}
+    .chart-card .canvas-wrap{flex:1;min-height:180px;position:relative}
+
+    /* responsive */
+    @media(max-width:980px){
+    .charts-grid{grid-template-columns:repeat(2,1fr)}
+    .header-inner{padding:12px}
+    .center-area{gap:12px}
+    }
+
     .berita-link-all { text-align: center; margin-top: 30px; }
     .berita-link-all a { background-color: var(--accent); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 700; }
+
+    /* ===== Berita List and Search Styles ===== */
+    .search-bar {display: flex; gap: 10px; margin-bottom: 25px; padding: 15px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);}
+    .search-bar input {flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem;}
+    .search-bar button {background: var(--accent); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s;}
+    .search-bar button:hover {background: var(--accent-dark);}
+
+    .news-grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;}
+    .news-item {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: transform 0.2s;
+        text-decoration: none; /* Penting: news-item adalah <a> */
+        color: inherit;
+        display: block; /* Agar news-item mengisi grid */
+    }
+    .news-item:hover {
+        transform: translateY(-5px);
+    }
+    .news-item:hover h3 {
+        color: var(--accent-dark); /* Efek hover pada judul */
+    }
+
+    .news-item img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+    }
+    .news-content {
+        padding: 15px;
+    }
+    .news-content h3 {
+        margin-top: 0;
+        font-size: 1.15rem;
+        line-height: 1.4;
+        font-weight: 800;
+        height: 3.45rem; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        color: #132a2a; /* Pastikan warna judul benar */
+        transition: color 0.2s;
+    }
+    .news-meta {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+    .news-meta span {
+        margin-right: 15px;
+    }
+    .news-excerpt {
+        font-size: 0.95rem;
+        color: #444;
+        line-height: 1.5;
+        height: 4.5em; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    /* Pagination Styles */
+    .pagination {display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 20px;}
+    .pagination button {background: var(--card); color: #132a2a; border: 1px solid #ddd; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s, color 0.2s; min-width: 40px;}
+    .pagination button:hover:not(.active), .pagination button:disabled {background: var(--bg);}
+    .pagination button.active {background: var(--accent); color: #fff; border-color: var(--accent); cursor: default;}
 
     /* GALERI */
     .galeri { max-width: var(--container); margin: 0 auto; }
@@ -725,6 +1054,250 @@ footer p{margin:6px 0;color:rgba(255,255,255,0.9);font-weight:600}
   fadeInElements.forEach(el => {
       observer.observe(el);
   });
+
+  /* @ziedanet
+   Script: Statistik page (Chart.js + mobile menu interactions)
+   Ringkas & hanya untuk fitur yang dipakai
+*/
+(function(){
+  // helper: format date
+  function formatDate(d){ return d.toLocaleString('id-ID', { day:'2-digit', month:'short', year:'numeric' }); }
+  document.getElementById('lastUpdated').textContent = formatDate(new Date());
+
+  /* ===== dummy data for charts (Chart.js) =====
+     Data dummy ini tidak diubah (sesuai permintaan) @ziedanet */
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const monthlyData = [120,180,150,210,250,290,310,330,300,280,260,300];
+  const origins = ['Siak','Pekanbaru','Riau','Bandung','Jakarta'];
+  const originData = [420,180,120,90,60];
+  const ratingLabels = ['5 ★','4 ★','3 ★','2 ★','1 ★'];
+  const ratingData = [420,150,50,20,10];
+
+  /* ===== Chart: Monthly (bar) - fix: animation not looping and stable sizing
+     Jangan ubah bagian ini karena sudah sesuai (perbaikan sebelumnya) @ziedanet */
+  const ctxM = document.getElementById('chartMonthly').getContext('2d');
+  const chartMonthly = new Chart(ctxM, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Pengunjung',
+        data: monthlyData.slice(), // use copy
+        backgroundColor: months.map((m,i)=>`rgba(${50 + i*8},${120 + (i*6)},${200 - i*5},0.9)`),
+        borderRadius:6,
+        barThickness:18
+      }]
+    },
+    options: {
+      plugins:{legend:{display:false}},
+      responsive:true,
+      maintainAspectRatio:false,
+      animation:{
+        duration:600,
+        easing:'easeOutCubic',
+        // don't animate on resize repeatedly
+        animateRotate:false,
+        animateScale:false
+      },
+      scales:{
+        x:{grid:{display:false}, ticks:{maxRotation:0,minRotation:0}},
+        y:{beginAtZero:true}
+      },
+      interaction:{mode:'index', intersect:false}
+    }
+  });
+
+  /* ===== Chart: Origin (doughnut) ===== */
+  const ctxO = document.getElementById('chartOrigin').getContext('2d');
+  const chartOrigin = new Chart(ctxO, {
+    type: 'doughnut',
+    data: {
+      labels: origins,
+      datasets: [{
+        data: originData.slice(),
+        backgroundColor: ['#2ecc71','#3498db','#9b59b6','#f39c12','#ff6b9f'],
+        hoverOffset:8
+      }]
+    },
+    options:{
+      plugins:{legend:{position:'bottom'}},
+      responsive:true,
+      maintainAspectRatio:false,
+      animation:{duration:600,easing:'easeOutCubic'}
+    }
+  });
+
+  /* ===== Chart: Feedback (pie) ===== */
+  const ctxF = document.getElementById('chartFeedback').getContext('2d');
+  const chartFeedback = new Chart(ctxF, {
+    type: 'pie',
+    data: {
+      labels: ratingLabels,
+      datasets: [{
+        data: ratingData.slice(),
+        backgroundColor: ['#27ae60','#2f80ed','#f2c94c','#f2994a','#eb5757'],
+      }]
+    },
+    options:{
+      plugins:{legend:{position:'bottom'}},
+      responsive:true,
+      maintainAspectRatio:false,
+      animation:{duration:600,easing:'easeOutCubic'}
+    }
+  });
+
+
+
+
+  /* ==========================================================
+     News List, Search, and Pagination Logic (Tidak Berubah)
+     ========================================================== */
+    const newsContainer = document.getElementById('news-container');
+    const paginationControls = document.getElementById('pagination-controls');
+    const noResults = document.getElementById('no-results');
+    const itemsPerPage = 12;
+    let currentPage = 1;
+    let filteredNews = [];
+
+    const baseImageUrl = (id) => `https://picsum.photos/seed/${id}/400/180`;
+    const newsDetailUrl = "berita-detail.html"; 
+
+    // --- Dummy Data (30 Berita) ---
+    const allNewsData = [
+        { title: "Pembukaan Festival Seni dan Budaya Siak 2025", date: "24 Okt 2025", category: "Budaya", excerpt: "Festival Seni dan Budaya tahunan Siak dibuka dengan meriah di tepi Sungai Siak, menampilkan tarian tradisional dan kuliner lokal.", image: baseImageUrl(100) },
+        { title: "Bupati Ajak Masyarakat Jaga Kebersihan Lingkungan", date: "23 Okt 2025", category: "Pemerintahan", excerpt: "Dalam pidato mingguan, Bupati Siak menekankan pentingnya peran aktif masyarakat dalam menjaga kebersihan sungai dan fasilitas publik.", image: baseImageUrl(101) },
+        { title: "Siak Raih Penghargaan Kota Sehat Nasional", date: "22 Okt 2025", category: "Kesehatan", excerpt: "Berkat kerjasama lintas sektor, Kabupaten Siak kembali meraih predikat Kota Sehat tingkat nasional untuk kelima kalinya secara berturut-turut.", image: baseImageUrl(102) },
+        { title: "Pembangunan Infrastruktur Jalan Tol Siak-Pekanbaru Capai 80%", date: "21 Okt 2025", category: "Pembangunan", excerpt: "Proyek strategis nasional, Jalan Tol yang menghubungkan Siak dan Pekanbaru, memasuki tahap akhir penyelesaian.", image: baseImageUrl(103) },
+        { title: "Pelatihan Digital Marketing untuk UMKM Siak", date: "20 Okt 2025", category: "Ekonomi", excerpt: "Diskominfo Siak menggelar pelatihan intensif bagi pelaku Usaha Mikro Kecil dan Menengah (UMKM) untuk meningkatkan penjualan online mereka.", image: baseImageUrl(104) },
+        { title: "Persiapan Siak Menjadi Tuan Rumah PON 2028", date: "19 Okt 2025", category: "Olahraga", excerpt: "Berbagai venue olahraga di Siak mulai direnovasi dan dibangun baru untuk menyambut perhelatan akbar Pekan Olahraga Nasional (PON) 2028.", image: baseImageUrl(105) },
+        { title: "Sosialisasi Penggunaan Aplikasi Pelayanan Publik Terbaru", date: "18 Okt 2025", category: "Pemerintahan", excerpt: "Pemerintah Kabupaten Siak meluncurkan aplikasi mobile baru untuk mempermudah akses layanan publik seperti perizinan dan kependudukan.", image: baseImageUrl(106) },
+        { title: "Penemuan Situs Bersejarah Baru di Kawasan Istana Siak", date: "17 Okt 2025", category: "Sejarah", excerpt: "Tim arkeolog menemukan artefak dan struktur kuno yang diyakini merupakan bagian dari kompleks Istana Siak di masa lampau.", image: baseImageUrl(107) },
+        { title: "Panen Raya Padi Unggul di Kecamatan Tualang", date: "16 Okt 2025", category: "Pertanian", excerpt: "Petani di Tualang berhasil mencatat rekor panen padi dengan varietas unggul baru, menandakan ketahanan pangan lokal yang kuat.", image: baseImageUrl(108) },
+        { title: "Promosi Wisata Alam Siak: Hutan Mangrove Mempesona", date: "15 Okt 2025", category: "Pariwisata", excerpt: "Dinas Pariwisata gencar mempromosikan keindahan Hutan Mangrove Siak sebagai destinasi ekowisata unggulan di Riau.", image: baseImageUrl(109) },
+        { title: "Pemerintah Siak Gelar Operasi Pasar Murah Jelang Akhir Tahun", date: "14 Okt 2025", category: "Ekonomi", excerpt: "Untuk menstabilkan harga, operasi pasar murah digelar di 14 kecamatan, menjual kebutuhan pokok dengan harga terjangkau.", image: baseImageUrl(110) },
+        { title: "Waspada Musim Hujan: Pencegahan Bencana Banjir", date: "13 Okt 2025", category: "Bencana", excerpt: "BPBD Siak mengimbau masyarakat untuk waspada terhadap potensi banjir dan longsor seiring dengan intensitas hujan yang meningkat.", image: baseImageUrl(111) },
+        
+        { title: "Inovasi Pelayanan Kesehatan Keliling di Pelosok Siak", date: "12 Okt 2025", category: "Kesehatan", excerpt: "Program Puskesmas Keliling menjangkau desa-desa terpencil, memastikan setiap warga mendapatkan layanan kesehatan yang memadai.", image: baseImageUrl(112) },
+        { title: "Sosialisasi Bahaya Narkoba di Sekolah-sekolah", date: "11 Okt 2025", category: "Pendidikan", excerpt: "BNNK Siak bekerjasama dengan Dinas Pendidikan menggelar sosialisasi masif tentang bahaya narkoba bagi generasi muda.", image: baseImageUrl(113) },
+        { title: "Revitalisasi Pasar Tradisional Bunga Raya", date: "10 Okt 2025", category: "Ekonomi", excerpt: "Pasar tradisional di Bunga Raya direvitalisasi menjadi lebih bersih dan modern tanpa menghilangkan suasana khasnya.", image: baseImageUrl(114) },
+        { title: "Siak Tingkatkan Pengawasan Penerimaan Pegawai Pemerintah", date: "09 Okt 2025", category: "Pemerintahan", excerpt: "Pemerintah berkomitmen untuk menciptakan proses rekrutmen pegawai yang transparan dan bebas dari praktik KKN.", image: baseImageUrl(115) },
+        { title: "Pelestarian Tenun Siak Melalui Generasi Muda", date: "08 Okt 2025", category: "Budaya", excerpt: "Dinas Kebudayaan mengadakan workshop menenun gratis bagi pelajar SMA untuk melestarikan warisan Tenun Siak.", image: baseImageUrl(116) },
+        { title: "Kejuaraan Sepeda Gunung Bupati Cup Siak Sukses Digelar", date: "07 Okt 2025", category: "Olahraga", excerpt: "Ratusan peserta dari berbagai daerah memeriahkan Kejuaraan Sepeda Gunung tahunan yang diadakan di kawasan hutan lindung.", image: baseImageUrl(117) },
+        { title: "Penerapan Sistem Smart City untuk Efisiensi Layanan", date: "06 Okt 2025", category: "Pemerintahan", excerpt: "Siak mulai menerapkan berbagai modul Smart City untuk meningkatkan efisiensi dan transparansi dalam layanan publik.", image: baseImageUrl(118) },
+        { title: "Edukasi Mitigasi Kebakaran Hutan dan Lahan", date: "05 Okt 2025", category: "Bencana", excerpt: "Tim gabungan terus memberikan edukasi kepada masyarakat tentang pencegahan dan penanganan dini kebakaran hutan dan lahan (Karhutla).", image: baseImageUrl(119) },
+        { title: "Pemerintah Beri Bantuan Bibit Unggul Sawit ke Petani", date: "04 Okt 2025", category: "Pertanian", excerpt: "Ribuan bibit sawit unggul dibagikan secara gratis kepada petani kecil untuk peremajaan kebun dan peningkatan produksi.", image: baseImageUrl(120) },
+        { title: "Pengembangan Dermaga Wisata Pelabuhan Lama Siak", date: "03 Okt 2025", category: "Pariwisata", excerpt: "Proyek pengembangan dermaga lama menjadi pusat wisata tepian sungai yang dilengkapi dengan kafe dan pusat oleh-oleh.", image: baseImageUrl(121) },
+        { title: "Sosialisasi Pajak Daerah untuk Peningkatan PAD", date: "02 Okt 2025", category: "Ekonomi", excerpt: "Bapenda Siak mengadakan sosialisasi intensif mengenai kewajiban pajak daerah untuk meningkatkan Pendapatan Asli Daerah (PAD).", image: baseImageUrl(122) },
+        { title: "Pemberdayaan Wanita Melalui Kerajinan Eceng Gondok", date: "01 Okt 2025", category: "Pemberdayaan", excerpt: "Kelompok ibu-ibu di desa mulai memproduksi kerajinan bernilai jual tinggi dari bahan baku eceng gondok di sungai.", image: baseImageUrl(123) },
+
+        { title: "Lomba Inovasi Teknologi Tepat Guna Tingkat Kabupaten", date: "30 Sep 2025", category: "Teknologi", excerpt: "Lomba tahunan ini menjaring ide-ide kreatif dari masyarakat untuk solusi permasalahan sehari-hari.", image: baseImageUrl(124) },
+        { title: "Optimalisasi Pelayanan di Mal Pelayanan Publik (MPP) Siak", date: "29 Sep 2025", category: "Pemerintahan", excerpt: "MPP terus berupaya meningkatkan kualitas layanan dengan penambahan loket dan integrasi sistem.", image: baseImageUrl(125) },
+        { title: "Program Beasiswa Pendidikan Unggulan Kabupaten Siak", date: "28 Sep 2025", category: "Pendidikan", excerpt: "Pemerintah kembali membuka program beasiswa bagi pelajar berprestasi untuk melanjutkan pendidikan ke jenjang yang lebih tinggi.", image: baseImageUrl(126) },
+        { title: "Peluncuran Program Siak Hijau dan Bersih", date: "27 Sep 2025", category: "Lingkungan", excerpt: "Sebuah program komprehensif diluncurkan untuk mengurangi sampah plastik dan meningkatkan ruang terbuka hijau.", image: baseImageUrl(127) },
+        { title: "Kunjungan Investor Asing untuk Sektor Agrowisata", date: "26 Sep 2025", category: "Pariwisata", excerpt: "Delegasi investor dari Asia Tenggara mengunjungi Siak untuk menjajaki potensi investasi di bidang agrowisata.", image: baseImageUrl(128) },
+        { title: "Upaya Pencegahan Penyebaran Demam Berdarah (DBD)", date: "25 Sep 2025", category: "Kesehatan", excerpt: "Fogging dan gerakan 3M plus gencar dilakukan oleh Dinas Kesehatan untuk menekan kasus Demam Berdarah.", image: baseImageUrl(129) },
+    ];
+
+    // --- Fungsi Rendering ---
+    function renderNews(newsToRender) {
+        newsContainer.innerHTML = '';
+        
+        if (newsToRender.length === 0) {
+            newsContainer.style.display = 'none';
+            noResults.style.display = 'block';
+            return;
+        }
+
+        newsContainer.style.display = 'grid';
+        noResults.style.display = 'none';
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const currentItems = newsToRender.slice(start, end);
+
+        currentItems.forEach(news => {
+        const newsItem = document.createElement('a'); // Tetap menggunakan <a> agar seluruh kartu bisa di-klik
+        newsItem.href = newsDetailUrl + '?title=' + encodeURIComponent(news.title); 
+        newsItem.className = 'news-item';
+        newsItem.innerHTML = `
+            <img src="${news.image}" alt="Gambar ${news.title}" onerror="this.onerror=null;this.src='https://picsum.photos/seed/default/400/180';">
+            <div class="news-content">
+            <div class="news-meta">
+                <span><i class="fas fa-calendar-alt"></i> ${news.date}</span>
+                <span><i class="fas fa-tag"></i> ${news.category}</span>
+            </div>
+            <h3>${news.title}</h3>
+            <p class="news-excerpt">${news.excerpt}</p>
+            </div>
+        `;
+        newsContainer.appendChild(newsItem);
+        });
+        
+        renderPagination(newsToRender.length);
+    }
+
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        paginationControls.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const prevBtn = document.createElement('button');
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => window.changePage(currentPage - 1);
+        paginationControls.appendChild(prevBtn);
+
+        const maxPageButtons = 5; 
+        let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+        if (endPage - startPage + 1 < maxPageButtons) {
+            startPage = Math.max(1, endPage - maxPageButtons + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.textContent = i;
+        if (i === currentPage) {
+            pageBtn.classList.add('active');
+        }
+        pageBtn.onclick = () => window.changePage(i);
+        paginationControls.appendChild(pageBtn);
+        }
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => window.changePage(currentPage + 1);
+        paginationControls.appendChild(nextBtn);
+    }
+
+    // --- Fungsi Kontrol ---
+    window.changePage = function(page) {
+        if (page < 1 || page > Math.ceil(filteredNews.length / itemsPerPage)) return;
+        currentPage = page;
+        renderNews(filteredNews);
+        window.scrollTo({ top: newsContainer.offsetTop - 100, behavior: 'smooth' });
+    }
+
+    window.filterNews = function() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        
+        filteredNews = allNewsData.filter(news => {
+            return news.title.toLowerCase().includes(searchTerm) || 
+                news.excerpt.toLowerCase().includes(searchTerm);
+        });
+
+        currentPage = 1; 
+        renderNews(filteredNews);
+    }
+
+    // --- Inisialisasi ---
+    filteredNews = allNewsData;
+    renderNews(filteredNews);
+
+    })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
