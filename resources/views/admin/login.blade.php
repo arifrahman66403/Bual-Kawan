@@ -6,20 +6,16 @@
   <title>Login Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #f5f5f5;
-    }
-
     .login-card {
-      width: 420px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      background: rgba(33, 37, 41, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
       transform: translateY(20px);
       animation: float 0.8s ease-out forwards;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       perspective: 1000px;
-      border: 1px solid #e0e0e0;
     }
 
     @keyframes float {
@@ -28,7 +24,7 @@
 
     .login-card.tilt {
       transform: translateY(0) rotateX(var(--rx)) rotateY(var(--ry));
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.55);
     }
 
     .shake {
