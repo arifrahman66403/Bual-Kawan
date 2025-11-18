@@ -10,9 +10,9 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
       <h5 class="fw-bold text-color mb-2 mb-md-0">Data Perubahan Terbaru</h5>
       <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-download"></i> Export Excel
-        </button>
+        <a href="{{ route(''admin.riwayat.export'') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-download"></i> Export Excel
+        </a>
         <button class="btn btn-sm btn-genz">
           <i class="bi bi-clock-history"></i> Refresh
         </button>
