@@ -71,6 +71,15 @@
       cursor: pointer;
     }
 
+    .bg-white {
+  background-color: white !important; /* !important digunakan untuk memastikan gaya ini menimpa gaya inline */
+}
+
+.border-light-gray {
+  border: 1px solid #ccc !important;
+}
+
+
     /* small floating effect for headings */
     .title-float { transform: translateY(-6px); opacity: 0; animation: titleIn 0.7s 0.15s forwards; }
     @keyframes titleIn { to { transform: translateY(0); opacity: 1; } }
@@ -84,7 +93,7 @@
 
   <div id="card" class="card p-4 login-card">
     <div class="d-flex align-items-center mb-3">
-      <div class="me-3" style="width:56px;height:56px;background:linear-gradient(135deg,#fff1 0,#fff0);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.06)">
+    <div class="d-flex align-items-center mb-3" style="width:56px;height:56px;background-color: white; border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc">
         <!-- simple logo -->
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
           <rect x="3" y="3" width="18" height="18" rx="4" fill="url(#g)"/>
