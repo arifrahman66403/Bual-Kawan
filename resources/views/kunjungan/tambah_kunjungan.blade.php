@@ -135,20 +135,35 @@
 {{-- Template ini disembunyikan dan akan di-clone oleh JavaScript --}}
 <template id="peserta-row-template">
     <div class="row g-3 mb-3 peserta-item border-start border-3 ps-3 py-2 bg-light bg-opacity-50">
-        <div class="col-md-4">
+        
+        {{-- Nama Peserta (col-md-2) --}}
+        <div class="col-md-2">
             <label class="form-label small mb-1">Nama Peserta</label>
-            {{-- Nama field menggunakan array [] agar Laravel/PHP bisa membaca banyak input --}}
             <input type="text" class="form-control form-control-sm" name="peserta_nama[]" placeholder="Nama lengkap" required>
         </div>
-        <div class="col-md-3">
+        
+        {{-- Jabatan (col-md-2) --}}
+        <div class="col-md-2">
             <label class="form-label small mb-1">Jabatan</label>
             <input type="text" class="form-control form-control-sm" name="peserta_jabatan[]" placeholder="Contoh: Staf/Guru" required>
         </div>
-        <div class="col-md-3">
-            <label class="form-label small mb-1">No. WhatsApp/NIP (Opsional)</label>
+        
+        {{-- Kontak (col-md-2) --}}
+        <div class="col-md-2">
+            <label class="form-label small mb-1">No. WA/NIP (Opsional)</label>
             <input type="text" class="form-control form-control-sm" name="peserta_kontak[]" placeholder="08xx atau NIP">
         </div>
-        <div class="col-md-2 d-flex align-items-end">
+        
+        {{-- EMAIL BARU (col-md-3) --}}
+        <div class="col-md-3">
+            <label class="form-label small mb-1">Email (Opsional)</label>
+            <input type="email" class="form-control form-control-sm" name="peserta_email[]" placeholder="email@contoh.com">
+        </div>
+        
+        {{-- FILE TTD dan Hapus (col-md-3) --}}
+        <div class="col-md-3"> 
+            <label class="form-label small mb-1">File TTD (JPG/PNG)</label>
+            <input type="file" class="form-control form-control-sm mb-2" name="peserta_ttd[]" accept="image/jpeg,image/png">
             <button type="button" class="btn btn-sm btn-danger w-100 remove-peserta-btn">Hapus</button>
         </div>
     </div>
