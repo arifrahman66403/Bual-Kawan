@@ -172,8 +172,13 @@ class GuestController extends Controller
         $pengunjung = KisPengunjung::where('uid', $id)
                                     ->with(['peserta', 'dokumen'])
                                     ->firstOrFail();
+        
+        $perwakilanPeserta = KisPesertaKunjungan::where('pengunjung_id', $pengunjung->uid)
+                                    ->where('nama', $pengunjung->nama_perwakilan)
+                                    ->first();
 
         return view('kunjungan.detail', [
+            'perwakilanPeserta' => $perwakilanPeserta,
             'pengunjung' => $pengunjung,
             'title' => 'Detail pengunjung'
         ]);

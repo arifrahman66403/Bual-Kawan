@@ -1,4 +1,5 @@
-<x-layout :title="Statistik Kunjungan">
+<x-breadcrumb title="Statistik" />
+<x-layout title="Statistik Kunjungan">
 <section aria-labelledby="statTitle">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap">
         <h2 id="statTitle" style="margin:0;font-size:1.05rem">Ringkasan Statistik</h2>

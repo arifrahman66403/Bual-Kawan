@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Auth;
 // Route Beranda (Area publik)
 Route::view('/', 'beranda')->name('beranda');
 Route::view('/statistik', 'statistik')->name('statistik');
+Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
+Route::view('/tentang/visi-misi', 'tentang.visi-misi')->name('tentang.visi-misi');
 
 Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
 // Form Pengajuan Kunjungan (Tambah Kunjungan)

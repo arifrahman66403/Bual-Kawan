@@ -61,11 +61,14 @@ background:#fff;border-radius:10px;padding:8px;box-shadow:0 8px 22px rgba(10,20,
 .nav-item:hover .dropdown{display:block; z-index: 100;}
 
 /* ===== breadcrumb =====
-   Komentar: margin-top diset agar menempel ke header, dan tinggi dinaikkan 1.5x
-   Desktop: 140px -> 210px, Mobile: 120px -> 180px
+   Komentar: TINGGI DITINGKATKAN (300px)
    Inisial: @ziedanet */
 /* margin-top set to nav height so breadcrumb touches header (tidak berjarak) */
-.breadcrumb{margin-top:var(--nav-height);height:210px;background-image:url('jembatan-siak.jpg');
+.breadcrumb{margin-top:var(--nav-height);
+/* PERUBAHAN TINGGI DI SINI */
+height:210px; 
+/* GANTI URL GAMBAR DUMMY BREADCRUMB */
+background-image:url('jembatan.siak.jpg');
 background-position:center;background-size:cover;display:flex;align-items:flex-end;justify-content:center;position:relative;overflow:hidden;border-bottom:4px solid var(--accent)}
 .breadcrumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.45));z-index:0}
 .breadcrumb .inner{position:relative;z-index:2;padding:18px;text-align:center;color:#fff;max-width:var(--container);margin:0 auto}
@@ -75,6 +78,78 @@ background-position:center;background-size:cover;display:flex;align-items:flex-e
 
 /* ===== page container ===== */
 .page{max-width:var(--container);margin:20px auto;padding:10px 18px 100px}
+
+/* #1: Custom Styling untuk Halaman Profil */
+.profile-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    font-weight: 900;
+    color: var(--accent-dark);
+}
+.profile-content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: #333;
+    background: var(--card);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+.profile-content h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 4px solid var(--gold);
+}
+.profile-content p {
+    margin-bottom: 20px;
+    text-align: justify;
+}
+.profile-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin: 15px 0;
+    box-shadow: var(--shadow);
+}
+.profile-content ul, .profile-content ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+.profile-content li {
+    margin-bottom: 8px;
+}
+
+/* Tabel Styling for Structure/History */
+.profile-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+.profile-content th, .profile-content td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+.profile-content th {
+    background-color: #f2f2f2;
+    font-weight: 700;
+    color: var(--accent-dark);
+}
+
+
+/* #5: Animasi Fade-In */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 /* ===== info section (above footer) ===== */
 .info-section{background:linear-gradient(180deg,#2b2b2b,#232323);color:#fff;padding:18px 0 6px;margin-top:26px}
@@ -625,6 +700,31 @@ footer p{margin:6px 0;color:rgba(255,255,255,0.9);font-weight:600}
     if(window.innerWidth > 720) closeMobileSub();
   });
 })();
+
+/* =======================================================
+     Tambahan Skrip untuk Fitur Baru
+     ======================================================= */
+
+  // #5: Animasi Fade-In saat Scroll (Intersection Observer)
+  const fadeInElements = document.querySelectorAll('.fade-in');
+  const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target); // Stop observing once visible
+          }
+      });
+  }, observerOptions);
+
+  fadeInElements.forEach(el => {
+      observer.observe(el);
+  });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
