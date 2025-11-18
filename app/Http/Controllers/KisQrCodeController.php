@@ -17,21 +17,40 @@ class KisQrCodeController extends Controller
      */
     public function showParticipantForm($uid)
     {
-        // Cari data Pengajuan berdasarkan UID
-        $pengunjung = KisPengunjung::where('uid', $uid)->first();
+        // 1. Cari data Pengajuan berdasarkan UID dan Eager Load qrCode
+        $pengunjung = KisPengunjung::where('uid', $uid)->with('qrCode')->first();
 
         if (!$pengunjung) {
             return view('errors.404')->with('message', 'Kode Pengajuan tidak valid atau tidak ditemukan.');
         }
-
-        // Cek status, pastikan hanya bisa diisi jika 'disetujui' atau 'kunjungan'
-        if (!in_array($pengunjung->status, ['disetujui', 'kunjungan'])) {
-             return view('kunjungan.status')->with('pengunjung', $pengunjung)
-                        ->with('message', 'Pengajuan ini belum disetujui atau sudah selesai.');
+        
+        // Cek apakah data QR Code ada
+        if (!$pengunjung->qrCode) {
+            return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                        ->with('message', 'QR Code belum dibuat untuk pengajuan ini. Silakan hubungi Admin.');
         }
 
-        // Kirim data pengunjung ke view
-        return view('pengunjung.tambah_peserta', compact('pengunjung'));
+        // 2. CEK KADALUARSA QR CODE (PERBAIKAN UTAMA)
+        // Gunakan Carbon::parse()->isPast() untuk mengecek apakah waktu berlaku_sampai sudah lewat
+        if (Carbon::parse($pengunjung->qrCode->berlaku_sampai)->isPast()) {
+            $expired_date = Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d F Y H:i');
+            $message = "❌ Link pengisian data peserta (QR Code) telah *kadaluarsa* pada {$expired_date}. Silakan hubungi Admin untuk perpanjangan masa berlaku.";
+            
+            // Arahkan ke halaman status/error dengan pesan kadaluarsa
+            return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                                            ->with('message', $message)
+                                            ->with('status', 'expired'); // Anda bisa menggunakan 'status' untuk styling
+        }
+
+        // 3. Cek status (opsional tapi disarankan)
+        if (!in_array($pengunjung->status, ['disetujui', 'kunjungan'])) {
+             return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                        ->with('message', 'Pengajuan ini belum disetujui atau sudah selesai.')
+                        ->with('status', $pengunjung->status);
+        }
+
+        // 4. Jika semua valid, tampilkan formulir
+        return view('kunjungan.tambah_peserta', compact('pengunjung'));
     }
 
     /**
@@ -39,10 +58,15 @@ class KisQrCodeController extends Controller
      */
     public function storeParticipantData(Request $request, $uid)
     {
-        $pengunjung = KisPengunjung::where('uid', $uid)->first();
+        // ... (Kode storeParticipantData yang sama seperti sebelumnya) ...
         
-        if (!$pengunjung) {
-            return back()->with('error', 'Pengajuan tidak valid.');
+        // PERHATIAN: Idealnya, cek kadaluarsa diulang di sini sebelum penyimpanan, 
+        // untuk mencegah input dari tab browser yang dibuka lama.
+        $pengunjung = KisPengunjung::where('uid', $uid)->with('qrCode')->first();
+
+        // Cek Kadaluarsa lagi sebelum menyimpan (Preventif)
+        if (!$pengunjung || !$pengunjung->qrCode || Carbon::parse($pengunjung->qrCode->berlaku_sampai)->isPast()) {
+            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Gagal menyimpan: Sesi pengisian data telah kadaluarsa. Silakan refresh halaman atau hubungi Admin.');
         }
 
         // Validasi input data lainnya (tanpa validasi file ttd)
@@ -120,7 +144,7 @@ class KisQrCodeController extends Controller
             }
 
             DB::commit(); 
-            return view('pengunjung.konfirmasi')->with('pengunjung', $pengunjung)
+            return view('kunjungan.konfirmasi')->with('pengunjung', $pengunjung)
                                             ->with('success', 'Data rombongan berhasil ditambahkan. Terima kasih!');
 
         } catch (\Exception $e) {
