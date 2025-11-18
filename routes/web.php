@@ -80,6 +80,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
     Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
     Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
+    Route::get('/admin/riwayat/export', [RiwayatController::class, 'exportTracking'])->name('admin.riwayat.export');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');
