@@ -93,19 +93,35 @@
                     <h4 class="section-title mt-0">QR Code (untuk absen)</h4>
 
                     {{-- ✅ Tampilkan QR Code dari database --}}
-                    <div class="qr-code-area mb-4">
+                    <div class="qr-code-area mb-3">
                         @if ($pengunjung->qrCode && $pengunjung->qrCode->qr_code)
+                            
+                            {{-- 1. Tampilkan Gambar QR Code --}}
                             <img src="{{ asset($pengunjung->qrCode->qr_code) }}" 
                                 alt="QR Code Kunjungan"
                                 width="200"
                                 height="200"
                                 class="border rounded shadow-sm">
+                            
+                            {{-- 2. Tampilkan Detail QR --}}
                             <p class="mt-2 text-muted small">
-                                Berlaku hingga: 
-                                {{ \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d M Y H:i') }}
+                                **QR Berisi Link Input Peserta Rombongan**
+                                <br>Berlaku hingga: 
+                                <span class="fw-semibold">{{ \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d M Y H:i') }}</span>
                             </p>
+
+                            {{-- 3. Tombol/Link Input Peserta (Untuk Admin/Pengunjung via WhatsApp) --}}
+                            {{-- Pastikan route 'pengunjung.scan' sudah didefinisikan --}}
+                            <a href="{{ route('pengunjung.scan', $pengunjung->uid) }}" 
+                            target="_blank" 
+                            class="btn btn-sm btn-outline-genz mt-2">
+                                <i class="bi bi-link-45deg"></i> Input Peserta via Link
+                            </a>
+                            
                         @else
-                            <div class="alert alert-warning py-2">QR Code belum dibuat.</div>
+                            <div class="alert alert-warning py-2">
+                                QR Code belum dibuat. Setujui pengajuan untuk membuat QR Code.
+                            </div>
                         @endif
                     </div>
                 </div>

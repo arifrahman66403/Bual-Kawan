@@ -75,13 +75,19 @@ class PengajuanController extends Controller
 
             // === BUAT QR CODE (pakai GD backend, TANPA imagick) === 
             if ($newStatus === 'disetujui') {
-                $qrString = 'SINGGAH-' . strtoupper(Str::random(10));
+                
+                // 1. Definisikan URL yang akan di-encode ke QR Code
+                // URL ini akan mengarahkan ke halaman publik untuk input peserta
+                // Asumsikan route 'pengunjung.scan' sudah didefinisikan (route('pengunjung.scan', $uid))
+                $scanUrl = route('pengunjung.scan', $pengunjung->uid); // <-- PERBAIKAN PENTING
+                
                 $fileName = 'qr_' . $pengunjung->uid . '.png';
                 $filePath = storage_path('app/public/qr_codes/' . $fileName);
 
                 // ✅ Versi 6.x pakai constructor baru (tanpa setter)
                 $qrCode = new QrCode(
-                    data: $qrString,
+                    // Ganti $qrString dengan $scanUrl
+                    data: $scanUrl, // <-- Sekarang QR Code berisi URL publik
                     encoding: new Encoding('UTF-8'),
                     errorCorrectionLevel: ErrorCorrectionLevel::High,
                     size: 250,
@@ -94,13 +100,17 @@ class PengajuanController extends Controller
                 $result = $writer->write($qrCode);
 
                 // Simpan ke file
+                // Pastikan folder 'storage/app/public/qr_codes' sudah ada
                 $result->saveToFile($filePath);
 
                 // Simpan metadata ke database
                 KisQrCode::updateOrCreate(
                     ['pengunjung_id' => $pengunjung->uid],
                     [
-                        'qr_code' => 'storage/qr_codes/' . $fileName,
+                        // Menyimpan path file gambar QR
+                        'qr_code' => 'storage/qr_codes/' . $fileName, 
+                        // Opsional: Jika tabel KisQrCode memiliki kolom 'content'/'url',
+                        // Anda bisa menyimpannya di sini untuk debugging: 'qr_content' => $scanUrl,
                         'berlaku_mulai' => now(),
                         'berlaku_sampai' => now()->addDay(),
                         'created_by' => Auth::id() ?? 1,
