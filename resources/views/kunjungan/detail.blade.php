@@ -220,7 +220,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 
-                <form action="{{ route('pengunjung.upload.spt', $pengunjung->uid) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('kunjungan.upload.spt', $pengunjung->uid) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
                     <div class="modal-body">

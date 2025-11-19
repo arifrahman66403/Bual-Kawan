@@ -91,63 +91,76 @@
 <body class="bg-gradient-page text-light d-flex align-items-center justify-content-center vh-100">
   <div id="toastArea" class="toast-container"></div>
 
-  <div id="card" class="card p-4 login-card">
-    <div class="d-flex align-items-center mb-3">
-    <div class="d-flex align-items-center mb-3" style="width:56px;height:56px;background-color: white; border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc">
-        <!-- simple logo -->
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <rect x="3" y="3" width="18" height="18" rx="4" fill="url(#g)"/>
-          <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.12"/><stop offset="1" stop-color="#fff" stop-opacity="0.04"/></linearGradient></defs>
+  <div id="card" class="card p-5 login-card">
+    <!-- Header with Logo -->
+    <div class="d-flex align-items-center mb-4 pb-3 border-bottom border-secondary">
+      <div style="width:56px;height:56px;background-color: white; border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc;flex-shrink:0;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="18" height="18" rx="4" fill="#0d6efd"/>
+          <text x="12" y="17" font-size="12" font-weight="bold" fill="white" text-anchor="middle">BK</text>
         </svg>
       </div>
-      <div>
-        <h4 class="mb-0">Login Admin</h4>
-        <small class="text-light-50">Masuk untuk mengelola konten & pengguna</small>
+      <div class="ms-3">
+        <h5 class="mb-0 fw-bold text-white">Bual Kawan</h5>
+        <small class="text-light opacity-75">Admin Login</small>
       </div>
     </div>
 
+    <!-- Title -->
+    <h3 class="text-white fw-bold mb-1">Selamat Datang</h3>
+    <p class="text-light opacity-75 mb-4">Masukkan kredensial Anda untuk melanjutkan</p>
+
+    <!-- Form -->
     <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
       @csrf
 
+      <!-- Email Field -->
+      <div class="mb-4">
+        <label for="email" class="form-label text-white fw-5 mb-2">Email Address</label>
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-light border-opacity-25 text-light">📧</span>
+          <input id="email" type="email" name="email" class="form-control border-light border-opacity-25" placeholder="admin@example.com" required autofocus>
+        </div>
+        <div class="invalid-feedback text-warning d-block mt-1">Masukkan email yang valid.</div>
+      </div>
+
+      <!-- Password Field -->
       <div class="mb-3">
-        <label for="email" class="form-label text-light small">Email</label>
+        <label for="password" class="form-label text-white fw-5 mb-2">Password</label>
         <div class="input-group">
-          <span class="input-group-text bg-transparent border-0 text-light">📩</span>
-          <input id="email" type="email" name="email" class="form-control" placeholder="nama@domain.com" required autofocus>
-          <div class="invalid-feedback text-light">Masukkan email yang valid.</div>
+          <span class="input-group-text bg-transparent border-light border-opacity-25 text-light">🔒</span>
+          <input id="password" type="password" name="password" class="form-control border-light border-opacity-25" placeholder="Masukkan password" required>
+          <button type="button" class="btn btn-outline-secondary toggle-pass border-light border-opacity-25" id="togglePass" title="Toggle password">
+            <span id="toggleIcon">👁️</span>
+          </button>
         </div>
+        <div class="invalid-feedback text-warning d-block mt-1">Password tidak boleh kosong.</div>
       </div>
 
-      <div class="mb-2">
-        <label for="password" class="form-label text-light small">Password</label>
-        <div class="input-group">
-          <span class="input-group-text bg-transparent border-0 text-light">🔒</span>
-          <input id="password" type="password" name="password" class="form-control" placeholder="Masukkan password" required>
-          <button type="button" class="btn btn-link text-light toggle-pass ps-2 pe-2" id="togglePass" title="Tampilkan/Sembunyikan password" style="text-decoration:none;">👁️</button>
-          <div class="invalid-feedback text-light">Password tidak boleh kosong.</div>
-        </div>
+      <!-- Forgot Password Link -->
+      <div class="mb-4 text-end">
+        <a href="#" class="small text-light opacity-75 text-decoration-none">Lupa password?</a>
       </div>
 
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="#" class="small text-light" style="opacity:0.9; text-decoration:underline;">Lupa password?</a>
-      </div>
-
+      <!-- Error Message -->
       @if ($errors->any())
-        <div id="serverError" class="alert alert-danger mb-3">{{ $errors->first() }}</div>
+        <div id="serverError" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <strong>Error!</strong> {{ $errors->first() }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
       @endif
 
-      <button id="submitBtn" type="submit" class="btn btn-login text-light w-100 d-flex align-items-center justify-content-center">
+      <!-- Submit Button -->
+      <button id="submitBtn" type="submit" class="btn btn-login text-white w-100 fw-bold py-2 mb-3">
         <span id="btnText">Masuk</span>
       </button>
 
-      <div class="text-center mt-3">
-        <small class="text-light-50">atau kembali ke <a href="/" class="text-white" style="text-decoration:underline;">Beranda</a></small>
+      <!-- Footer -->
+      <div class="text-center small">
+        <p class="text-light opacity-75 mb-2">Kembali ke <a href="/" class="text-white fw-bold text-decoration-none">Beranda</a></p>
+        <span class="text-light opacity-50 d-block">Versi 1.0 • © {{ date('Y') }} Bual Kawan</span>
       </div>
     </form>
-
-    <div class="text-center mt-3 small" style="opacity:0.78">
-      <span>Versi aplikasi 1.0 • © {{ date('Y') }}</span>
-    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
