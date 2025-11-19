@@ -82,7 +82,7 @@
               <!-- Tombol Aksi (tidak memakai data-bs-toggle / data-bs-target) -->
               <td class="text-nowrap">
           <!-- Tombol Detail (boleh tetap) -->
-          <button class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></button>
+          <a href="{{ route('admin.pengajuan.show', $p->uid) }}" class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></a>
 
             @if($p->status == 'disetujui')
             <!-- Jika sudah disetujui: tampilkan tombol Selesai -->
@@ -194,8 +194,8 @@
         modalConfirmButton.className = `btn ${status === 'disetujui' ? 'btn-success' : 'btn-danger'}`;
         modalStatusValue.value = status;
 
-        // gunakan helper url() agar sesuai dengan base URL Laravel
-        modalForm.action = `{{ url('pengajuan') }}/${id}/status`;
+        // gunakan helper url() agar sesuai dengan base URL Laravel (route admin)
+        modalForm.action = `{{ url('admin/pengajuan') }}/${id}/status`;
 
         bsModal.show();
       });

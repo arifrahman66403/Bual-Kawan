@@ -30,7 +30,7 @@ Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.ind
 Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
 Route::get('/kunjungan/detail/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
-Route::post('/kunjungan/upload-spt/{uid}', [QrController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
+Route::post('/kunjungan/upload-spt/{uid}', [GuestController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
 Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
 Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
 
@@ -78,8 +78,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
     Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
     Route::get('/admin/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan');
-    Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
     Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
+    Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
     Route::get('/admin/pengajuan/export', [PengajuanController::class, 'exportPengunjung'])->name('admin.pengajuan.export');
     Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
     Route::get('/admin/riwayat/export', [RiwayatController::class, 'exportTracking'])->name('admin.riwayat.export');

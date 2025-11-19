@@ -172,42 +172,66 @@ class GuestController extends Controller
         }
     }
     /**
-     * Mengunggah dokumen SPT oleh Pengunjung di halaman detail/status.
+     * Mengunggah dan menyimpan file Surat Perintah Tugas (SPT)
+     * ke dalam tabel kis_dokumen.
      */
     public function uploadSpt(Request $request, $uid)
     {
         // 1. Validasi File
         $request->validate([
-            'file_spt' => 'required|file|mimes:pdf|max:2048', // Max 2MB, PDF only
+            'file_spt' => 'required|file|mimes:pdf|max:2048', // Maks 2MB
         ], [
-            'file_spt.required' => 'Pilih file SPT yang akan diunggah.',
+            'file_spt.required' => 'File SPT wajib diunggah.',
             'file_spt.mimes' => 'File harus berformat PDF.',
-            'file_spt.max' => 'Ukuran file tidak boleh melebihi 2MB.',
+            'file_spt.max' => 'Ukuran file tidak boleh lebih dari 2MB.',
         ]);
 
-        // 2. Cari Pengajuan (wajib ada)
-        $pengunjung = KisPengunjung::where('uid', $uid)->firstOrFail();
-        
-        // 3. Simpan File Baru
-        if ($request->hasFile('file_spt')) {
-            $file = $request->file('file_spt');
-            // Gunakan nama file yang unik dan aman
-            $fileName = 'spt_' . $pengunjung->uid . '_' . time() . '.' . $file->getClientOriginalExtension();
-            
-            // Simpan di storage/app/public/dokumen_spt
-            $path = $file->storeAs('dokumen_spt', $fileName, 'public'); 
+        $pengunjung = KisPengunjung::where('uid', $uid)->first();
 
-            // 4. Update atau Buat Record Dokumen
-            KisDokumen::updateOrCreate(
-                ['pengunjung_id' => $pengunjung->uid],
-                ['file_spt' => $path] // Simpan path ke database
-                // Tidak perlu created_by jika diakses guest
-            );
-            
-            return back()->with('success', 'File SPT berhasil diunggah. Pengajuan akan segera diverifikasi.');
+        if (!$pengunjung) {
+            return back()->with('error', 'Data pengajuan tidak ditemukan.');
         }
-        
-        return back()->with('error', 'Gagal memproses unggahan file.');
+
+        DB::beginTransaction();
+
+        try {
+            // 2. Simpan File ke Storage
+            $file = $request->file('file_spt');
+            // Menghasilkan nama file yang unik dan menyimpan ke folder 'dokumen_spt' di disk 'public'
+            $path = $file->store('dokumen_spt', 'public'); 
+
+            // 3. Cek apakah dokumen untuk pengunjung ini sudah ada di tabel KisDokumen
+            // Jika ada, kita update. Jika belum ada, kita buat baru.
+            $dokumen = KisDokumen::firstOrNew(['pengunjung_id' => $uid]);
+
+            // Jika ini adalah record baru (INSERT):
+            if (!$dokumen->exists) {
+                // === BARIS PERBAIKAN UTAMA UNTUK ERROR 1364 ===
+                $dokumen->uid = Str::uuid(); 
+                // ===============================================
+            } else {
+                // Jika file SPT lama sudah ada, hapus file lama sebelum di-update
+                if ($dokumen->file_spt) {
+                    Storage::disk('public')->delete($dokumen->file_spt);
+                }
+            }
+            
+            // 4. Update path file dan simpan ke database
+            $dokumen->file_spt = $path;
+            $dokumen->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Dokumen Surat Perintah Tugas (SPT) berhasil dilampirkan/diganti.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Jika terjadi error setelah file tersimpan, hapus file yang baru saja diupload
+            if (isset($path)) {
+                 Storage::disk('public')->delete($path);
+            }
+            return back()->with('error', 'Gagal mengunggah file SPT: ' . $e->getMessage());
+        }
     }
     /**
      * Menampilkan Detail Laporan Kunjungan.
