@@ -112,7 +112,7 @@
       <div class="mb-3">
         <label for="email" class="form-label text-light small">Email</label>
         <div class="input-group">
-          <span class="input-group-text bg-transparent border-0 text-light">📧</span>
+          <span class="input-group-text bg-transparent border-0 text-light">📩</span>
           <input id="email" type="email" name="email" class="form-control" placeholder="nama@domain.com" required autofocus>
           <div class="invalid-feedback text-light">Masukkan email yang valid.</div>
         </div>
@@ -181,7 +181,7 @@
       toggle.addEventListener('click', function(){
         const isHidden = pass.type === 'password';
         pass.type = isHidden ? 'text' : 'password';
-        toggle.textContent = isHidden ? '🙈' : '👁️';
+        toggle.textContent = isHidden ? '🙈' : '🙉';
       });
 
       // Client-side validation with shake on invalid

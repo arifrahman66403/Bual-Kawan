@@ -1,87 +1,182 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Peserta Rombongan</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body { background-color: #f8f9fa; }
-        .form-card { background-color: white; border-radius: 1rem; }
-    </style>
-</head>
-<body>
-
-<div class="container py-5">
-    <div class="form-card shadow-lg mx-auto p-4" style="max-width: 700px;">
+<x-layout title="Input Peserta Rombongan">
+    {{-- Pastikan component x-layout Anda mengimpor Carbon, Bootstrap CSS/JS, dan bi-icons --}}
+    
+    <div class="container my-5">
+        <h2 class="fw-bold text-color mb-3">Selamat Datang, {{ $pengunjung->nama_perwakilan }}!</h2>
+        <p class="lead">Silakan input data peserta rombongan Anda untuk kunjungan dari **{{ $pengunjung->nama_instansi }}** pada tanggal **{{ Carbon\Carbon::parse($pengunjung->tgl_kunjungan)->format('d F Y') }}**.</p>
         
-        <h3 class="mb-3 fw-bold">Tambah Peserta Rombongan</h3>
-        <p class="text-muted">
-            Isi formulir di bawah ini untuk menambahkan anggota rombongan baru ke pengajuan kunjungan instansi: 
-            **{{ $pengunjung->nama_instansi ?? 'N/A' }}** pada tanggal **{{ \Carbon\Carbon::parse($pengunjung->tgl_kunjungan)->format('Y-m-d') }}**.
-        </p>
-        <hr>
-
-        {{-- Menampilkan pesan error atau sukses --}}
         @if (session('error'))
-            <div class="alert alert-danger"><i class="bi bi-x-octagon-fill"></i> {{ session('error') }}</div>
-        @endif
-        
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                Gagal menyimpan data. Silakan periksa kembali kolom yang diisi.
-            </div>
+            <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
-        {{-- Form action menuju route 'peserta.store' dengan parameter UID pengunjung --}}
-        <form action="{{ route('peserta.store', $pengunjung->uid) }}" method="POST">
-            @csrf
-            
-            <div class="mb-3">
-                <label for="nama" class="form-label">Nama Lengkap Peserta <span class="text-danger">*</span></label>
-                <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required>
-                @error('nama')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-            
-            <div class="mb-3">
-                <label for="nip" class="form-label">NIP (Opsional)</label>
-                <input type="text" class="form-control @error('nip') is-invalid @enderror" id="nip" name="nip" value="{{ old('nip') }}">
-                @error('nip')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-            
-            <div class="mb-3">
-                <label for="jabatan" class="form-label">Jabatan <span class="text-danger">*</span></label>
-                <input type="text" class="form-control @error('jabatan') is-invalid @enderror" id="jabatan" name="jabatan" value="{{ old('jabatan') }}" required>
-                @error('jabatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-            
-            <div class="mb-3">
-                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
-                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-            
-            <div class="mb-3">
-                <label for="wa" class="form-label">No. WhatsApp <span class="text-danger">*</span></label>
-                <input type="text" class="form-control @error('wa') is-invalid @enderror" id="wa" name="wa" value="{{ old('wa') }}" required>
-                @error('wa')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-            
-            <hr>
-            <div class="d-flex justify-content-end gap-2">
-                {{-- Kembali ke halaman detail --}}
-                <a href="{{ route('kunjungan.detail', $pengunjung->uid) }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-1"></i> Kembali ke Detail Kunjungan
-                </a>
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-person-plus-fill me-1"></i> Tambahkan Peserta
+        <div class="card p-4 shadow-sm">
+            <h5 class="fw-bold mb-4">Formulir Peserta Rombongan</h5>
+
+            <form action="{{ route('pengunjung.store.peserta', $pengunjung->uid) }}" method="POST">
+                @csrf
+                
+                <div id="peserta-list">
+                    {{-- Baris akan ditambahkan oleh JS --}}
+                </div>
+                
+                <button type="button" id="add-peserta-btn" class="btn btn-outline-genz mt-3">
+                    <i class="bi bi-plus-circle"></i> Tambah Peserta Lagi
                 </button>
-            </div>
-        </form>
+                
+                <hr class="my-4">
+                
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-send"></i> Selesai & Kirim Data Rombongan
+                </button>
+            </form>
+        </div>
     </div>
-</div>
+    
+    <template id="peserta-row-template">
+        <div class="row g-3 mb-3 peserta-item border-start border-3 ps-3 py-2 bg-light bg-opacity-50">
+            
+            {{-- Nama Peserta (col-md-2) --}}
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Nama Peserta</label>
+                <input type="text" class="form-control form-control-sm" name="peserta_nama[]" placeholder="Nama lengkap" required>
+            </div>
+            
+            {{-- Jabatan (col-md-2) --}}
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Jabatan</label>
+                <input type="text" class="form-control form-control-sm" name="peserta_jabatan[]" placeholder="Contoh: Staf/Guru">
+            </div>
+            
+            {{-- Kontak (col-md-2) --}}
+            <div class="col-md-2">
+                <label class="form-label small mb-1">No. WA/NIP</label>
+                <input type="text" class="form-control form-control-sm" name="peserta_kontak[]" placeholder="08xx atau NIP">
+            </div>
+            
+            {{-- EMAIL (col-md-3) --}}
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Email</label>
+                <input type="email" class="form-control form-control-sm" name="peserta_email[]" placeholder="email@contoh.com">
+            </div>
+            
+            {{-- TANDA TANGAN DIGITAL (col-md-3) --}}
+            <div class="col-md-3 ttd-container"> 
+                <label class="form-label small mb-1">Tanda Tangan (Wajib)</label>
+                
+                <div class="signature-box border border-dark rounded p-1 mb-1 bg-white">
+                    <canvas class="signature-pad" height="80" style="width: 100%;"></canvas>
+                </div>
+                
+                <button type="button" class="btn btn-sm btn-outline-danger w-100 mb-2 clear-signature-btn">Bersihkan TTD</button>
+                
+                <input type="hidden" class="ttd-data-input" name="peserta_ttd_data[]" value="">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+                <button type="button" class="btn btn-sm btn-danger w-100 remove-peserta-btn">Hapus</button>
+            </div>
+        </div>
+    </template>
+
+    {{-- Script Signature Pad --}}
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    
+    {{-- Script Logika Dinamis (Perbaikan) --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Deklarasi variabel utama (HANYA SEKALI)
+            const list = document.getElementById('peserta-list');
+            const template = document.getElementById('peserta-row-template');
+            const addButton = document.getElementById('add-peserta-btn');
+            const form = document.querySelector('form');
+
+            // 1. Fungsi untuk menginisialisasi Signature Pad pada row baru
+            const initializeSignaturePad = (row) => {
+                const canvas = row.querySelector('.signature-pad');
+                const dataInput = row.querySelector('.ttd-data-input');
+                const clearButton = row.querySelector('.clear-signature-btn');
+
+                // Pastikan Canvas berukuran penuh
+                // Ini penting agar area tanda tangan terisi penuh
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                
+                const signaturePad = new SignaturePad(canvas, {
+                    backgroundColor: 'rgb(255, 255, 255)' 
+                });
+
+                // Event listener untuk tombol Bersihkan
+                clearButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    signaturePad.clear();
+                    dataInput.value = '';
+                });
+                
+                // Simpan instance SignaturePad ke elemen row untuk diakses saat submit
+                row.signaturePadInstance = signaturePad; 
+            };
+
+            // 2. Fungsi Tambah Baris Peserta
+            const addPesertaRow = () => {
+                const clone = template.content.cloneNode(true);
+                const newRow = clone.querySelector('.peserta-item');
+                list.appendChild(newRow);
+                
+                // Panggil inisialisasi Signature Pad untuk baris baru
+                initializeSignaturePad(newRow); 
+            };
+
+            // --- Eksekusi Awal & Listener ---
+            
+            // Tambahkan baris pertama secara otomatis dan inisialisasi TTD
+            addPesertaRow();
+
+            // Listener untuk tombol Tambah Peserta Lagi 
+            addButton.addEventListener('click', addPesertaRow);
+
+            // Listener untuk tombol Hapus (Delegation)
+            list.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-peserta-btn')) {
+                    const rowToRemove = e.target.closest('.peserta-item');
+                    if (rowToRemove) {
+                        rowToRemove.remove();
+                    }
+                }
+            });
+
+            // 3. Logic Submit Form (Wajib Cek TTD dan Konversi ke Base64)
+            form.addEventListener('submit', function(e) {
+                const pesertaRows = list.querySelectorAll('.peserta-item');
+                let allValid = true;
+
+                pesertaRows.forEach((row, index) => {
+                    const signaturePad = row.signaturePadInstance;
+                    const dataInput = row.querySelector('.ttd-data-input');
+                    const namaInput = row.querySelector('input[name="peserta_nama[]"]');
+                    
+                    // Kita hanya memvalidasi dan menyimpan TTD jika Nama Peserta diisi
+                    if (namaInput.value.trim() !== "") {
+                        if (signaturePad && signaturePad.isEmpty()) {
+                            // Tanda tangan WAJIB diisi
+                            alert(`Tanda tangan peserta ${namaInput.value.trim()} harus diisi.`);
+                            allValid = false;
+                            
+                            // Scroll ke elemen yang bermasalah (opsional, untuk UX)
+                            namaInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+                        
+                        // Konversi tanda tangan (Canvas) ke format Base64 PNG
+                        const dataURL = signaturePad.toDataURL('image/png');
+                        dataInput.value = dataURL;
+                    } else {
+                        // Jika nama kosong, pastikan data TTD juga dikosongkan agar tidak diproses di backend
+                        dataInput.value = ''; 
+                    }
+                });
+
+                if (!allValid) {
+                    e.preventDefault(); // Hentikan submit jika ada TTD yang kosong
+                }
+            });
+        });
+    </script>
+</x-layout>

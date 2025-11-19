@@ -3,94 +3,169 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\KisQrCode;
 use App\Models\KisPengunjung;
+use App\Models\KisPesertaKunjungan;
 use Illuminate\Support\Str;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class KisQrCodeController extends Controller
 {
-    public function index()
+    /**
+     * Menampilkan formulir penambahan peserta rombongan setelah QR dipindai.
+     */
+    public function showParticipantForm($uid)
     {
-        $data = KisQrCode::with('pengunjung')->latest()->get();
-        $qrCodes = $data;
-            return view('qr.index', compact('qrCodes'));
+        // 1. Cari data Pengajuan berdasarkan UID dan Eager Load qrCode
+        $pengunjung = KisPengunjung::where('uid', $uid)->with('qrCode')->first();
 
-        return response()->json([
-            'success' => true,
-            'data' => $data,
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'pengunjung_id' => 'required|exists:kis_pengunjung,id',
-            'berlaku_mulai' => 'required|date',
-            'berlaku_sampai' => 'required|date|after:berlaku_mulai',
-        ]);
-
-        // Pastikan folder QR ada
-        if (!file_exists(public_path('qr'))) {
-            mkdir(public_path('qr'), 0777, true);
+        if (!$pengunjung) {
+            return view('errors.404')->with('message', 'Kode Pengajuan tidak valid atau tidak ditemukan.');
+        }
+        
+        // Cek apakah data QR Code ada
+        if (!$pengunjung->qrCode) {
+            return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                        ->with('message', 'QR Code belum dibuat untuk pengajuan ini. Silakan hubungi Admin.');
         }
 
-        // Generate kode unik
-        $kodeQr = strtoupper(Str::random(10));
+        // 2. CEK KADALUARSA QR CODE (PERBAIKAN UTAMA)
+        $qr = $pengunjung->qrCode;
+        $now = Carbon::now();
 
-        // Tentukan nama file QR
-        $fileName = 'qr_' . $kodeQr . '.png';
-        $filePath = public_path('qr/' . $fileName);
-
-        // Generate QR code image
-        QrCode::format('png')->size(250)->generate($kodeQr, $filePath);
-
-        // Simpan ke database
-        $qr = KisQrCode::create([
-            'pengunjung_id' => $request->pengunjung_id,
-            'kode_qr' => $kodeQr,
-            'path_qr' => 'qr/' . $fileName,
-            'berlaku_mulai' => $request->berlaku_mulai,
-            'berlaku_sampai' => $request->berlaku_sampai,
-            'status' => 'aktif',
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'QR Code berhasil dibuat',
-            'data' => $qr,
-        ]);
-    }
-
-    public function update(Request $request, KisQrCode $kisQrCode)
-    {
-        $request->validate([
-            'status' => 'required|in:aktif,nonaktif'
-        ]);
-
-        $kisQrCode->update(['status' => $request->status]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Status QR Code diperbarui',
-            'data' => $kisQrCode
-        ]);
-    }
-
-    public function destroy($id)
-    {
-        $qr = KisQrCode::findOrFail($id);
-
-        // Hapus file QR
-        if (file_exists(public_path($qr->path_qr))) {
-            unlink(public_path($qr->path_qr));
+        // Jika berlaku_sampai ada, cek isPast; jika tidak ada, anggap tidak kadaluarsa
+        if (!empty($qr->berlaku_sampai) && Carbon::parse($qr->berlaku_sampai)->isPast()) {
+            $expired_date = Carbon::parse($qr->berlaku_sampai)->format('d F Y H:i');
+            $message = "❌ Link pengisian data peserta (QR Code) telah kadaluarsa pada {$expired_date}. Silakan hubungi Admin untuk perpanjangan masa berlaku.";
+            
+            return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                                           ->with('message', $message)
+                                           ->with('status', 'expired');
         }
 
-        $qr->delete();
+        // Jika berlaku_mulai ada, cek belum berlaku
+        if (!empty($qr->berlaku_mulai) && Carbon::parse($qr->berlaku_mulai)->isFuture()) {
+            $start_date = Carbon::parse($qr->berlaku_mulai)->format('d F Y H:i');
+            $message = "❌ QR Code belum aktif. Berlaku mulai {$start_date}.";
+            return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                                           ->with('message', $message)
+                                           ->with('status', 'not_active');
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'QR Code berhasil dihapus'
+        // 3. Cek status (opsional tapi disarankan)
+        if (!in_array($pengunjung->status, ['disetujui', 'kunjungan'])) {
+             return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                        ->with('message', 'Pengajuan ini belum disetujui atau sudah selesai.')
+                        ->with('status', $pengunjung->status);
+        }
+
+        // 4. Jika semua valid, tampilkan formulir
+        return view('kunjungan.tambah_peserta', compact('pengunjung'));
+    }
+
+    /**
+     * Menyimpan data peserta rombongan dari formulir yang diakses melalui QR.
+     */
+    public function storeParticipantData(Request $request, $uid)
+    {
+        // Prevent double-submit from very old tabs: cek pengunjung & QR lagi
+        $pengunjung = KisPengunjung::where('uid', $uid)->with('qrCode')->first();
+
+        if (!$pengunjung || !$pengunjung->qrCode) {
+            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Sesi tidak valid. Silakan refresh halaman atau hubungi Admin.');
+        }
+
+        $qr = $pengunjung->qrCode;
+        $now = Carbon::now();
+
+        if (!empty($qr->berlaku_sampai) && Carbon::parse($qr->berlaku_sampai)->isPast()) {
+            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Gagal menyimpan: Sesi pengisian data telah kadaluarsa.');
+        }
+
+        if (!empty($qr->berlaku_mulai) && Carbon::parse($qr->berlaku_mulai)->isFuture()) {
+            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Gagal menyimpan: QR Code belum aktif.');
+        }
+
+        // Validasi input data peserta (tetap seperti sebelumnya)
+        $request->validate([
+            'peserta_nama.*' => 'required|string|max:255', 
+            'peserta_jabatan.*' => 'nullable|string|max:255',
+            'peserta_kontak.*' => 'nullable|string|max:20',
+            'peserta_email.*' => 'nullable|email|max:255',
+            'peserta_ttd_data.*' => 'required|string', 
         ]);
+
+        DB::beginTransaction();
+        
+        try {
+            // AMBIL DATA BASE64 DARI INPUT TERSEMBUNYI
+            $ttd_data_array = $request->peserta_ttd_data;
+            
+            $peserta_data_massal = [];
+            
+            $nama_array = $request->peserta_nama;
+            $jabatan_array = $request->peserta_jabatan;
+            $kontak_array = $request->peserta_kontak;
+            $email_array = $request->peserta_email;
+            
+            $count = count($nama_array);
+
+            for ($i = 0; $i < $count; $i++) {
+                $nama = trim($nama_array[$i] ?? '');
+                
+                if (!empty($nama)) {
+                    $ttd_path = null;
+                    
+                    // === LOGIKA BARU UNTUK BASE64 ===
+                    $base64Image = $ttd_data_array[$i] ?? null;
+                    
+                    // Cek apakah data Base64 ada dan valid (misal: 'data:image/png;base64,...')
+                    if ($base64Image) {
+                        // Hapus prefix "data:image/png;base64,"
+                        $base64Image = str_replace('data:image/png;base64,', '', $base64Image);
+                        $base64Image = str_replace(' ', '+', $base64Image); // Perbaiki spasi
+
+                        // Decode data Base64 menjadi binary data
+                        $imageData = base64_decode($base64Image);
+                        
+                        if ($imageData === false) {
+                            throw new \Exception("Gagal mengkonversi tanda tangan peserta ke-" . ($i + 1));
+                        }
+                        
+                        $fileName = 'ttd_' . $pengunjung->uid . '_' . ($i + 1) . '_' . time() . '.png';
+                        
+                        // Simpan file ke storage
+                        Storage::disk('public')->put('ttd_peserta/' . $fileName, $imageData);
+                        $ttd_path = 'ttd_peserta/' . $fileName; // Path yang akan disimpan ke DB
+                    }
+                    
+                    $peserta_data_massal[] = [
+                        'uid' => Str::uuid(),
+                        'pengunjung_id' => $pengunjung->uid, 
+                        'nama' => $nama,
+                        'nip' => $kontak_array[$i] ?? null, 
+                        'jabatan' => $jabatan_array[$i] ?? null,
+                        'email' => $email_array[$i] ?? null, 
+                        'wa' => $kontak_array[$i] ?? null, 
+                        'file_ttd' => $ttd_path, // <-- Path file TTD dari Base64
+                        'created_by' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+
+            if (!empty($peserta_data_massal)) {
+                KisPesertaKunjungan::insert($peserta_data_massal);
+            }
+
+            DB::commit(); 
+            return view('kunjungan.konfirmasi')->with('pengunjung', $pengunjung)
+                                               ->with('success', 'Data rombongan berhasil ditambahkan. Terima kasih!');
+        } catch (\Exception $e) {
+            DB::rollBack(); 
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+        }
     }
 }

@@ -39,8 +39,10 @@
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
             <h5 class="fw-bold text-color mb-2 mb-md-0">Data Pengajuan Terbaru</h5>
             <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i> Export Excel</button>
-              <button class="btn btn-sm btn-genz"><i class="bi bi-plus-circle"></i> Tambah Manual</button>
+                <a href="{{ route('admin.pengajuan.export') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-download"></i> Export Excel
+                </a>
+                <button class="btn btn-sm btn-genz"><i class="bi bi-plus-circle"></i> Tambah Manual</button>
             </div>
           </div>
 
@@ -61,46 +63,60 @@
             <tr data-status="{{ ucfirst($p->status) }}">
               <td>{{ $no+1 }}</td>
               <td>
-                <span class="fw-semibold text-color">{{ $p->nama_perwakilan }}</span>
-                <div class="text-muted-genz">{{ $p->nama_instansi }}</div>
+          <span class="fw-semibold text-color">{{ $p->nama_perwakilan }}</span>
+          <div class="text-muted-genz">{{ $p->nama_instansi }}</div>
               </td>
               <td class="d-none d-md-table-cell">{{ $p->tujuan }}</td>
               <td>{{ \Carbon\Carbon::parse($p->tgl_kunjungan)->format('d M Y') }}</td>
               <td>
-                <span class="badge 
-                  @if($p->status=='pengajuan') bg-secondary 
-                  @elseif($p->status=='disetujui') bg-success 
-                  @elseif($p->status=='kunjungan') bg-info 
-                  @elseif($p->status=='selesai') bg-primary
-                  @else bg-dark @endif">
-                  {{ ucfirst($p->status) }}
-                </span>
+          <span class="badge 
+            @if($p->status=='pengajuan') bg-secondary 
+            @elseif($p->status=='disetujui') bg-success 
+            @elseif($p->status=='kunjungan') bg-info 
+            @elseif($p->status=='selesai') bg-primary
+            @else bg-dark @endif">
+            {{ ucfirst($p->status) }}
+          </span>
               </td>
 
               <!-- Tombol Aksi (tidak memakai data-bs-toggle / data-bs-target) -->
               <td class="text-nowrap">
-                <!-- Tombol Detail (boleh tetap) -->
-                <button class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></button>
+          <!-- Tombol Detail (boleh tetap) -->
+          <button class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></button>
 
-                <!-- Tombol Setujui: hanya data-* attributes, buka modal lewat JS -->
-                <button type="button"
-                        class="btn btn-sm btn-success ms-1 btn-action"
-                        data-status="disetujui"
-                        data-id="{{ $p->uid }}"
-                        data-icon="bi-check-circle text-success"
-                        data-message="Apakah kamu yakin ingin MENYETUJUI pengajuan ini?">
-                  <i class="bi bi-check2-circle"></i> Terima
-                </button>
+            @if($p->status == 'disetujui')
+            <!-- Jika sudah disetujui: tampilkan tombol Selesai -->
+            <button type="button"
+              class="btn btn-sm btn-primary ms-1 btn-action"
+              data-status="selesai"
+              data-id="{{ $p->uid }}"
+              data-icon="bi-check2-square text-primary"
+              data-message="Apakah kamu yakin ingin menandai pengajuan ini SELESAI?">
+              <i class="bi bi-check2-square"></i> Selesai
+            </button>
+            @elseif($p->status == 'selesai')
+            <button class="btn btn-sm btn-secondary ms-1" title="Tidak Ada Aksi Lagi" disabled><i class="bi bi-lock"></i></button>
+            @else
+            <!-- Tombol Setujui: hanya data-* attributes, buka modal lewat JS -->
+            <button type="button"
+              class="btn btn-sm btn-success ms-1 btn-action"
+              data-status="disetujui"
+              data-id="{{ $p->uid }}"
+              data-icon="bi-check-circle text-success"
+              data-message="Apakah kamu yakin ingin MENYETUJUI pengajuan ini?">
+              <i class="bi bi-check2-circle"></i> Terima
+            </button>
 
-                <!-- Tombol Tolak -->
-                <button type="button"
-                        class="btn btn-sm btn-danger ms-1 btn-action"
-                        data-status="ditolak"
-                        data-id="{{ $p->uid }}"
-                        data-icon="bi-x-circle text-danger"
-                        data-message="Apakah kamu yakin ingin MENOLAK pengajuan ini?">
-                  <i class="bi bi-x-circle"></i> Tolak
-                </button>
+            <!-- Tombol Tolak -->
+            <button type="button"
+              class="btn btn-sm btn-danger ms-1 btn-action"
+              data-status="ditolak"
+              data-id="{{ $p->uid }}"
+              data-icon="bi-x-circle text-danger"
+              data-message="Apakah kamu yakin ingin MENOLAK pengajuan ini?">
+              <i class="bi bi-x-circle"></i> Tolak
+            </button>
+            @endif
               </td>
             </tr>
             @endforeach
@@ -110,7 +126,7 @@
 
       <!-- Pagination -->
       <div class="mt-3 d-flex justify-content-center">
-        <!-- Links -->
+        {{ $pengunjungs->links() }}
       </div>
     </div>
   </div>

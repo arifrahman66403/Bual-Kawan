@@ -20,14 +20,19 @@ use Illuminate\Support\Facades\Auth;
 // Route Beranda (Area publik)
 Route::view('/', 'beranda')->name('beranda');
 Route::view('/statistik', 'statistik')->name('statistik');
+Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
+Route::view('/tentang/visi-misi', 'tentang.visi-misi')->name('tentang.visi-misi');
+Route::view('/berita', 'berita.berita')->name('berita.berita');
+Route::view('/berita-detail', 'berita.berita-detail')->name('berita.detail');   
 
 Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
 // Form Pengajuan Kunjungan (Tambah Kunjungan)
 Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
 Route::get('/kunjungan/detail/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
-Route::get('/kunjungan/{id}/tambah-peserta', [GuestController::class, 'showAddPesertaForm'])->name('peserta.create');
-Route::post('/kunjungan/{id}/peserta', [GuestController::class, 'storePeserta'])->name('peserta.store');
+Route::post('/kunjungan/upload-spt/{uid}', [QrController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
+Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
+Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
 
 // Route Login Admin (Area publik)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -75,7 +80,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan');
     Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
     Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
+    Route::get('/admin/pengajuan/export', [PengajuanController::class, 'exportPengunjung'])->name('admin.pengajuan.export');
     Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
+    Route::get('/admin/riwayat/export', [RiwayatController::class, 'exportTracking'])->name('admin.riwayat.export');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');

@@ -76,13 +76,13 @@
                             <input type="text" class="form-control" id="nama_perwakilan" name="nama_perwakilan" placeholder="Nama lengkap" value="{{ old('nama_perwakilan') }}">
                         </div>
                         
-                        {{-- NIP (kis_peserta_kunjungan.nip) --}}
+                        {{-- NIP (kis_peserta_kunjungan.nip) - Perwakilan dijadikan Peserta 0 --}}
                         <div class="mb-3">
                             <label for="nip" class="form-label">NIP</label>
                             <input type="text" class="form-control" id="nip" name="nip" placeholder="NIP (jika ada)" value="{{ old('nip') }}">
                         </div>
                         
-                        {{-- Jabatan (kis_peserta_kunjungan.jabatan) --}}
+                        {{-- Jabatan (kis_peserta_kunjungan.jabatan) - Perwakilan dijadikan Peserta 0 --}}
                         <div class="mb-3">
                             <label for="jabatan" class="form-label">Jabatan</label>
                             <input type="text" class="form-control" id="jabatan" name="jabatan" placeholder="Jabatan" value="{{ old('jabatan') }}">

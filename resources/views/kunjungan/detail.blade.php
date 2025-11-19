@@ -5,6 +5,14 @@
             
             <h2 class="mb-4 fw-bold">Detail Laporan Kunjungan</h2>
             
+            {{-- Pesan Sukses/Error dari Controller --}}
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
+            
             @if (!isset($pengunjung))
                 <div class="alert alert-warning text-center">Data pengunjung tidak ditemukan.</div>
             @else
@@ -40,18 +48,35 @@
                         <div class="detail-value">{{ \Carbon\Carbon::parse($pengunjung->tgl_kunjungan)->format('Y-m-d') }}</div>
                     </div>
                     
+                    {{-- Blok untuk menampilkan status SPT dan tombol upload --}}
                     <div class="mb-3">
-                        <div class="detail-label">File SPT:</div>
-                        <div class="detail-value">
+                        <div class="detail-label fw-semibold">File Surat Perintah Tugas (SPT):</div>
+                        <div class="detail-value mt-2">
                             @if ($pengunjung->dokumen && $pengunjung->dokumen->file_spt)
+                                {{-- KONDISI 1: File Sudah Ada --}}
                                 <a href="{{ Storage::url($pengunjung->dokumen->file_spt) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-file-earmark-pdf-fill me-1"></i> Lihat SPT
                                 </a>
+                                
+                                {{-- Tambahkan Opsi Ganti File (Opsional, gunakan modal yang sama) --}}
+                                <button type="button" class="btn btn-sm btn-outline-warning ms-2" 
+                                        data-bs-toggle="modal" data-bs-target="#uploadSptModal">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Ganti File
+                                </button>
+
                             @else
-                                <span class="text-muted">Tidak ada file SPT</span>
+                                {{-- KONDISI 2: File Belum Ada --}}
+                                <span class="text-muted me-3">Tidak ada file SPT yang terlampir.</span>
+                                
+                                {{-- Tombol untuk memicu Modal Upload --}}
+                                <button type="button" class="btn btn-sm btn-genz" 
+                                        data-bs-toggle="modal" data-bs-target="#uploadSptModal">
+                                    <i class="bi bi-cloud-arrow-up me-1"></i> Lampirkan File SPT
+                                </button>
                             @endif
                         </div>
                     </div>
+                    {{-- Modal di pindahkan ke bagian bawah code ini agar lebih rapi --}}
                 </div>
                 
                 {{-- ==================== DATA PERWAKILAN ==================== --}}
@@ -63,10 +88,13 @@
                         <div class="detail-value">{{ $pengunjung->nama_perwakilan ?? '-' }}</div>
                     </div>
                     
-                    <div class="mb-3">
-                        <div class="detail-label">NIP:</div>
-                        <div class="detail-value">{{ $perwakilanPeserta->nip ?? '-' }}</div>
-                    </div>
+                    {{-- PERMINTAAN 2: Hilangkan NIP jika status 'selesai' --}}
+                    @if ($pengunjung->status !== 'selesai')
+                        <div class="mb-3">
+                            <div class="detail-label">NIP:</div>
+                            <div class="detail-value">{{ $perwakilanPeserta->nip ?? '-' }}</div>
+                        </div>
+                    @endif
                     
                     <div class="mb-3">
                         <div class="detail-label">Jabatan:</div>
@@ -92,22 +120,44 @@
                 <div class="col-md-4 text-center border-end">
                     <h4 class="section-title mt-0">QR Code (untuk absen)</h4>
 
-                    {{-- ✅ Tampilkan QR Code dari database --}}
-                    <div class="qr-code-area mb-4">
-                        @if ($pengunjung->qrCode && $pengunjung->qrCode->qr_code)
-                            <img src="{{ asset($pengunjung->qrCode->qr_code) }}" 
-                                alt="QR Code Kunjungan"
-                                width="200"
-                                height="200"
-                                class="border rounded shadow-sm">
-                            <p class="mt-2 text-muted small">
-                                Berlaku hingga: 
-                                {{ \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d M Y H:i') }}
-                            </p>
-                        @else
-                            <div class="alert alert-warning py-2">QR Code belum dibuat.</div>
-                        @endif
-                    </div>
+                    {{-- PERMINTAAN 1: Hilangkan QR Code jika status 'selesai' --}}
+                    @if ($pengunjung->status === 'selesai')
+                        <div class="alert alert-secondary mt-3">
+                            <i class="bi bi-check-circle-fill"></i> Kunjungan telah **Selesai**.
+                        </div>
+                    @else
+                        {{-- Tampilkan QR Code dari database --}}
+                        <div class="qr-code-area mb-3">
+                            @if ($pengunjung->qrCode && $pengunjung->qrCode->qr_code)
+                                
+                                {{-- 1. Tampilkan Gambar QR Code --}}
+                                <img src="{{ asset($pengunjung->qrCode->qr_code) }}" 
+                                    alt="QR Code Kunjungan"
+                                    width="200"
+                                    height="200"
+                                    class="border rounded shadow-sm">
+                                
+                                {{-- 2. Tampilkan Detail QR --}}
+                                <p class="mt-2 text-muted small">
+                                    **QR Berisi Link Input Peserta Rombongan**
+                                    <br>Berlaku hingga: 
+                                    <span class="fw-semibold">{{ \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d M Y H:i') }}</span>
+                                </p>
+
+                                {{-- 3. Tombol/Link Input Peserta --}}
+                                <a href="{{ route('pengunjung.scan', $pengunjung->uid) }}" 
+                                target="_blank" 
+                                class="btn btn-sm btn-outline-genz mt-2">
+                                    <i class="bi bi-link-45deg"></i> Input Peserta via Link
+                                </a>
+                                
+                            @else
+                                <div class="alert alert-warning py-2">
+                                    QR Code belum dibuat. silahkan hubungi admin untuk pembuatan QR Code.
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
                 
                 <div class="col-md-8">
@@ -126,10 +176,18 @@
                             </thead>
                             <tbody>
                                 @forelse ($pengunjung->peserta as $index => $peserta)
+                                @php
+                                    // PERMINTAAN 3: Masking NIP jika status 'selesai'
+                                    $tampil_nip = $peserta->nip ?? '-';
+                                    if ($pengunjung->status === 'selesai') {
+                                        // Mengganti semua karakter dengan bintang jika sudah selesai
+                                        $tampil_nip = $peserta->nip ? str_repeat('*', strlen($peserta->nip)) : '-';
+                                    }
+                                @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $peserta->nama }}</td>
-                                    <td>{{ $peserta->nip ?? '-' }}</td>
+                                    <td>{{ $tampil_nip }}</td> {{-- Gunakan variabel yang sudah diolah --}}
                                     <td>{{ $peserta->jabatan ?? '-' }}</td>
                                 </tr>
                                 @empty
@@ -148,6 +206,44 @@
             </div>
             
             @endif
+        </div>
+    </div>
+    
+    {{-- MODAL UPLOAD SPT (Ditempatkan di luar container utama) --}}
+    <div class="modal fade" id="uploadSptModal" tabindex="-1" aria-labelledby="uploadSptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="uploadSptModalLabel">
+                        <i class="bi bi-file-earmark-arrow-up text-genz"></i> Unggah Dokumen SPT
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <form action="{{ route('pengunjung.upload.spt', $pengunjung->uid) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    
+                    <div class="modal-body">
+                        <div class="alert alert-info small" role="alert">
+                            File wajib berformat **PDF** dan ukuran maksimum **2MB**.
+                        </div>
+                        
+                        <label for="file_spt_upload" class="form-label fw-semibold">Pilih File Surat Perintah Tugas (SPT)</label>
+                        <input class="form-control" type="file" id="file_spt_upload" name="file_spt" accept="application/pdf" required>
+
+                        @error('file_spt')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-genz">
+                            <i class="bi bi-upload me-1"></i> Unggah & Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </x-layout>
