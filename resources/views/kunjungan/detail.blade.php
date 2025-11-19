@@ -18,7 +18,10 @@
             @else
             
             <div class="row">
-                
+                @php
+                    // Ambil data perwakilan dari koleksi peserta
+                    $perwakilanPeserta = $pengunjung->peserta->where('is_perwakilan', true)->first();
+                @endphp
                 {{-- ==================== DATA INSTANSI ==================== --}}
                 <div class="col-md-6 border-end pe-md-5">
                     <h4 class="section-title">Data Instansi</h4>
@@ -176,23 +179,22 @@
                             </thead>
                             <tbody>
                                 @forelse ($pengunjung->peserta as $index => $peserta)
-                                @php
-                                    // PERMINTAAN 3: Masking NIP jika status 'selesai'
-                                    $tampil_nip = $peserta->nip ?? '-';
-                                    if ($pengunjung->status === 'selesai') {
-                                        // Mengganti semua karakter dengan bintang jika sudah selesai
-                                        $tampil_nip = $peserta->nip ? str_repeat('*', strlen($peserta->nip)) : '-';
-                                    }
-                                @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $peserta->nama }}</td>
-                                    <td>{{ $tampil_nip }}</td> {{-- Gunakan variabel yang sudah diolah --}}
+                                    <td>
+                                        {{ $peserta->nama }}
+                                        {{-- Tambahkan Badge untuk Perwakilan --}}
+                                        @if (isset($peserta->is_perwakilan) && $peserta->is_perwakilan)
+                                            <span class="badge bg-primary-subtle text-primary ms-1">Perwakilan</span>
+                                        @endif
+                                    </td>
+                                    {{-- NIP akan otomatis tampil '-' jika $peserta->nip adalah NULL (sebelum diisi via QR) --}}
+                                    <td>{{ $tampil_nip }}</td> 
                                     <td>{{ $peserta->jabatan ?? '-' }}</td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted">Tidak ada peserta rombongan yang terdaftar.</td>
+                                    <td colspan="5" class="text-center text-muted">Tidak ada peserta rombongan yang terdaftar.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
