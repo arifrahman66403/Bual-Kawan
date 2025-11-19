@@ -1,4 +1,3 @@
-
 <div class="bottom-nav d-lg-none">
     <x-nav-link-admin 
         href="{{ route('admin.dashboard') }}" 
@@ -25,7 +24,23 @@
         :active="request()->routeIs('admin.riwayat')" />
 
     <x-nav-link-admin 
-        href="{{ route('login') }}" 
+        href="{{ route('logout') }}" 
+        class="bottom-nav-link"
+        icon="bi-images" 
+        label="Gallery" 
+        id="mobile-nav-gallery"
+        :active="request()->routeIs('admin.gallery')" />
+
+    <x-nav-link-admin 
+        href="#" 
+        class="bottom-nav-link"
+        icon="bi-film" 
+        label="Slider Foto" 
+        id="mobile-nav-slider"
+        :active="request()->routeIs('admin.slider')" />
+
+    <x-nav-link-admin 
+        href="#" 
         class="bottom-nav-link"
         icon="bi-people" 
         label="Admin" 

@@ -2,7 +2,7 @@
     <div class="col-12 mb-4 desktop-nav-icons">
         <div class="d-flex flex-wrap justify-content-center">
             <x-nav-link-admin
-                href="{{ route('login') }}" 
+                href="{{ route('admin.dashboard') }}" 
                 class="nav-link-icon"
                 icon="bi-speedometer2" 
                 label="Dashboard" 
@@ -26,7 +26,23 @@
                 :active="request()->routeIs('admin.riwayat')" />
 
             <x-nav-link-admin 
-                href="{{ route('login') }}" 
+                href="{{ route('logout') }}" 
+                class="nav-link-icon"
+                icon="bi-images" 
+                label="Gallery" 
+                id="nav-gallery"
+                :active="request()->routeIs('admin.gallery')" />
+
+            <x-nav-link-admin 
+                href="#" 
+                class="nav-link-icon"
+                icon="bi-film" 
+                label="Slider Foto" 
+                id="nav-slider"
+                :active="request()->routeIs('admin.slider')" />
+
+            <x-nav-link-admin 
+                href="#" 
                 class="nav-link-icon"
                 icon="bi-people" 
                 label="Admin" 

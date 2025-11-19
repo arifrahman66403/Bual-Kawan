@@ -137,7 +137,6 @@
                                 <select name="status" class="form-select" required>
                                     <option value="pengajuan" {{ $pengunjung->status === 'pengajuan' ? 'selected' : '' }}>Pengajuan</option>
                                     <option value="disetujui" {{ $pengunjung->status === 'disetujui' ? 'selected' : '' }}>Disetujui</option>
-                                    <option value="ditolak" {{ $pengunjung->status === 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                                     <option value="selesai" {{ $pengunjung->status === 'selesai' ? 'selected' : '' }}>Selesai</option>
                                 </select>
                             </div>

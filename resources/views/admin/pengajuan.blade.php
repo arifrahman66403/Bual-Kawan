@@ -84,7 +84,7 @@
           <!-- Tombol Detail (boleh tetap) -->
           <a href="{{ route('admin.pengajuan.show', $p->uid) }}" class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></a>
 
-            @if($p->status == 'disetujui')
+            @if($p->status == 'disetujui' || $p->status == 'kunjungan')
             <!-- Jika sudah disetujui: tampilkan tombol Selesai -->
             <button type="button"
               class="btn btn-sm btn-primary ms-1 btn-action"
@@ -107,7 +107,7 @@
               <i class="bi bi-check2-circle"></i> Terima
             </button>
 
-            <!-- Tombol Tolak -->
+            <!-- Tombol Tolak
             <button type="button"
               class="btn btn-sm btn-danger ms-1 btn-action"
               data-status="ditolak"
@@ -115,7 +115,7 @@
               data-icon="bi-x-circle text-danger"
               data-message="Apakah kamu yakin ingin MENOLAK pengajuan ini?">
               <i class="bi bi-x-circle"></i> Tolak
-            </button>
+            </button -->
             @endif
               </td>
             </tr>
@@ -195,7 +195,7 @@
         modalStatusValue.value = status;
 
         // gunakan helper url() agar sesuai dengan base URL Laravel (route admin)
-        modalForm.action = `{{ url('admin/pengajuan') }}/${id}/status`;
+        modalForm.action = `{{ url('pengajuan') }}/${id}/status`;
 
         bsModal.show();
       });

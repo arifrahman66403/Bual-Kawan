@@ -19,7 +19,7 @@ class GuestController extends Controller
     {
         // Menggunakan view namespace 'kunjungan' sesuai preferensi Anda
         $kunjunganAktif = KisPengunjung::whereIn('status', ['pengajuan', 'disetujui', 'kunjungan', 'selesai'])
-                                       ->latest('tgl_kunjungan')
+                                       ->latest()
                                        ->paginate(5);
                                        
         return view('kunjungan.kunjungan_aktif', [
@@ -43,7 +43,7 @@ class GuestController extends Controller
 
     public function storeKunjungan(Request $request)
     {
-        // 1. Validasi Data (DITAMBAH: Validasi array Email)
+        // 1. Validasi Data
         $request->validate([
             'kode_daerah' => 'required|string|max:255',
             'nama_instansi' => 'required|string|max:255',
@@ -53,26 +53,26 @@ class GuestController extends Controller
             'nama_perwakilan' => 'required|string|max:255',
             'email_perwakilan' => 'required|email|max:255',
             'wa_perwakilan' => 'required|string|max:20',
-            'file_spt' => 'nullable|file|mimes:pdf|max:2048', 
-            'jabatan' => 'required|string|max:255', 
-            'nip' => 'nullable|string|max:255',     
+            'file_spt' => 'nullable|file|mimes:pdf|max:2048',
+            'jabatan_perwakilan' => 'required|string|max:255',
+            'nip_perwakilan' => 'nullable|string|max:255',
 
-            // --- VALIDASI TAMBAHAN UNTUK PESERTA DINAMIS ---
+            // peserta dinamis
             'peserta_nama.*' => 'nullable|string|max:255',
             'peserta_jabatan.*' => 'nullable|string|max:255',
             'peserta_kontak.*' => 'nullable|string|max:20',
-            'peserta_email.*' => 'nullable|email|max:255', // <-- VALIDASI EMAIL BARU
-            'peserta_ttd.*' => 'nullable|file|mimes:jpg,png|max:1024', 
+            'peserta_email.*' => 'nullable|email|max:255',
+            'peserta_ttd.*' => 'nullable|file|mimes:jpg,png|max:1024',
         ]);
-        
+
         DB::beginTransaction();
-        $spt_path = null; 
+        $spt_path = null;
         $ttd_files = $request->file('peserta_ttd');
-        
+
         try {
-            // 2. Simpan Data KisPengunjung
+            // 2. Simpan Data KisPengunjung (simpan data perwakilan di table pengunjung)
             $pengunjung = KisPengunjung::create([
-                'uid' => Str::uuid(), 
+                'uid' => Str::uuid(),
                 'kode_daerah' => $request->kode_daerah,
                 'nama_instansi' => $request->nama_instansi,
                 'satuan_kerja' => $request->satuan_kerja,
@@ -81,90 +81,87 @@ class GuestController extends Controller
                 'nama_perwakilan' => $request->nama_perwakilan,
                 'email_perwakilan' => $request->email_perwakilan,
                 'wa_perwakilan' => $request->wa_perwakilan,
-                'status' => 'pengajuan', 
-                'kode_qr' => 'QR-' . Str::random(8), 
+                'jabatan' => $request->jabatan_perwakilan,        // simpan jabatan perwakilan ke kolom jabatan
+                'nip' => $request->nip_perwakilan,                // simpan nip perwakilan ke kolom nip
+                'status' => 'pengajuan',
+                'kode_qr' => 'QR-' . Str::random(8),
                 'created_by' => null,
             ]);
             $pengunjungUid = $pengunjung->uid;
 
-            // 3. Simpan File SPT (KisDokumen) - LOGIKA SAMA
+            // 3. Simpan File SPT
             if ($request->hasFile('file_spt')) {
                 $spt_file = $request->file('file_spt');
                 $spt_path = Storage::disk('public')->putFile('spt', $spt_file);
 
                 KisDokumen::create([
-                    'uid' => Str::uuid(), 
-                    'pengunjung_id' => $pengunjungUid, 
-                    'file_spt' => $spt_path, 
-                    'created_by' => null, 
+                    'uid' => Str::uuid(),
+                    'pengunjung_id' => $pengunjungUid,
+                    'file_spt' => $spt_path,
+                    'created_by' => null,
                 ]);
             }
-            
-            // --- LOGIKA PESERTA: Kumpulkan semua peserta ---
+
+            // 4. Siapkan peserta: pertama adalah perwakilan (jelas terpisah)
             $peserta_data_massal = [];
 
-            // 4a. Tambahkan Perwakilan Utama (Peserta ke-1)
-            // Menggunakan data Perwakilan dari field utama form
             $peserta_data_massal[] = [
                 'uid' => Str::uuid(),
-                'pengunjung_id' => $pengunjungUid, 
+                'pengunjung_id' => $pengunjungUid,
                 'nama' => $request->nama_perwakilan,
-                'nip' => $request->nip,
-                'jabatan' => $request->jabatan,
-                'email' => $request->email_perwakilan, // <-- Mengambil Email Perwakilan
-                'wa' => $request->wa_perwakilan,
-                'file_ttd' => null, 
+                'nip' => $request->nip_perwakilan ?? null,
+                'jabatan' => $request->jabatan_perwakilan ?? null,
+                'email' => $request->email_perwakilan ?? null,
+                'wa' => $request->wa_perwakilan ?? null,
+                'file_ttd' => null,
                 'created_by' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
 
-            // 4b. Tambahkan Peserta Rombongan Tambahan (Looping Array)
+            // 5. Tambahkan peserta rombongan tambahan dari array tanpa menimpa perwakilan
             if ($request->has('peserta_nama') && is_array($request->peserta_nama)) {
                 $nama_array = $request->peserta_nama;
-                $jabatan_array = $request->peserta_jabatan;
-                $kontak_array = $request->peserta_kontak;
-                $email_array = $request->peserta_email; // <-- AMBIL ARRAY EMAIL BARU
-                
-                $count = count($nama_array);
+                $jabatan_array = $request->peserta_jabatan ?? [];
+                $kontak_array = $request->peserta_kontak ?? [];
+                $email_array = $request->peserta_email ?? [];
 
+                $count = count($nama_array);
                 for ($i = 0; $i < $count; $i++) {
                     $nama = trim($nama_array[$i] ?? '');
-                    
-                    if (!empty($nama)) {
-                        $ttd_path = null;
-                        
-                        if (isset($ttd_files[$i]) && $ttd_files[$i] instanceof \Illuminate\Http\UploadedFile) {
-                            $ttd_path = Storage::disk('public')->putFile('ttd_peserta', $ttd_files[$i]); 
-                        }
-                        
-                        $peserta_data_massal[] = [
-                            'uid' => Str::uuid(),
-                            'pengunjung_id' => $pengunjungUid, 
-                            'nama' => $nama,
-                            'nip' => $kontak_array[$i] ?? null, 
-                            'jabatan' => $jabatan_array[$i] ?? null,
-                            'email' => $email_array[$i] ?? null, // <-- SIMPAN EMAIL ROMBONGAN
-                            'wa' => $kontak_array[$i] ?? null, 
-                            'file_ttd' => $ttd_path, 
-                            'created_by' => null,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
+                    if (empty($nama)) continue;
+
+                    $ttd_path = null;
+                    if (isset($ttd_files[$i]) && $ttd_files[$i] instanceof \Illuminate\Http\UploadedFile) {
+                        $ttd_path = Storage::disk('public')->putFile('ttd_peserta', $ttd_files[$i]);
                     }
+
+                    $peserta_data_massal[] = [
+                        'uid' => Str::uuid(),
+                        'pengunjung_id' => $pengunjungUid,
+                        'nama' => $nama,
+                        'nip' => null,                                    // jika form tidak menyediakan NIP untuk peserta, simpan null
+                        'jabatan' => $jabatan_array[$i] ?? null,
+                        'email' => $email_array[$i] ?? null,
+                        'wa' => $kontak_array[$i] ?? null,
+                        'file_ttd' => $ttd_path,
+                        'created_by' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
             }
-            
-            // 5. Insert Massal Peserta Kunjungan 
+
+            // 6. Insert massal peserta
             if (!empty($peserta_data_massal)) {
                 KisPesertaKunjungan::insert($peserta_data_massal);
             }
 
-            DB::commit(); 
+            DB::commit();
             return redirect()->route('kunjungan.index')->with('success', 'Pengajuan kunjungan berhasil dikirim!');
 
         } catch (\Exception $e) {
-            DB::rollBack(); 
+            DB::rollBack();
             if (isset($spt_path)) {
                 Storage::disk('public')->delete($spt_path);
             }

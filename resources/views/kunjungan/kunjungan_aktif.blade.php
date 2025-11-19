@@ -32,8 +32,8 @@
                         <thead class="card-header-custom">
                             <tr>
                                 <th scope="col">No</th>
-                                <th scope="col">Nama (Perwakilan)</th>
                                 <th scope="col">Instansi</th>
+                                <th scope="col">Satuan Kerja</th>
                                 <th scope="col">Tujuan Kunjungan</th>
                                 <th scope="col">Tanggal</th>
                                 <th scope="col">Aksi</th>
@@ -43,10 +43,10 @@
                             @forelse($kunjunganAktif as $index => $kunjungan)
                             <tr>
                                 <td>{{ $kunjunganAktif->firstItem() + $index }}</td>
-                                <td>{{ $kunjungan->nama_perwakilan }}</td>
                                 <td>{{ $kunjungan->nama_instansi }}</td>
-                                <td>{{ $kunjungan->satuan_kerja ?? 'Koordinasi' }}</td> 
-                                <td>{{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('Y-m-d') }}</td>
+                                <td>{{ $kunjungan->satuan_kerja }}</td>
+                                <td>{{ $kunjungan->tujuan ?? 'Koordinasi' }}</td> 
+                                <td>{{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('d-m-Y') }}</td>
                                 <td>
                                     <a href="{{ route('kunjungan.detail', $kunjungan->uid) }}" class="btn btn-sm btn-outline-primary">Detail</a>
                                 </td>

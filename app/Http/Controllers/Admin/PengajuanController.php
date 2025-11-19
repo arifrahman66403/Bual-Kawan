@@ -11,8 +11,9 @@ use App\Models\KisLog;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PengunjungExport;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
@@ -50,72 +51,96 @@ class PengajuanController extends Controller
     public function updateStatus(Request $request, $uid)
     {
         $request->validate([
-            'status' => 'required|in:pengajuan,disetujui,ditolak,selesai'
+            'status' => 'required|in:disetujui,ditolak,selesai',
         ]);
+
+        $newStatus = $request->status;
 
         try {
             $pengunjung = KisPengunjung::where('uid', $uid)->firstOrFail();
-            $newStatus = $request->status;
 
-            // update status pengunjung
+            // Update status
             $pengunjung->status = $newStatus;
             $pengunjung->save();
 
-            // create tracking entry
-            KisTracking::create([
-                'pengajuan_id' => $pengunjung->uid,
-                'catatan' => match($newStatus) {
-                    'disetujui' => 'Pengajuan disetujui oleh admin.',
-                    'ditolak' => 'Pengajuan ditolak oleh admin.',
-                    'selesai' => 'Pengajuan ditandai selesai oleh admin.',
-                    default => 'Status diperbarui oleh admin.',
-                },
-                'status' => $newStatus,
-                'created_by' => Auth::id(),
-            ]);
-
-            // Jika disetujui -> generate/aktifkan QR Code (jika belum ada)
-            if ($newStatus === 'disetujui') {
-                $existing = KisQrCode::where('pengunjung_id', $pengunjung->uid)->first();
-                if (! $existing) {
-                    // generate QR image (payload = link ke form peserta)
-                    $payload = url("pengunjung/scan/{$pengunjung->uid}"); // sesuaikan route target
-                    $qr = QrCode::create($payload)
-                        ->setEncoding(new Encoding('UTF-8'))
-                        ->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
-                    $writer = new PngWriter();
-                    $result = $writer->write($qr);
-
-                    $filename = 'qrcodes/' . $pengunjung->uid . '.png';
-                    Storage::disk('public')->put($filename, $result->getString());
-                    $publicPath = 'storage/' . $filename;
-
-                    KisQrCode::create([
-                        'uid' => (string) Str::uuid(),
-                        'pengunjung_id' => $pengunjung->uid,
-                        'qr_code' => $publicPath,
-                        'berlaku_mulai' => now(),
-                        'berlaku_sampai' => null,
-                    ]);
-                } else {
-                    // jika sudah ada, aktifkan/refresh berlaku_mulai
-                    $existing->berlaku_mulai = now();
-                    $existing->berlaku_sampai = null;
-                    $existing->save();
-                }
-            }
-
-            // Jika selesai -> expire QR
+            // Jika status jadi selesai, expire / invalidasi QR
             if ($newStatus === 'selesai') {
                 KisQrCode::where('pengunjung_id', $pengunjung->uid)
                     ->update(['berlaku_sampai' => now()]);
             }
 
-            return redirect()->route('admin.pengajuan')->with('success', 'Status pengajuan berhasil diubah.');
+            // Tracking
+            KisTracking::create([
+                'pengajuan_id' => $pengunjung->uid,
+                'status' => $newStatus,
+                'catatan' => $newStatus == 'disetujui'
+                    ? "Pengajuan disetujui oleh Admin."
+                    : "Pengajuan ditolak oleh Admin.",
+                'created_by' => Auth::id() ?? 1,
+            ]);
+
+            // === BUAT QR CODE (pakai GD backend, TANPA imagick) === 
+            if ($newStatus === 'disetujui') {
+                
+                // 1. Definisikan URL yang akan di-encode ke QR Code
+                // URL ini akan mengarahkan ke halaman publik untuk input peserta
+                // Asumsikan route 'pengunjung.scan' sudah didefinisikan (route('pengunjung.scan', $uid))
+                $scanUrl = route('pengunjung.scan', $pengunjung->uid); // <-- PERBAIKAN PENTING
+                
+                $fileName = 'qr_' . $pengunjung->uid . '.png';
+                $filePath = storage_path('app/public/qr_codes/' . $fileName);
+
+                // ✅ Versi 6.x pakai constructor baru (tanpa setter)
+                $qrCode = new QrCode(
+                    // Ganti $qrString dengan $scanUrl
+                    data: $scanUrl, // <-- Sekarang QR Code berisi URL publik
+                    encoding: new Encoding('UTF-8'),
+                    errorCorrectionLevel: ErrorCorrectionLevel::High,
+                    size: 250,
+                    margin: 10,
+                    foregroundColor: new Color(0, 0, 0),
+                    backgroundColor: new Color(255, 255, 255)
+                );
+
+                $writer = new PngWriter();
+                $result = $writer->write($qrCode);
+
+                // Simpan ke file
+                // Pastikan folder 'storage/app/public/qr_codes' sudah ada
+                $result->saveToFile($filePath);
+
+                // Simpan metadata ke database
+                KisQrCode::updateOrCreate(
+                    ['pengunjung_id' => $pengunjung->uid],
+                    [
+                        // Menyimpan path file gambar QR
+                        'qr_code' => 'storage/qr_codes/' . $fileName, 
+                        // Opsional: Jika tabel KisQrCode memiliki kolom 'content'/'url',
+                        // Anda bisa menyimpannya di sini untuk debugging: 'qr_content' => $scanUrl,
+                        'berlaku_mulai' => now(),
+                        'berlaku_sampai' => now()->addDay(),
+                        'created_by' => Auth::id() ?? 1,
+                    ]
+                );
+            }
+
+            // Log Aktivitas
+            KisLog::create([
+                'user_id' => Auth::id() ?? 1,
+                'pengunjung_id' => $pengunjung->uid,
+                'aksi' => 'Mengubah status pengunjung (' . $pengunjung->nama_instansi . ') menjadi ' . $newStatus,
+                'created_at' => now(),
+            ]);
+
+            $message = ($newStatus == 'disetujui')
+                ? '✅ Pengajuan berhasil **DISETUJUI** dan QR Code telah dibuat.'
+                : '❌ Pengajuan berhasil **DITOLAK**.';
+
+            return redirect()->route('admin.pengajuan')->with('success', $message);
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('admin.pengajuan')->with('error', 'Pengajuan tidak ditemukan.');
+            return redirect()->route('admin.pengajuan')->with('error', 'Data pengajuan tidak ditemukan.');
         } catch (\Exception $e) {
-            return redirect()->route('admin.pengajuan')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->route('admin.pengajuan')->with('error', 'Terjadi kesalahan sistem saat memproses verifikasi: ' . $e->getMessage());
         }
     }
 

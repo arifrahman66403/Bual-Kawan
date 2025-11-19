@@ -4,32 +4,32 @@
         
         <div class="row g-3 mb-4">
             <div class="col-lg-3 col-6">
-                <div class="card p-3 stat-card-bg stat-card-1">
-                    <i class="bi bi-calendar-check fs-4 mb-2"></i>
-                    <div class="big-number">{{ $total_tamu_hari_ini }}</div>
-                    <div class="text-muted-genz">Total Tamu Hari Ini</div>
-                </div>
+            <div class="card p-3 stat-card-bg stat-card-1">
+                <i class="bi bi-calendar-check fs-4 mb-2"></i>
+                <div class="big-number">{{ $total_tamu_hari_ini }}</div>
+                <div class="text-muted-genz">Total Tamu Hari Ini</div>
+            </div>
             </div>
             <div class="col-lg-3 col-6">
-                <div class="card p-3 stat-card-bg stat-card-2">
-                    <i class="bi bi-graph-up fs-4 mb-2"></i>
-                    <div class="big-number">+12%</div>
-                    <div class="text-muted-genz">Kenaikan Kunjungan</div>
-                </div>
+            <div class="card p-3 stat-card-bg stat-card-2">
+                <i class="bi bi-calendar-month fs-4 mb-2"></i>
+                <div class="big-number">{{ $total_tamu_bulan_ini }}</div>
+                <div class="text-muted-genz">Total Tamu Bulan Ini</div>
+            </div>
             </div>
             <div class="col-lg-3 col-6">
-                <div class="card p-3 stat-card-bg stat-card-3">
-                    <i class="bi bi-hourglass-split fs-4 mb-2"></i>
-                    <div class="big-number">15 Min</div>
-                    <div class="text-muted-genz">Rata-rata Durasi</div>
-                </div>
+            <div class="card p-3 stat-card-bg stat-card-3">
+                <i class="bi bi-calendar-check fs-4 mb-2"></i>
+                <div class="big-number">{{ $total_tamu_tahun_ini }}</div>
+                <div class="text-muted-genz">Total Tamu Tahun Ini</div>
+            </div>
             </div>
             <div class="col-lg-3 col-6">
-                <div class="card p-3 stat-card-bg stat-card-4">
-                    <i class="bi bi-people fs-4 mb-2"></i>
-                    <div class="big-number">{{ $total_tamu_semua }}</div>
-                    <div class="text-muted-genz">Total Tamu Sepanjang Masa</div>
-                </div>
+            <div class="card p-3 stat-card-bg stat-card-4">
+                <i class="bi bi-people fs-4 mb-2"></i>
+                <div class="big-number">{{ $total_tamu_semua }}</div>
+                <div class="text-muted-genz">Total Tamu Sepanjang Masa</div>
+            </div>
             </div>
         </div>
 

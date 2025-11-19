@@ -189,7 +189,7 @@
                                         @endif
                                     </td>
                                     {{-- NIP akan otomatis tampil '-' jika $peserta->nip adalah NULL (sebelum diisi via QR) --}}
-                                    <td>{{ $tampil_nip }}</td> 
+                                    <td>{{ $peserta->nip }}</td> 
                                     <td>{{ $peserta->jabatan ?? '-' }}</td>
                                 </tr>
                                 @empty

@@ -78,14 +78,14 @@
                         
                         {{-- NIP (kis_peserta_kunjungan.nip) - Perwakilan dijadikan Peserta 0 --}}
                         <div class="mb-3">
-                            <label for="nip" class="form-label">NIP</label>
-                            <input type="text" class="form-control" id="nip" name="nip" placeholder="NIP (jika ada)" value="{{ old('nip') }}">
+                            <label for="nip_perwakilan" class="form-label">NIP</label>
+                            <input type="text" class="form-control" id="nip_perwakilan" name="nip_perwakilan" placeholder="NIP (jika ada)" value="{{ old('nip_perwakilan') }}">
                         </div>
                         
                         {{-- Jabatan (kis_peserta_kunjungan.jabatan) - Perwakilan dijadikan Peserta 0 --}}
                         <div class="mb-3">
-                            <label for="jabatan" class="form-label">Jabatan</label>
-                            <input type="text" class="form-control" id="jabatan" name="jabatan" placeholder="Jabatan" value="{{ old('jabatan') }}">
+                            <label for="jabatan_perwakilan" class="form-label">Jabatan</label>
+                            <input type="text" class="form-control" id="jabatan_perwakilan" name="jabatan_perwakilan" placeholder="Jabatan" value="{{ old('jabatan_perwakilan') }}">
                         </div>
                         
                         {{-- Email (kis_pengunjung.email_perwakilan) --}}

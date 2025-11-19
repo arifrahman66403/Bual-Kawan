@@ -13,10 +13,20 @@ class AdminController extends Controller
     {
         // Hitung statistik
         $tanggal_hari_ini = date('Y-m-d');
+        $bulan_tahun_ini = date('Y-m');
+        $tahun_ini = date('Y');
         
         $total_tamu_hari_ini = KisPengunjung::whereDate('tgl_kunjungan', $tanggal_hari_ini)
-                                            ->where('status', 'disetujui')
+                                            ->where('status', 'disetujui', 'kunjungan', 'selesai')
                                             ->count();
+        
+        $total_tamu_bulan_ini = KisPengunjung::whereRaw("DATE_FORMAT(tgl_kunjungan, '%Y-%m') = ?", [$bulan_tahun_ini])
+                                             ->where('status', 'disetujui', 'kunjungan', 'selesai')
+                                             ->count();
+        
+        $total_tamu_tahun_ini = KisPengunjung::whereRaw("YEAR(tgl_kunjungan) = ?", [$tahun_ini])
+                                             ->where('status', 'disetujui', 'kunjungan', 'selesai')
+                                             ->count();
         
         $total_tamu_semua = KisPengunjung::count();
         
@@ -27,7 +37,7 @@ class AdminController extends Controller
                                    ->groupBy('tanggal')
                                    ->get();
         
-        return view('admin.dashboard', compact('total_tamu_hari_ini', 'total_tamu_semua', 'chart_data'));
+        return view('admin.dashboard', compact('total_tamu_hari_ini', 'total_tamu_bulan_ini', 'total_tamu_tahun_ini', 'total_tamu_semua', 'chart_data'));
     }
 
     public function pendingList()
