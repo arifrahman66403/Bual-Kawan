@@ -103,20 +103,6 @@
                     </div>
                 </div>
                 
-                {{-- ==================== BAGIAN BARU: PESERTA ROMBONGAN ==================== --}}
-                <hr class="mt-5 mb-4">
-                <h5 class="mb-3 fw-bold">Daftar Peserta Rombongan <small class="text-muted fw-normal">(Selain Perwakilan di atas)</small></h5>
-                
-                <div class="mb-3">
-                    <button type="button" class="btn btn-sm btn-primary" id="add-peserta-btn">
-                        <i class="bi bi-plus-circle me-1"></i> Tambah Peserta Rombongan
-                    </button>
-                </div>
-
-                {{-- Container tempat baris peserta akan ditambahkan --}}
-                <div id="peserta-container">
-                    </div>
-                
                 {{-- Tombol Aksi --}}
                 <hr class="mt-4 mb-3">
                 <div class="d-flex justify-content-end gap-2">
@@ -130,69 +116,3 @@
         </div>
     </div>
 </x-layout>
-
-{{-- ==================== TEMPLATE ROW PESERTA (Hidden HTML) ==================== --}}
-{{-- Template ini disembunyikan dan akan di-clone oleh JavaScript --}}
-<template id="peserta-row-template">
-    <div class="row g-3 mb-3 peserta-item border-start border-3 ps-3 py-2 bg-light bg-opacity-50">
-        
-        {{-- Nama Peserta (col-md-2) --}}
-        <div class="col-md-2">
-            <label class="form-label small mb-1">Nama Peserta</label>
-            <input type="text" class="form-control form-control-sm" name="peserta_nama[]" placeholder="Nama lengkap" required>
-        </div>
-        
-        {{-- Jabatan (col-md-2) --}}
-        <div class="col-md-2">
-            <label class="form-label small mb-1">Jabatan</label>
-            <input type="text" class="form-control form-control-sm" name="peserta_jabatan[]" placeholder="Contoh: Staf/Guru" required>
-        </div>
-        
-        {{-- Kontak (col-md-2) --}}
-        <div class="col-md-2">
-            <label class="form-label small mb-1">No. WA/NIP (Opsional)</label>
-            <input type="text" class="form-control form-control-sm" name="peserta_kontak[]" placeholder="08xx atau NIP">
-        </div>
-        
-        {{-- EMAIL BARU (col-md-3) --}}
-        <div class="col-md-3">
-            <label class="form-label small mb-1">Email (Opsional)</label>
-            <input type="email" class="form-control form-control-sm" name="peserta_email[]" placeholder="email@contoh.com">
-        </div>
-        
-        {{-- FILE TTD dan Hapus (col-md-3) --}}
-        <div class="col-md-3"> 
-            <label class="form-label small mb-1">File TTD (JPG/PNG)</label>
-            <input type="file" class="form-control form-control-sm mb-2" name="peserta_ttd[]" accept="image/jpeg,image/png">
-            <button type="button" class="btn btn-sm btn-danger w-100 remove-peserta-btn">Hapus</button>
-        </div>
-    </div>
-</template>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const addButton = document.getElementById('add-peserta-btn');
-        const container = document.getElementById('peserta-container');
-        const template = document.getElementById('peserta-row-template');
-
-        // Fungsi untuk menambahkan baris peserta
-        function addPesertaRow() {
-            // Kloning template dari DOM
-            const clone = template.content.cloneNode(true);
-            const newRow = clone.querySelector('.peserta-item');
-            
-            // Tambahkan event listener untuk tombol hapus pada baris baru
-            newRow.querySelector('.remove-peserta-btn').addEventListener('click', function() {
-                newRow.remove();
-            });
-            
-            // Sisipkan baris baru ke dalam container
-            container.appendChild(newRow);
-        }
-
-        // Tambahkan event listener ke tombol 'Tambah Peserta'
-        addButton.addEventListener('click', addPesertaRow);
-
-        // Opsi: Jika Anda ingin minimal ada 1 baris peserta default, aktifkan baris ini:
-        // addPesertaRow(); 
-    });
-</script>

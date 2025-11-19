@@ -5,8 +5,8 @@
         <h2>Selamat Datang di Bual Kawan</h2>
         <p>Portal interaktif untuk menjalin komunikasi masyarakat dan pemerintah Kabupaten Siak.</p>
         <div>
-            <a href="https://bualkawan.siakkab.go.id/buku-tamu.html"><i class="fas fa-pen"></i> Isi Buku Tamu</a>
-            <a href="https://bualkawan.siakkab.go.id/statistik.html"><i class="fas fa-chart-bar"></i> Lihat Statistik</a>
+            <a href="{{ route('kunjungan.index') }}"><i class="fas fa-pen"></i> Isi Buku Tamu</a>
+            <a href="{{ route('statistik') }}"><i class="fas fa-chart-bar"></i> Lihat Statistik</a>
         </div>
       </div>
     </div>
@@ -16,8 +16,8 @@
         <h2>Kemudahan Akses Informasi</h2>
         <p>Transparansi publik yang lebih dekat dengan warga Kabupaten Siak, tersedia 24 jam.</p>
         <div>
-            <a href="https://bualkawan.siakkab.go.id/buku-tamu.html"><i class="fas fa-pen"></i> Isi Buku Tamu</a>
-            <a href="https://bualkawan.siakkab.go.id/statistik.html"><i class="fas fa-chart-bar"></i> Lihat Statistik</a>
+            <a href="{{ route('kunjungan.index') }}"><i class="fas fa-pen"></i> Isi Buku Tamu</a>
+            <a href="{{ route('statistik') }}"><i class="fas fa-chart-bar"></i> Lihat Statistik</a>
         </div>
       </div>
     </div>
@@ -27,8 +27,8 @@
         <h2>Siak Maju dan Bermarwah</h2>
         <p>Mari bersama-sama membangun Kabupaten Siak melalui partisipasi dan kritik yang konstruktif.</p>
         <div>
-            <a href="https://bualkawan.siakkab.go.id/buku-tamu.html"><i class="fas fa-pen"></i> Isi Buku Tamu</a>
-            <a href="https://bualkawan.siakkab.go.id/statistik.html"><i class="fas fa-chart-bar"></i> Lihat Statistik</a>
+            <a href="{{ route('kunjungan.index') }}"><i class="fas fa-pen"></i> Isi Buku Tamu</a>
+            <a href="{{ route('statistik') }}"><i class="fas fa-chart-bar"></i> Lihat Statistik</a>
         </div>
       </div>
     </div>

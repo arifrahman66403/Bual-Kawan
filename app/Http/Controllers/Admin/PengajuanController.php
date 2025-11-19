@@ -51,7 +51,7 @@ class PengajuanController extends Controller
     public function updateStatus(Request $request, $uid)
     {
         $request->validate([
-            'status' => 'required|in:disetujui,ditolak',
+            'status' => 'required|in:disetujui,ditolak,selesai',
         ]);
 
         $newStatus = $request->status;
@@ -62,6 +62,12 @@ class PengajuanController extends Controller
             // Update status
             $pengunjung->status = $newStatus;
             $pengunjung->save();
+
+            // Jika status jadi selesai, expire / invalidasi QR
+            if ($newStatus === 'selesai') {
+                KisQrCode::where('pengunjung_id', $pengunjung->uid)
+                    ->update(['berlaku_sampai' => now()]);
+            }
 
             // Tracking
             KisTracking::create([

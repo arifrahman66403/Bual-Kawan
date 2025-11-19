@@ -25,6 +25,15 @@ class OperatorController extends Controller
                 ->with('pengunjung')
                 ->first();
 
+        // validasi masa berlaku QR
+        if ($qr) {
+            $now = Carbon::now();
+            if (($qr->berlaku_mulai && $now->lt(Carbon::parse($qr->berlaku_mulai))) ||
+                ($qr->berlaku_sampai && $now->gt(Carbon::parse($qr->berlaku_sampai)))) {
+                return back()->with('error', 'Kode QR tidak berlaku (kedaluwarsa).');
+            }
+        }
+
         if (! $qr || ! $qr->pengunjung) {
             return back()->with('error', 'Kode QR tidak valid atau tidak terdaftar.');
         }

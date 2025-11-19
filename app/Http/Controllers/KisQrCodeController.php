@@ -31,15 +31,26 @@ class KisQrCodeController extends Controller
         }
 
         // 2. CEK KADALUARSA QR CODE (PERBAIKAN UTAMA)
-        // Gunakan Carbon::parse()->isPast() untuk mengecek apakah waktu berlaku_sampai sudah lewat
-        if (Carbon::parse($pengunjung->qrCode->berlaku_sampai)->isPast()) {
-            $expired_date = Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d F Y H:i');
-            $message = "❌ Link pengisian data peserta (QR Code) telah *kadaluarsa* pada {$expired_date}. Silakan hubungi Admin untuk perpanjangan masa berlaku.";
+        $qr = $pengunjung->qrCode;
+        $now = Carbon::now();
+
+        // Jika berlaku_sampai ada, cek isPast; jika tidak ada, anggap tidak kadaluarsa
+        if (!empty($qr->berlaku_sampai) && Carbon::parse($qr->berlaku_sampai)->isPast()) {
+            $expired_date = Carbon::parse($qr->berlaku_sampai)->format('d F Y H:i');
+            $message = "❌ Link pengisian data peserta (QR Code) telah kadaluarsa pada {$expired_date}. Silakan hubungi Admin untuk perpanjangan masa berlaku.";
             
-            // Arahkan ke halaman status/error dengan pesan kadaluarsa
             return view('kunjungan.status')->with('pengunjung', $pengunjung)
-                                            ->with('message', $message)
-                                            ->with('status', 'expired'); // Anda bisa menggunakan 'status' untuk styling
+                                           ->with('message', $message)
+                                           ->with('status', 'expired');
+        }
+
+        // Jika berlaku_mulai ada, cek belum berlaku
+        if (!empty($qr->berlaku_mulai) && Carbon::parse($qr->berlaku_mulai)->isFuture()) {
+            $start_date = Carbon::parse($qr->berlaku_mulai)->format('d F Y H:i');
+            $message = "❌ QR Code belum aktif. Berlaku mulai {$start_date}.";
+            return view('kunjungan.status')->with('pengunjung', $pengunjung)
+                                           ->with('message', $message)
+                                           ->with('status', 'not_active');
         }
 
         // 3. Cek status (opsional tapi disarankan)
@@ -58,24 +69,30 @@ class KisQrCodeController extends Controller
      */
     public function storeParticipantData(Request $request, $uid)
     {
-        // ... (Kode storeParticipantData yang sama seperti sebelumnya) ...
-        
-        // PERHATIAN: Idealnya, cek kadaluarsa diulang di sini sebelum penyimpanan, 
-        // untuk mencegah input dari tab browser yang dibuka lama.
+        // Prevent double-submit from very old tabs: cek pengunjung & QR lagi
         $pengunjung = KisPengunjung::where('uid', $uid)->with('qrCode')->first();
 
-        // Cek Kadaluarsa lagi sebelum menyimpan (Preventif)
-        if (!$pengunjung || !$pengunjung->qrCode || Carbon::parse($pengunjung->qrCode->berlaku_sampai)->isPast()) {
-            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Gagal menyimpan: Sesi pengisian data telah kadaluarsa. Silakan refresh halaman atau hubungi Admin.');
+        if (!$pengunjung || !$pengunjung->qrCode) {
+            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Sesi tidak valid. Silakan refresh halaman atau hubungi Admin.');
         }
 
-        // Validasi input data lainnya (tanpa validasi file ttd)
+        $qr = $pengunjung->qrCode;
+        $now = Carbon::now();
+
+        if (!empty($qr->berlaku_sampai) && Carbon::parse($qr->berlaku_sampai)->isPast()) {
+            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Gagal menyimpan: Sesi pengisian data telah kadaluarsa.');
+        }
+
+        if (!empty($qr->berlaku_mulai) && Carbon::parse($qr->berlaku_mulai)->isFuture()) {
+            return redirect()->route('pengunjung.scan', $uid)->with('error', 'Gagal menyimpan: QR Code belum aktif.');
+        }
+
+        // Validasi input data peserta (tetap seperti sebelumnya)
         $request->validate([
             'peserta_nama.*' => 'required|string|max:255', 
             'peserta_jabatan.*' => 'nullable|string|max:255',
             'peserta_kontak.*' => 'nullable|string|max:20',
             'peserta_email.*' => 'nullable|email|max:255',
-            // Validasi untuk Base64: memastikan string ada dan tidak kosong
             'peserta_ttd_data.*' => 'required|string', 
         ]);
 
@@ -145,8 +162,7 @@ class KisQrCodeController extends Controller
 
             DB::commit(); 
             return view('kunjungan.konfirmasi')->with('pengunjung', $pengunjung)
-                                            ->with('success', 'Data rombongan berhasil ditambahkan. Terima kasih!');
-
+                                               ->with('success', 'Data rombongan berhasil ditambahkan. Terima kasih!');
         } catch (\Exception $e) {
             DB::rollBack(); 
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
