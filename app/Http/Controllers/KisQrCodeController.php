@@ -87,21 +87,20 @@ class KisQrCodeController extends Controller
             return redirect()->route('pengunjung.scan', $uid)->with('error', 'Gagal menyimpan: QR Code belum aktif.');
         }
 
-        // Validasi input data peserta (tetap seperti sebelumnya)
         $request->validate([
-            'peserta_nama.*' => 'required|string|max:255', 
+            // Diubah menjadi nullable agar baris kosong (jika dihapus di FE) tidak menyebabkan error required
+            'peserta_nama.*' => 'nullable|string|max:255', 
             'peserta_jabatan.*' => 'nullable|string|max:255',
             'peserta_kontak.*' => 'nullable|string|max:20',
             'peserta_email.*' => 'nullable|email|max:255',
-            'peserta_ttd_data.*' => 'required|string', 
+            // Ini tetap required karena TTD harus ada jika Nama Peserta diisi (validasi JS)
+            'peserta_ttd_data.*' => 'nullable|string', 
         ]);
 
         DB::beginTransaction();
         
         try {
-            // AMBIL DATA BASE64 DARI INPUT TERSEMBUNYI
             $ttd_data_array = $request->peserta_ttd_data;
-            
             $peserta_data_massal = [];
             
             $nama_array = $request->peserta_nama;
@@ -110,23 +109,22 @@ class KisQrCodeController extends Controller
             $email_array = $request->peserta_email;
             
             $count = count($nama_array);
+            $total_peserta = 0; // Tambahkan penghitung peserta
 
             for ($i = 0; $i < $count; $i++) {
                 $nama = trim($nama_array[$i] ?? '');
                 
                 if (!empty($nama)) {
+                    $total_peserta++; // Hitung peserta yang valid
                     $ttd_path = null;
                     
-                    // === LOGIKA BARU UNTUK BASE64 ===
+                    // ... (LOGIKA BASE64 TTD, TIDAK BERUBAH) ...
                     $base64Image = $ttd_data_array[$i] ?? null;
                     
-                    // Cek apakah data Base64 ada dan valid (misal: 'data:image/png;base64,...')
                     if ($base64Image) {
-                        // Hapus prefix "data:image/png;base64,"
                         $base64Image = str_replace('data:image/png;base64,', '', $base64Image);
-                        $base64Image = str_replace(' ', '+', $base64Image); // Perbaiki spasi
+                        $base64Image = str_replace(' ', '+', $base64Image); 
 
-                        // Decode data Base64 menjadi binary data
                         $imageData = base64_decode($base64Image);
                         
                         if ($imageData === false) {
@@ -134,10 +132,8 @@ class KisQrCodeController extends Controller
                         }
                         
                         $fileName = 'ttd_' . $pengunjung->uid . '_' . ($i + 1) . '_' . time() . '.png';
-                        
-                        // Simpan file ke storage
                         Storage::disk('public')->put('ttd_peserta/' . $fileName, $imageData);
-                        $ttd_path = 'ttd_peserta/' . $fileName; // Path yang akan disimpan ke DB
+                        $ttd_path = 'ttd_peserta/' . $fileName; 
                     }
                     
                     $peserta_data_massal[] = [
@@ -148,7 +144,7 @@ class KisQrCodeController extends Controller
                         'jabatan' => $jabatan_array[$i] ?? null,
                         'email' => $email_array[$i] ?? null, 
                         'wa' => $kontak_array[$i] ?? null, 
-                        'file_ttd' => $ttd_path, // <-- Path file TTD dari Base64
+                        'file_ttd' => $ttd_path, 
                         'created_by' => null,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -156,13 +152,25 @@ class KisQrCodeController extends Controller
                 }
             }
 
+            // === LANGKAH 1: HAPUS DATA LAMA (PENTING) ===
+            // Agar tidak terjadi duplikasi jika pengunjung submit ulang
+            KisPesertaKunjungan::where('pengunjung_id', $pengunjung->uid)->delete();
+
+
             if (!empty($peserta_data_massal)) {
                 KisPesertaKunjungan::insert($peserta_data_massal);
             }
-
+            
+            // === LANGKAH 2: UPDATE STATUS KisPengunjung ===
+            $pengunjung->update([
+                'status' => 'kunjungan', // <-- Mengubah status pengajuan utama!
+                'jumlah_peserta_diinput' => $total_peserta, // Opsional: Simpan jumlah peserta yang berhasil diinput
+            ]);
+            
             DB::commit(); 
             return view('kunjungan.konfirmasi')->with('pengunjung', $pengunjung)
-                                               ->with('success', 'Data rombongan berhasil ditambahkan. Terima kasih!');
+                                               ->with('success', 'Data rombongan berhasil ditambahkan. Status kunjungan Anda telah **Aktif**!');
+
         } catch (\Exception $e) {
             DB::rollBack(); 
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
