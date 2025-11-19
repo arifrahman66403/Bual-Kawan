@@ -1,7 +1,7 @@
 <header class="header-full">
 <div class="header-inner">
     <div class="logo">
-    <img src="logo-bualkawan2.png" alt="logo">
+    <img src="https://bualkawan.siakkab.go.id/logo-bualkawan.png" alt="logo">
     <div class="brand">Buku Tamu Singgah</div>
     </div>
 

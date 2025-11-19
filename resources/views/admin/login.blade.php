@@ -129,10 +129,6 @@
       </div>
 
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember">
-          <label class="form-check-label small text-light" for="remember">Ingat saya</label>
-        </div>
         <a href="#" class="small text-light" style="opacity:0.9; text-decoration:underline;">Lupa password?</a>
       </div>
 
