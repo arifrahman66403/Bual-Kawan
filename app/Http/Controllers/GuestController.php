@@ -172,6 +172,44 @@ class GuestController extends Controller
         }
     }
     /**
+     * Mengunggah dokumen SPT oleh Pengunjung di halaman detail/status.
+     */
+    public function uploadSpt(Request $request, $uid)
+    {
+        // 1. Validasi File
+        $request->validate([
+            'file_spt' => 'required|file|mimes:pdf|max:2048', // Max 2MB, PDF only
+        ], [
+            'file_spt.required' => 'Pilih file SPT yang akan diunggah.',
+            'file_spt.mimes' => 'File harus berformat PDF.',
+            'file_spt.max' => 'Ukuran file tidak boleh melebihi 2MB.',
+        ]);
+
+        // 2. Cari Pengajuan (wajib ada)
+        $pengunjung = KisPengunjung::where('uid', $uid)->firstOrFail();
+        
+        // 3. Simpan File Baru
+        if ($request->hasFile('file_spt')) {
+            $file = $request->file('file_spt');
+            // Gunakan nama file yang unik dan aman
+            $fileName = 'spt_' . $pengunjung->uid . '_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            // Simpan di storage/app/public/dokumen_spt
+            $path = $file->storeAs('dokumen_spt', $fileName, 'public'); 
+
+            // 4. Update atau Buat Record Dokumen
+            KisDokumen::updateOrCreate(
+                ['pengunjung_id' => $pengunjung->uid],
+                ['file_spt' => $path] // Simpan path ke database
+                // Tidak perlu created_by jika diakses guest
+            );
+            
+            return back()->with('success', 'File SPT berhasil diunggah. Pengajuan akan segera diverifikasi.');
+        }
+        
+        return back()->with('error', 'Gagal memproses unggahan file.');
+    }
+    /**
      * Menampilkan Detail Laporan Kunjungan.
      */
     public function showDetail($id)
