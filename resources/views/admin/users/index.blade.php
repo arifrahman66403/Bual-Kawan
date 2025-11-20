@@ -15,7 +15,7 @@
       <h5 class="fw-bold text-color mb-2 mb-md-0">Daftar Pengguna Sistem</h5>
       <div class="d-flex gap-2">
         <a href="{{ route('admin.users.create') }}" class="btn btn-sm btn-primary">
-            <i class="bi bi-person-plus-fill"></i> Tambah Admin
+            <i class="bi bi-person-plus-fill"></i> Tambah User
         </a>
         
         <form method="GET" action="{{ route('admin.users.index') }}" class="d-flex">

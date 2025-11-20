@@ -21,6 +21,7 @@ class KisPesertaKunjungan extends Model
         'nama',
         'nip',
         'jabatan',
+        'is_perwakilan',
         'email',
         'wa',
         'file_ttd',

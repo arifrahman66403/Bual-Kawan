@@ -55,6 +55,23 @@ class KisPengunjung extends Model
         return $this->hasOne(KisQrCode::class, 'pengunjung_id', 'uid');
     }
 
+    public function qrCodeDetail()
+    {
+        return $this->hasOne(KisQrCode::class, 'pengunjung_id', 'uid')
+            ->where('qr_type', 'detail')
+            ->withTrashed();
+    }
+
+    public function getQrCodeUrlAttribute()
+    {
+        // Asumsikan relasi qrCodeDetail sudah ada dan kolom qr_code berisi 'qr_codes/qr_detail_UID.png'
+        if ($this->qrCodeDetail && $this->qrCodeDetail->qr_code) {
+            // Ini akan menghasilkan URL seperti: http://domainanda.com/storage/qr_codes/qr_detail_UID.png
+            return asset('storage/' . $this->qrCodeDetail->qr_code); 
+        }
+        return null;
+    }
+
     public function tracking()
     {
         return $this->hasMany(KisTracking::class, 'pengajuan_id', 'uid');

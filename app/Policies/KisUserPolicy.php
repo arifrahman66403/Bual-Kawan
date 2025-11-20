@@ -8,23 +8,40 @@ class KisUserPolicy
 {
     /**
      * Determine whether the user can view any models.
+     * (Melihat Daftar User di Tabel)
      */
     public function viewAny(KisUser $kisUser): bool
     {
+        // Superadmin dan Admin boleh lihat daftar user
         return $kisUser->role === 'superadmin' || $kisUser->role === 'admin';
     }
 
     /**
      * Determine whether the user can view the model.
+     * (Melihat Detail User)
      */
     public function view(KisUser $kisUser, KisUser $model): bool
     {
-        if ($kisUser->role === 'superadmin' || $kisUser->role === 'admin') {
+        // Superadmin boleh lihat siapa saja
+        if ($kisUser->role === 'superadmin') {
             return true;
         }
 
-        // operator can view only their own record
-        return $kisUser->role === 'operator' && $kisUser->id === $model->id;
+        // Admin:
+        if ($kisUser->role === 'admin') {
+            // 1. Boleh lihat diri sendiri
+            if ($kisUser->id === $model->id) return true;
+            // 2. Boleh lihat detail operator
+            if ($model->role === 'operator') return true;
+            // 3. Boleh lihat sesama admin (opsional, biasanya boleh untuk koordinasi, tapi readonly)
+            // Jika ingin STRICT "tidak boleh lihat sesama admin", hapus baris bawah ini.
+            if ($model->role === 'admin') return true;
+            
+            return false;
+        }
+
+        // Operator hanya boleh lihat profilnya sendiri
+        return $kisUser->id === $model->id;
     }
 
     /**
@@ -32,7 +49,8 @@ class KisUserPolicy
      */
     public function create(KisUser $kisUser): bool
     {
-        // superadmin dan admin biasa boleh membuat user
+        // Superadmin dan Admin boleh membuat user baru
+        // (Catatan: Di Controller pastikan Admin tidak bisa bikin user dengan role 'superadmin' atau 'admin')
         return $kisUser->role === 'superadmin' || $kisUser->role === 'admin';
     }
 
@@ -41,17 +59,29 @@ class KisUserPolicy
      */
     public function update(KisUser $kisUser, KisUser $model): bool
     {
+        // 1. Superadmin bebas edit siapa saja
         if ($kisUser->role === 'superadmin') {
             return true;
         }
 
+        // 2. Admin
         if ($kisUser->role === 'admin') {
-            // admin bisa mengupdate siapa saja kecuali superadmin
-            return $model->role !== 'superadmin';
+            // Boleh edit diri sendiri (Ganti password/profil sendiri)
+            if ($kisUser->id === $model->id) {
+                return true;
+            }
+
+            // Boleh edit Operator
+            if ($model->role === 'operator') {
+                return true;
+            }
+
+            // DILARANG edit sesama Admin atau Superadmin
+            return false;
         }
 
-        // operator can update only their own record
-        return $kisUser->role === 'operator' && $kisUser->id === $model->id;
+        // 3. Operator hanya boleh edit diri sendiri
+        return $kisUser->id === $model->id;
     }
 
     /**
@@ -59,16 +89,23 @@ class KisUserPolicy
      */
     public function delete(KisUser $kisUser, KisUser $model): bool
     {
-        // superadmin boleh delete semua.
+        // 1. Superadmin bebas hapus siapa saja
         if ($kisUser->role === 'superadmin') {
             return true;
         }
 
-        // admin bisa menghapus kecuali superadmin dan tidak boleh menghapus diri sendiri
+        // 2. Admin
         if ($kisUser->role === 'admin') {
-            return $model->role !== 'superadmin' && $kisUser->id !== $model->id;
+            // HANYA boleh hapus Operator
+            if ($model->role === 'operator') {
+                return true;
+            }
+
+            // DILARANG hapus sesama Admin, Superadmin, atau Diri Sendiri (biasanya akun aktif tidak boleh hapus diri sendiri)
+            return false;
         }
 
+        // Operator tidak boleh menghapus akun (biasanya request ke admin)
         return false;
     }
 
@@ -77,30 +114,24 @@ class KisUserPolicy
      */
     public function restore(KisUser $kisUser, KisUser $model): bool
     {
+        // Logikanya sama dengan Delete
         if ($kisUser->role === 'superadmin') {
             return true;
         }
 
         if ($kisUser->role === 'admin') {
-            return $model->role !== 'superadmin' && $kisUser->id !== $model->id;
+            return $model->role === 'operator';
         }
 
         return false;
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can force delete the model.
      */
     public function forceDelete(KisUser $kisUser, KisUser $model): bool
     {
-        if ($kisUser->role === 'superadmin') {
-            return true;
-        }
-
-        if ($kisUser->role === 'admin') {
-            return $model->role !== 'superadmin' && $kisUser->id !== $model->id;
-        }
-
-        return false;
+        // Biasanya Force Delete (hapus permanen) hanya Superadmin
+        return $kisUser->role === 'superadmin';
     }
 }

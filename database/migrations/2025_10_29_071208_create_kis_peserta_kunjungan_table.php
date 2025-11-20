@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nama', 150);
             $table->string('nip', 50)->nullable();
             $table->string('jabatan', 150)->nullable();
+            $table->boolean('is_perwakilan')->default(false);
             $table->string('email', 100)->nullable();
             $table->string('wa', 20)->nullable();
             $table->string('file_ttd', 255)->nullable();
