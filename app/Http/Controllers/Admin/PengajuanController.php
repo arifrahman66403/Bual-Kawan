@@ -79,6 +79,41 @@ class PengajuanController extends Controller
                 'created_by' => Auth::id() ?? 1,
             ]);
 
+            // === 1. BUAT QR CODE UNTUK DETAIL KUNJUNGAN (UNTUK DITAMPILKAN DI PUBLIK) ===
+            if ($newStatus === 'disetujui') {
+                
+                // URL QR Detail Kunjungan
+                $detailUrl = route('kunjungan.detail', $pengunjung->uid); 
+                $fileNameDetail = 'qr_detail_' . $pengunjung->uid . '.png';
+                $filePathDetail = storage_path('app/public/qr_code/' . $fileNameDetail); 
+
+                // ✅ Generate QR Code Detail
+                $qrCodeDetail = new QrCode(
+                    data: $detailUrl, 
+                    encoding: new Encoding('UTF-8'),
+                    errorCorrectionLevel: ErrorCorrectionLevel::High,
+                    size: 250,
+                    margin: 10,
+                    foregroundColor: new Color(0, 0, 0),
+                    backgroundColor: new Color(255, 255, 255)
+                );
+
+                $writer = new PngWriter();
+                $writer->write($qrCodeDetail)->saveToFile($filePathDetail);
+
+                // Simpan metadata ke KisQrCode (Hanya path QR Detail Kunjungan)
+                KisQrCode::updateOrCreate(
+                    ['pengunjung_id' => $pengunjung->uid],
+                    [
+                        // PATH yang akan diambil oleh view publik
+                        'qr_code' => 'qr_code/' . $fileNameDetail, 
+                        'berlaku_mulai' => now(),
+                        'berlaku_sampai' => now()->addDay(),
+                        'created_by' => Auth::id() ?? 1,
+                    ]
+                );
+            }
+
             // === BUAT QR CODE (pakai GD backend, TANPA imagick) === 
             if ($newStatus === 'disetujui') {
                 

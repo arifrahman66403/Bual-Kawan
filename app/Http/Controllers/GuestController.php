@@ -19,8 +19,9 @@ class GuestController extends Controller
     {
         // Menggunakan view namespace 'kunjungan' sesuai preferensi Anda
         $kunjunganAktif = KisPengunjung::whereIn('status', ['pengajuan', 'disetujui', 'kunjungan', 'selesai'])
-                                       ->latest()
-                                       ->paginate(5);
+                                    ->with('qrCode')
+                                    ->latest()
+                                    ->paginate(5);
                                        
         return view('kunjungan.kunjungan_aktif', [
             'kunjunganAktif' => $kunjunganAktif,
@@ -114,6 +115,7 @@ class GuestController extends Controller
                 'email' => $request->email_perwakilan ?? null,
                 'wa' => $request->wa_perwakilan ?? null,
                 'file_ttd' => null,
+                'is_perwakilan' => 1,
                 'created_by' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -145,6 +147,7 @@ class GuestController extends Controller
                         'email' => $email_array[$i] ?? null,
                         'wa' => $kontak_array[$i] ?? null,
                         'file_ttd' => $ttd_path,
+                        'is_perwakilan' => 0,
                         'created_by' => null,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -235,20 +238,26 @@ class GuestController extends Controller
      */
     public function showDetail($id)
     {
-        // FIX: Hapus 'file_spt' dari array with()
+        // 1. Ambil data kunjungan dengan relasi peserta dan dokumen
         $pengunjung = KisPengunjung::where('uid', $id)
                                     ->with(['peserta', 'dokumen'])
                                     ->firstOrFail();
         
-        $perwakilanPeserta = KisPesertaKunjungan::where('pengunjung_id', $pengunjung->uid)
-                                    ->where('nama', $pengunjung->nama_perwakilan)
-                                    ->first();
+        // 2. Cari Perwakilan Peserta (is_perwakilan = 1)
+        // Kita gunakan relasi karena Perwakilan sudah dimasukkan ke tabel peserta.
+        $perwakilanPeserta = $pengunjung->peserta->where('is_perwakilan', 1)->first();
+
+        // 3. Filter Rombongan (sisanya, is_perwakilan = 0)
+        // reject() akan menghapus item yang mengembalikan nilai TRUE
+        $anggotaRombongan = $pengunjung->peserta->reject(function ($peserta) {
+            return $peserta->is_perwakilan == 1;
+        });
 
         return view('kunjungan.detail', [
-            'perwakilanPeserta' => $perwakilanPeserta,
+            'perwakilanPeserta' => $perwakilanPeserta, // Data Perwakilan yang sudah difilter
+            'anggotaRombongan' => $anggotaRombongan,   // Data Rombongan non-Perwakilan
             'pengunjung' => $pengunjung,
             'title' => 'Detail pengunjung'
         ]);
     }
-
-}
+}    
