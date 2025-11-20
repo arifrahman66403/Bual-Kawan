@@ -38,6 +38,7 @@
       40%, 60% { transform: translateX(4px); }
     }
 
+    /* Default form control (kept for dark-on-dark if needed) */
     .form-control {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
@@ -60,10 +61,32 @@
     .btn-login:active { transform: translateY(1px) scale(0.998); }
     .btn-login:hover { box-shadow: 0 8px 20px rgba(13,110,253,0.28); }
 
+    /* Page background changed to white and bring text to dark for light mode */
     .bg-gradient-page {
-      background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.03), transparent 10%),
-                  radial-gradient(circle at 90% 80%, rgba(255,255,255,0.02), transparent 10%),
-                  linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      background: #ffffff;
+    }
+
+    /* Make body text dark when using the white page background */
+    body.bg-gradient-page {
+      color: #212529;
+    }
+    /* Ensure common utility classes inside the white page inherit dark color */
+    body.bg-gradient-page .text-white,
+    body.bg-gradient-page .text-light {
+      color: #212529 !important;
+    }
+
+    /* Adjust form controls for the white page background */
+    body.bg-gradient-page .form-control {
+      background: rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.12);
+      color: #212529;
+    }
+    body.bg-gradient-page .form-control:focus {
+      background: rgba(0,0,0,0.06);
+      border-color: rgba(33,37,41,0.15);
+      box-shadow: 0 0 8px rgba(0,0,0,0.04);
+      color: #212529;
     }
 
     .toggle-pass {
@@ -72,13 +95,12 @@
     }
 
     .bg-white {
-  background-color: white !important; /* !important digunakan untuk memastikan gaya ini menimpa gaya inline */
-}
+      background-color: white !important; /* !important digunakan untuk memastikan gaya ini menimpa gaya inline */
+    }
 
-.border-light-gray {
-  border: 1px solid #ccc !important;
-}
-
+    .border-light-gray {
+      border: 1px solid #ccc !important;
+    }
 
     /* small floating effect for headings */
     .title-float { transform: translateY(-6px); opacity: 0; animation: titleIn 0.7s 0.15s forwards; }
@@ -86,6 +108,7 @@
 
     /* toast custom */
     .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 1080; }
+  </style>
   </style>
 </head>
 <body class="bg-gradient-page text-light d-flex align-items-center justify-content-center vh-100">
