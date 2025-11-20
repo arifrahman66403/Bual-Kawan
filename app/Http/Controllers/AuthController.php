@@ -55,7 +55,7 @@ class AuthController extends Controller
             // 3. Pengalihan (Redirection) berdasarkan role menggunakan if-else if
             if ($role === 'superadmin') {
                 // Arahkan Superadmin
-                return redirect()->route('superadmin.dashboard')->with('success', "Selamat datang, Superadmin {$user->name}!");
+                return redirect()->route('admin.dashboard')->with('success', "Selamat datang, Superadmin {$user->name}!");
             } elseif ($role === 'admin') {
                 // Arahkan Admin
                 return redirect()->route('admin.dashboard')->with('success', "Selamat datang, Admin {$user->name}!");

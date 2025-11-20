@@ -32,7 +32,8 @@ class KisUserPolicy
      */
     public function create(KisUser $kisUser): bool
     {
-        return $kisUser->role === 'superadmin';
+        // superadmin dan admin biasa boleh membuat user
+        return $kisUser->role === 'superadmin' || $kisUser->role === 'admin';
     }
 
     /**
@@ -45,6 +46,7 @@ class KisUserPolicy
         }
 
         if ($kisUser->role === 'admin') {
+            // admin bisa mengupdate siapa saja kecuali superadmin
             return $model->role !== 'superadmin';
         }
 
@@ -57,7 +59,17 @@ class KisUserPolicy
      */
     public function delete(KisUser $kisUser, KisUser $model): bool
     {
-        return $kisUser->role === 'superadmin';
+        // superadmin boleh delete semua.
+        if ($kisUser->role === 'superadmin') {
+            return true;
+        }
+
+        // admin bisa menghapus kecuali superadmin dan tidak boleh menghapus diri sendiri
+        if ($kisUser->role === 'admin') {
+            return $model->role !== 'superadmin' && $kisUser->id !== $model->id;
+        }
+
+        return false;
     }
 
     /**
@@ -65,7 +77,15 @@ class KisUserPolicy
      */
     public function restore(KisUser $kisUser, KisUser $model): bool
     {
-        return $kisUser->role === 'superadmin';
+        if ($kisUser->role === 'superadmin') {
+            return true;
+        }
+
+        if ($kisUser->role === 'admin') {
+            return $model->role !== 'superadmin' && $kisUser->id !== $model->id;
+        }
+
+        return false;
     }
 
     /**
@@ -73,6 +93,14 @@ class KisUserPolicy
      */
     public function forceDelete(KisUser $kisUser, KisUser $model): bool
     {
-        return $kisUser->role === 'superadmin';
+        if ($kisUser->role === 'superadmin') {
+            return true;
+        }
+
+        if ($kisUser->role === 'admin') {
+            return $model->role !== 'superadmin' && $kisUser->id !== $model->id;
+        }
+
+        return false;
     }
 }
