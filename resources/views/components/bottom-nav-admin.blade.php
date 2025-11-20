@@ -24,26 +24,26 @@
         :active="request()->routeIs('admin.riwayat')" />
 
     <x-nav-link-admin 
-        href="{{ route('logout') }}" 
+        href="{{ route('admin.gallery.index') }}" 
         class="bottom-nav-link"
         icon="bi-images" 
         label="Gallery" 
         id="mobile-nav-gallery"
-        :active="request()->routeIs('admin.gallery')" />
+        :active="request()->routeIs('admin.gallery.index')" />
 
     <x-nav-link-admin 
-        href="#" 
+        href="{{ route('admin.slider.index') }}"
         class="bottom-nav-link"
         icon="bi-film" 
         label="Slider Foto" 
         id="mobile-nav-slider"
-        :active="request()->routeIs('admin.slider')" />
+        :active="request()->routeIs('admin.slider.index')" />
 
     <x-nav-link-admin 
-        href="#" 
+        href="{{ route('admin.users.index') }}"
         class="bottom-nav-link"
         icon="bi-people" 
         label="Admin" 
         id="mobile-nav-admin"
-        :active="request()->routeIs('admin.pengguna')" />
+        :active="request()->routeIs('admin.users.index')" />
 </div>

@@ -17,15 +17,15 @@ class AdminController extends Controller
         $tahun_ini = date('Y');
         
         $total_tamu_hari_ini = KisPengunjung::whereDate('tgl_kunjungan', $tanggal_hari_ini)
-                                            ->where('status', 'disetujui', 'kunjungan', 'selesai')
+                                            ->whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
                                             ->count();
         
         $total_tamu_bulan_ini = KisPengunjung::whereRaw("DATE_FORMAT(tgl_kunjungan, '%Y-%m') = ?", [$bulan_tahun_ini])
-                                             ->where('status', 'disetujui', 'kunjungan', 'selesai')
+                                             ->whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
                                              ->count();
         
-        $total_tamu_tahun_ini = KisPengunjung::whereRaw("YEAR(tgl_kunjungan) = ?", [$tahun_ini])
-                                             ->where('status', 'disetujui', 'kunjungan', 'selesai')
+        $total_tamu_tahun_ini = KisPengunjung::whereYear('tgl_kunjungan', $tahun_ini)
+                                             ->whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
                                              ->count();
         
         $total_tamu_semua = KisPengunjung::count();

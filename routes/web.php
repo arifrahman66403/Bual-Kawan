@@ -3,10 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\Admin\PengajuanController;
+use App\Http\Controllers\Admin\TrackingController;
+use App\Http\Controllers\KisUserController;
 use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\Admin\LogController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\SliderController;
 use App\Http\Controllers\Admin\RiwayatController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\KisPengunjungController;
@@ -73,6 +78,18 @@ Route::middleware(['auth', 'role:operator,admin'])->prefix('/operator')->name('o
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Menampilkan daftar galeri
+    Route::get('/gallery', [GalleryController::class, 'index'])->name('admin.gallery.index');
+    Route::get('/gallery/create', [GalleryController::class, 'create'])->name('admin.gallery.create');
+    Route::post('/gallery', [GalleryController::class, 'store'])->name('admin.gallery.store');
+    Route::delete('/gallery/{id}', [GalleryController::class, 'destroy'])->name('admin.gallery.destroy');
+
+    // Routes Slider
+    Route::get('/slider', [SliderController::class, 'index'])->name('admin.slider.index');
+    Route::get('/slider/create', [SliderController::class, 'create'])->name('admin.slider.create');
+    Route::post('/slider', [SliderController::class, 'store'])->name('admin.slider.store');
+    Route::delete('/slider/{id}', [SliderController::class, 'destroy'])->name('admin.slider.destroy');
+
     // === QR CODE ===
     Route::get('/qr', [KisQrCodeController::class, 'index'])->name('qr.index');
     Route::get('/qr/create', [KisQrCodeController::class, 'create'])->name('qr.create');
@@ -87,6 +104,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');
     Route::post('/tracking/scan', [KisTrackingController::class, 'scan'])->name('tracking.scan');
+
+    // === LOG ADMIN ===
+    Route::get('/users', [KisUserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/create', [KisUserController::class, 'create'])->name('admin.users.create');
+    Route::post('/users', [KisUserController::class, 'store'])->name('admin.users.store');
+    Route::get('/users/{id}/edit', [KisUserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{id}', [KisUserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/users/{id}', [KisUserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::patch('/users/{id}/toggle', [KisUserController::class, 'toggleStatus'])->name('admin.users.toggle');
 });
 
 Route::prefix('admin')->group(function () {

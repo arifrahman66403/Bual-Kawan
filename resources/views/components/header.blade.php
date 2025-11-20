@@ -2,7 +2,7 @@
 <div class="header-inner">
     <div class="logo">
     <img src="https://bualkawan.siakkab.go.id/logo-bualkawan.png" alt="logo">
-    <div class="brand">Buku Tamu Singgah</div>
+    <div class="brand">Bual Kawan</div>
     </div>
 
     <div class="header-spacer"></div>

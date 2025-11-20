@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('role', ['superadmin', 'admin', 'operator'])->default('operator');
             $table->string('pass'); // you can rename to 'password' in model if needed
             // audit columns for actions performed by user on other rows are stored as INT referencing kis_user.id
+            $table->tinyInteger('is_active')->default(1); // 1: Aktif, 0: Non-aktif
             $table->softDeletes();
             $table->timestamps();
         });

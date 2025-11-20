@@ -19,6 +19,7 @@ class KisUser extends Authenticatable
         'wa',
         'role',
         'pass',
+        'is_active'
     ];
 
     protected $hidden = ['pass'];
