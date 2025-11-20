@@ -177,25 +177,27 @@
                                     <th>Jabatan</th>
                                 </tr>
                             </thead>
+                            @php
+                                // filter hanya yang benar-benar bukan perwakilan
+                                $rombongan = $pengunjung->peserta->filter(function ($p) {
+                                    return (int)$p->is_perwakilan === 0;
+                                });
+                            @endphp
+
                             <tbody>
-                                @forelse ($pengunjung->peserta as $index => $peserta)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>
-                                        {{ $peserta->nama }}
-                                        {{-- Tambahkan Badge untuk Perwakilan --}}
-                                        @if (isset($peserta->is_perwakilan) && $peserta->is_perwakilan)
-                                            <span class="badge bg-primary-subtle text-primary ms-1">Perwakilan</span>
-                                        @endif
-                                    </td>
-                                    {{-- NIP akan otomatis tampil '-' jika $peserta->nip adalah NULL (sebelum diisi via QR) --}}
-                                    <td>{{ $peserta->nip }}</td> 
-                                    <td>{{ $peserta->jabatan ?? '-' }}</td>
-                                </tr>
+                                @forelse ($rombongan as $index => $peserta)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $peserta->nama }}</td>
+                                        <td>{{ $peserta->nip ?? '-' }}</td>
+                                        <td>{{ $peserta->jabatan ?? '-' }}</td>
+                                    </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">Tidak ada peserta rombongan yang terdaftar.</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            Tidak ada peserta rombongan yang terdaftar.
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
