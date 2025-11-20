@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('kis_qr_code', function (Blueprint $table) {
             $table->id(); // INT AUTO_INCREMENT (sesuai desain pada gambar kolom id)
             $table->char('pengunjung_id', 36); // FK -> kis_pengunjung.uid
-            $table->string('qr_type', 20)->default('detail'); // e.g., 'detail', 'access', etc.
-            $table->text('qr_code')->nullable(); // store QR payload/base64/path
+            $table->string('qr_detail_path')->nullable(); // e.g., 'detail', 'access', etc.
+            $table->string('qr_scan_path')->nullable(); // store QR payload/base64/path
             $table->dateTime('berlaku_mulai')->nullable();
             $table->dateTime('berlaku_sampai')->nullable();
 

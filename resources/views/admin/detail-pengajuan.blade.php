@@ -111,10 +111,10 @@
                 <div class="card mb-3">
                     <div class="card-body text-center">
                         <h5>QR Code</h5>
-                        @if($pengunjung->qrCode && !empty($pengunjung->qrCode->qr_code))
-                            <img src="{{ asset($pengunjung->qrCode->qr_code) }}" alt="QR Code" class="img-fluid mb-2" style="max-width:220px;">
+                        @if($pengunjung->qrCode && !empty($pengunjung->qrCode->qr_scan_path))
+                            <img src="{{ asset($pengunjung->qrCode->qr_scan_path) }}" alt="QR Code" class="img-fluid mb-2" style="max-width:220px;">
                             <div class="d-grid gap-2">
-                                <a href="{{ asset($pengunjung->qrCode->qr_code) }}" target="_blank" class="btn btn-outline-primary btn-sm">Buka Gambar QR</a>
+                                <a href="{{ asset($pengunjung->qrCode->qr_scan_path) }}" target="_blank" class="btn btn-outline-primary btn-sm">Buka Gambar QR</a>
                             </div>
                             <div class="small text-muted mt-2">
                                 Berlaku mulai: {{ $pengunjung->qrCode->berlaku_mulai ? \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_mulai)->format('Y-m-d H:i') : '-' }}<br>

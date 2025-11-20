@@ -9,7 +9,7 @@
                 <h2 class="mb-4 fw-bold">Daftar Kunjungan Aktif</h2>
                 
                 @if (session('success'))
-                    <div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> {{ session('success') }}</div>
+                    <div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> {!! session('success') !!}</div>
                 @endif
                 
                 @if (session('error'))
@@ -61,13 +61,13 @@
                                         data-bs-toggle="modal" 
                                         data-bs-target="#qrModal"
                                         data-kunjungan-nama="{{ $kunjungan->nama_instansi }}"
-                                        {{-- Perbaikan: Menggunakan data-detail-link untuk tombol Buka Langsung --}}
                                         data-detail-link="{{ route('kunjungan.detail', $kunjungan->uid) }}"
-                                        {{-- data-qr-url dari Accessor Model --}}
-                                        data-qr-url="{{ $kunjungan->qr_code_url }}"
+                                        {{-- 🛑 PERUBAHAN UTAMA DI SINI: Menggunakan 'qr_detail_url' --}}
+                                        {{-- Diasumsikan 'qr_detail_url' adalah accessor di Model KisPengunjung yang mengambil path QR Detail --}}
+                                        data-qr-url="{{ $kunjungan->qr_detail_url }}" 
                                         data-kunjungan-status="{{ $kunjungan->status }}"
                                         title="Tampilkan QR Code & Detail Kunjungan">
-                                        <i class="bi bi-eye"></i> 
+                                            <i class="bi bi-eye"></i> 
                                     </button>
                                 </td>
                             </tr>
@@ -137,7 +137,7 @@
                     const button = event.relatedTarget; 
                     const kunjunganNama = button.getAttribute('data-kunjungan-nama');
                     const detailLink = button.getAttribute('data-detail-link'); // Ambil URL Detail Link
-                    const qrImageUrl = button.getAttribute('data-qr-url'); // Ambil URL Gambar QR
+                    const qrImageUrl = button.getAttribute('data-qr-url'); // Ambil URL Gambar QR (yaitu qr_detail_url)
                     const kunjunganStatus = button.getAttribute('data-kunjungan-status');
 
                     // 1. Atur Nama Instansi
@@ -159,7 +159,7 @@
                         // Tampilkan pesan error/warning
                         qrcodeDiv.innerHTML = `<div class="alert alert-warning">
                                                     QR Code akan tersedia setelah disetujui Admin. Status saat ini: <strong>${kunjunganStatus.toUpperCase()}</strong>
-                                               </div>`;
+                                                  </div>`;
                     }
                 });
                 

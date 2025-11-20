@@ -20,7 +20,8 @@
             <div class="row">
                 @php
                     // Ambil data perwakilan dari koleksi peserta
-                    $perwakilanPeserta = $pengunjung->peserta->where('is_perwakilan', true)->first();
+                    // Pastikan $pengunjung->peserta tersedia sebelum memanggil where()
+                    $perwakilanPeserta = isset($pengunjung->peserta) ? $pengunjung->peserta->where('is_perwakilan', true)->first() : null;
                 @endphp
                 {{-- ==================== DATA INSTANSI ==================== --}}
                 <div class="col-md-6 border-end pe-md-5">
@@ -47,7 +48,7 @@
                     </div>
                     
                     <div class="mb-3">
-                        <div class="detail-label">Tanggal Kunjungan:</div>
+                        <div class="detail-label">Tanggal Kunjangan:</div>
                         <div class="detail-value">{{ \Carbon\Carbon::parse($pengunjung->tgl_kunjungan)->format('Y-m-d') }}</div>
                     </div>
                     
@@ -95,13 +96,15 @@
                     @if ($pengunjung->status !== 'selesai')
                         <div class="mb-3">
                             <div class="detail-label">NIP:</div>
-                            <div class="detail-value">{{ $perwakilanPeserta->nip ?? '-' }}</div>
+                            {{-- Pengecekan null untuk perwakilanPeserta --}}
+                            <div class="detail-value">{{ $perwakilanPeserta ? ($perwakilanPeserta->nip ?? '-') : '-' }}</div>
                         </div>
                     @endif
                     
                     <div class="mb-3">
                         <div class="detail-label">Jabatan:</div>
-                        <div class="detail-value">{{ $perwakilanPeserta->jabatan ?? '-' }}</div>
+                         {{-- Pengecekan null untuk perwakilanPeserta --}}
+                        <div class="detail-value">{{ $perwakilanPeserta ? ($perwakilanPeserta->jabatan ?? '-') : '-' }}</div>
                     </div>
                     
                     <div class="mb-3">
@@ -131,10 +134,11 @@
                     @else
                         {{-- Tampilkan QR Code dari database --}}
                         <div class="qr-code-area mb-3">
-                            @if ($pengunjung->qrCode && $pengunjung->qrCode->qr_code)
+                            @if ($pengunjung->qrCode && $pengunjung->qrCode->qr_scan_path)
                                 
                                 {{-- 1. Tampilkan Gambar QR Code --}}
-                                <img src="{{ asset($pengunjung->qrCode->qr_code) }}" 
+                                {{-- FIX: Mengganti asset() dengan Storage::url() untuk path di storage disk --}}
+                                <img src="{{ Storage::url($pengunjung->qrCode->qr_scan_path) }}" 
                                     alt="QR Code Kunjungan"
                                     width="200"
                                     height="200"
@@ -179,15 +183,15 @@
                             </thead>
                             @php
                                 // filter hanya yang benar-benar bukan perwakilan
-                                $rombongan = $pengunjung->peserta->filter(function ($p) {
+                                $rombongan = isset($pengunjung->peserta) ? $pengunjung->peserta->filter(function ($p) {
                                     return (int)$p->is_perwakilan === 0;
-                                });
+                                }) : collect();
                             @endphp
 
                             <tbody>
                                 @forelse ($rombongan as $index => $peserta)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $peserta->nama }}</td>
                                         <td>{{ $peserta->nip ?? '-' }}</td>
                                         <td>{{ $peserta->jabatan ?? '-' }}</td>

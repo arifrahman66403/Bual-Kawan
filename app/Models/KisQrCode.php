@@ -14,8 +14,8 @@ class KisQrCode extends Model
 
     protected $fillable = [
         'pengunjung_id',
-        'qr_code',
-        'qr_type',
+        'qr_detail_path',
+        'qr_scan_path',
         'berlaku_mulai',
         'berlaku_sampai',
         'created_by',

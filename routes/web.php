@@ -35,7 +35,7 @@ Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.ind
 Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
 Route::get('/kunjungan/detail/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
-Route::post('/kunjungan/upload-spt/{uid}', [GueesController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
+Route::post('/kunjungan/upload-spt/{uid}', [GuestController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
 Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
 Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
 

@@ -37,7 +37,7 @@ class KisPengunjung extends Model
     // Relasi
     public function peserta()
     {
-        return $this->hasMany(KisPesertaKunjungan::class, 'pengunjung_id', 'uid');
+        return $this->hasMany(KisPesertaKunjungan::class, 'pengunjung_id', 'uid', 'is_perwakilan');
     }
 
     public function getRouteKeyName()
@@ -58,19 +58,26 @@ class KisPengunjung extends Model
     public function qrCodeDetail()
     {
         return $this->hasOne(KisQrCode::class, 'pengunjung_id', 'uid')
-            ->where('qr_type', 'detail')
+            ->where('qr_detail_path', 'detail')
             ->withTrashed();
     }
 
-    public function getQrCodeUrlAttribute()
+    // Jika QR Code path disimpan di relasi KisQrCode
+    public function getQrDetailUrlAttribute()
     {
-        // Asumsikan relasi qrCodeDetail sudah ada dan kolom qr_code berisi 'qr_codes/qr_detail_UID.png'
-        if ($this->qrCodeDetail && $this->qrCodeDetail->qr_code) {
-            // Ini akan menghasilkan URL seperti: http://domainanda.com/storage/qr_codes/qr_detail_UID.png
-            return asset('storage/' . $this->qrCodeDetail->qr_code); 
+        // Asumsikan relasi qrCode() ada dan kolom baru di KisQrCode adalah 'qr_detail_path'
+        $qrCode = $this->qrCode; 
+        
+        if ($qrCode && $qrCode->qr_detail_path) {
+            // Asumsikan file disimpan di storage/app/public/qr_code/
+            return asset('storage/' . $qrCode->qr_detail_path); 
         }
+        
         return null;
     }
+
+    // Tambahkan 'qr_detail_url' ke $appends jika menggunakan JSON
+    protected $appends = ['qr_detail_url'];
 
     public function tracking()
     {

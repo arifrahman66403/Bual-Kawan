@@ -79,82 +79,40 @@ class PengajuanController extends Controller
                 'created_by' => Auth::id() ?? 1,
             ]);
 
-            // === 1. BUAT QR CODE UNTUK DETAIL KUNJUNGAN (UNTUK DITAMPILKAN DI PUBLIK) ===
+            // === LOGIKA GABUNGAN PEMBUATAN QR CODE === 
             if ($newStatus === 'disetujui') {
                 
-                // URL QR Detail Kunjungan
+                // 1. QR CODE DETAIL KUNJUNGAN (Untuk link publik)
                 $detailUrl = route('kunjungan.detail', $pengunjung->uid); 
                 $fileNameDetail = 'qr_detail_' . $pengunjung->uid . '.png';
                 $filePathDetail = storage_path('app/public/qr_code/' . $fileNameDetail); 
-
-                // ✅ Generate QR Code Detail
+                
                 $qrCodeDetail = new QrCode(
-                    data: $detailUrl, 
-                    encoding: new Encoding('UTF-8'),
-                    errorCorrectionLevel: ErrorCorrectionLevel::High,
-                    size: 250,
-                    margin: 10,
-                    foregroundColor: new Color(0, 0, 0),
-                    backgroundColor: new Color(255, 255, 255)
+                    data: $detailUrl, encoding: new Encoding('UTF-8'), errorCorrectionLevel: ErrorCorrectionLevel::High,
+                    size: 250, margin: 10, foregroundColor: new Color(0, 0, 0), backgroundColor: new Color(255, 255, 255)
                 );
+                (new PngWriter())->write($qrCodeDetail)->saveToFile($filePathDetail);
+                
+                // 2. QR CODE SCAN PESERTA (Untuk link input/scan)
+                $scanUrl = route('pengunjung.scan', $pengunjung->uid); 
+                $fileNameScan = 'qr_scan_' . $pengunjung->uid . '.png';
+                $filePathScan = storage_path('app/public/qr_code/' . $fileNameScan);
 
-                $writer = new PngWriter();
-                $writer->write($qrCodeDetail)->saveToFile($filePathDetail);
+                $qrCodeScan = new QrCode(
+                    data: $scanUrl, encoding: new Encoding('UTF-8'), errorCorrectionLevel: ErrorCorrectionLevel::High,
+                    size: 250, margin: 10, foregroundColor: new Color(0, 0, 0), backgroundColor: new Color(255, 255, 255)
+                );
+                (new PngWriter())->write($qrCodeScan)->saveToFile($filePathScan);
 
-                // Simpan metadata ke KisQrCode (Hanya path QR Detail Kunjungan)
+                // 3. Simpan Metadata GABUNGAN ke KisQrCode
                 KisQrCode::updateOrCreate(
                     ['pengunjung_id' => $pengunjung->uid],
                     [
-                        // PATH yang akan diambil oleh view publik
-                        'qr_code' => 'qr_code/' . $fileNameDetail, 
-                        'berlaku_mulai' => now(),
+                        'qr_detail_path' => 'qr_code/' . $fileNameDetail, // Kolom BARU
+                        'qr_scan_path'   => 'qr_code/' . $fileNameScan,   // Kolom BARU
+                        'berlaku_mulai'  => now(),
                         'berlaku_sampai' => now()->addDay(),
-                        'created_by' => Auth::id() ?? 1,
-                    ]
-                );
-            }
-
-            // === BUAT QR CODE (pakai GD backend, TANPA imagick) === 
-            if ($newStatus === 'disetujui') {
-                
-                // 1. Definisikan URL yang akan di-encode ke QR Code
-                // URL ini akan mengarahkan ke halaman publik untuk input peserta
-                // Asumsikan route 'pengunjung.scan' sudah didefinisikan (route('pengunjung.scan', $uid))
-                $scanUrl = route('pengunjung.scan', $pengunjung->uid); // <-- PERBAIKAN PENTING
-                
-                $fileName = 'qr_' . $pengunjung->uid . '.png';
-                $filePath = storage_path('app/public/qr_codes/' . $fileName);
-
-                // ✅ Versi 6.x pakai constructor baru (tanpa setter)
-                $qrCode = new QrCode(
-                    // Ganti $qrString dengan $scanUrl
-                    data: $scanUrl, // <-- Sekarang QR Code berisi URL publik
-                    encoding: new Encoding('UTF-8'),
-                    errorCorrectionLevel: ErrorCorrectionLevel::High,
-                    size: 250,
-                    margin: 10,
-                    foregroundColor: new Color(0, 0, 0),
-                    backgroundColor: new Color(255, 255, 255)
-                );
-
-                $writer = new PngWriter();
-                $result = $writer->write($qrCode);
-
-                // Simpan ke file
-                // Pastikan folder 'storage/app/public/qr_codes' sudah ada
-                $result->saveToFile($filePath);
-
-                // Simpan metadata ke database
-                KisQrCode::updateOrCreate(
-                    ['pengunjung_id' => $pengunjung->uid],
-                    [
-                        // Menyimpan path file gambar QR
-                        'qr_code' => 'storage/qr_codes/' . $fileName, 
-                        // Opsional: Jika tabel KisQrCode memiliki kolom 'content'/'url',
-                        // Anda bisa menyimpannya di sini untuk debugging: 'qr_content' => $scanUrl,
-                        'berlaku_mulai' => now(),
-                        'berlaku_sampai' => now()->addDay(),
-                        'created_by' => Auth::id() ?? 1,
+                        'created_by'     => Auth::id() ?? 1,
                     ]
                 );
             }
@@ -186,6 +144,7 @@ class PengajuanController extends Controller
     {
         try {
             $pengunjung = KisPengunjung::where('uid', $uid)
+                ->where('is_perwakilan', 0)
                 ->with(['qrCode', 'dokumen', 'peserta', 'tracking', 'createdBy'])
                 ->firstOrFail();
 

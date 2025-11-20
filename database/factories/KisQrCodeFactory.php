@@ -26,7 +26,8 @@ class KisQrCodeFactory extends Factory
 
         return [
             'pengunjung_id' => KisPengunjung::inRandomOrder()->first()?->uid,
-            'qr_code' => $this->faker->uuid(),
+            'qr_detail_path' => 'qr_codes/detail/' . $this->faker->uuid . '.png',
+            'qr_scan_path' => 'qr_codes/scan/' . $this->faker->uuid . '.png',
             'berlaku_mulai' => $start,
             'berlaku_sampai' => $end,
             'created_by' => KisUser::inRandomOrder()->first()?->id,
