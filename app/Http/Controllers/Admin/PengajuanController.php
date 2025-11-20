@@ -127,7 +127,7 @@ class PengajuanController extends Controller
 
             $message = ($newStatus == 'disetujui')
                 ? '✅ Pengajuan berhasil **DISETUJUI** dan QR Code telah dibuat.'
-                : '❌ Pengajuan berhasil **DITOLAK**.';
+                : '✅ Kunjungan telah **SELESAI**.';
 
             return redirect()->route('admin.pengajuan')->with('success', $message);
         } catch (ModelNotFoundException $e) {
@@ -143,9 +143,19 @@ class PengajuanController extends Controller
     public function show($uid)
     {
         try {
+            // TIDAK ADA FILTER is_perwakilan pada Model KisPengunjung di sini.
             $pengunjung = KisPengunjung::where('uid', $uid)
-                ->where('is_perwakilan', 0)
-                ->with(['qrCode', 'dokumen', 'peserta', 'tracking', 'createdBy'])
+                ->with([
+                    // 1. FILTER RELASI: Filter hanya diterapkan pada KisPesertaKunjungan (relasi 'peserta')
+                    'peserta' => function ($query) {
+                        $query->where('is_perwakilan', 0); // HANYA memuat peserta non-perwakilan
+                    },
+                    // 2. Load relasi lainnya
+                    'qrCode', 
+                    'dokumen', 
+                    'tracking', 
+                    'createdBy'
+                ])
                 ->firstOrFail();
 
             return view('admin.detail-pengajuan', compact('pengunjung'));

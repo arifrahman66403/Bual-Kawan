@@ -181,15 +181,9 @@
                                     <th>Jabatan</th>
                                 </tr>
                             </thead>
-                            @php
-                                // filter hanya yang benar-benar bukan perwakilan
-                                $rombongan = isset($pengunjung->peserta) ? $pengunjung->peserta->filter(function ($p) {
-                                    return (int)$p->is_perwakilan === 0;
-                                }) : collect();
-                            @endphp
 
                             <tbody>
-                                @forelse ($rombongan as $index => $peserta)
+                                @forelse ($anggotaRombongan as $index => $peserta)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $peserta->nama }}</td>

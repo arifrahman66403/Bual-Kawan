@@ -18,7 +18,7 @@ class GuestController extends Controller
     public function index()
     {
         // Menggunakan view namespace 'kunjungan' sesuai preferensi Anda
-        $kunjunganAktif = KisPengunjung::whereIn('status', ['pengajuan', 'disetujui', 'kunjungan', 'selesai'])
+        $kunjunganAktif = KisPengunjung::whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
                                     ->with('qrCode')
                                     ->latest()
                                     ->paginate(5);
@@ -234,30 +234,45 @@ class GuestController extends Controller
         }
     }
     /**
-     * Menampilkan Detail Laporan Kunjungan.
+     * Menampilkan detail kunjungan untuk tampilan publik/user.
+     * Mengambil data kunjungan, memisahkan perwakilan dan rombongan di sini.
+     * * @param string $id UID dari KisPengunjung
+     * @return \Illuminate\View\View
      */
     public function showDetail($id)
     {
-        // 1. Ambil data kunjungan dengan relasi peserta dan dokumen
-        $pengunjung = KisPengunjung::where('uid', $id)
-                                    ->with(['peserta', 'dokumen'])
-                                    ->firstOrFail();
-        
-        // 2. Cari Perwakilan Peserta (is_perwakilan = 1)
-        // Kita gunakan relasi karena Perwakilan sudah dimasukkan ke tabel peserta.
-        $perwakilanPeserta = $pengunjung->peserta->where('is_perwakilan', 1)->first();
+        try {
+            // 1. Ambil data kunjungan dengan relasi yang dibutuhkan
+            $pengunjung = KisPengunjung::where('uid', $id)
+                ->with(['peserta', 'dokumen']) // Load peserta dan dokumen
+                ->firstOrFail();
 
-        // 3. Filter Rombongan (sisanya, is_perwakilan = 0)
-        // reject() akan menghapus item yang mengembalikan nilai TRUE
-        $anggotaRombongan = $pengunjung->peserta->reject(function ($peserta) {
-            return $peserta->is_perwakilan == 1;
-        });
+            // 2. Pisahkan Perwakilan dan Rombongan dari koleksi peserta
+            $pesertaCollection = $pengunjung->peserta;
 
-        return view('kunjungan.detail', [
-            'perwakilanPeserta' => $perwakilanPeserta, // Data Perwakilan yang sudah difilter
-            'anggotaRombongan' => $anggotaRombongan,   // Data Rombongan non-Perwakilan
-            'pengunjung' => $pengunjung,
-            'title' => 'Detail pengunjung'
-        ]);
+            // Perwakilan Peserta (is_perwakilan = 1)
+            $perwakilanPeserta = $pesertaCollection->first(function ($peserta) {
+                return (int)$peserta->is_perwakilan === 1;
+            });
+            // Catatan: Menggunakan first() lebih cepat daripada filter()->first()
+
+            // Rombongan (sisanya, is_perwakilan = 0)
+            $anggotaRombongan = $pesertaCollection->filter(function ($peserta) {
+                return (int)$peserta->is_perwakilan === 0;
+            });
+
+            // 3. Kirim data yang sudah bersih ke View
+            return view('kunjungan.detail', [
+                'perwakilanPeserta' => $perwakilanPeserta, // Data Perwakilan (Model/null)
+                'anggotaRombongan' => $anggotaRombongan,   // Data Rombongan (Collection)
+                'pengunjung' => $pengunjung,
+                'title' => 'Detail Kunjungan',
+            ]);
+
+        } catch (ModelNotFoundException $e) {
+            // Jika data tidak ditemukan, alihkan atau tampilkan error
+            // Asumsi ini adalah tampilan publik, bisa dialihkan ke halaman error atau index
+            return redirect()->route('kunjungan.index')->with('error', 'Kunjungan tidak ditemukan atau URL tidak valid.');
+        }
     }
 }    

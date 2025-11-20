@@ -29,6 +29,11 @@ class KisPesertaKunjungan extends Model
         'edited_by',
         'deleted_by',
     ];
+    
+    // Peningkatan: Casting kolom is_perwakilan ke boolean
+    protected $casts = [
+        'is_perwakilan' => 'boolean',
+    ];
 
     // Relasi
     public function pengunjung()
