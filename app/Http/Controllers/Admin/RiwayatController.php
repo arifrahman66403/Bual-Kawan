@@ -31,13 +31,16 @@ class RiwayatController extends Controller
      */
     public function exportTracking(Request $request)
     {
-        // Ambil input bulan dan tahun dari request
-        $bulan = $request->input('bulan');
-        $tahun = $request->input('tahun');
+        // 1. Ambil input dan ubah ke Integer (int)
+        // Jika kosong, biarkan null
+        $bulan = $request->input('bulan') ? (int) $request->input('bulan') : null;
+        $tahun = $request->input('tahun') ? (int) $request->input('tahun') : null;
         
         // Buat nama file yang dinamis
         $periode = 'Semua_Data';
+        
         if ($bulan && $tahun) {
+            // Karena $bulan sudah (int), Carbon akan menerimanya tanpa error
             $namaBulan = \Carbon\Carbon::create()->month($bulan)->locale('id')->monthName;
             $periode = $namaBulan . '_' . $tahun;
         } elseif ($tahun) {
@@ -46,7 +49,7 @@ class RiwayatController extends Controller
 
         $fileName = 'Riwayat_Tracking_' . $periode . '_' . date('Ymd_His') . '.xlsx';
 
-        // Panggil Export Class dengan parameter
+        // Panggil Export Class dengan parameter yang sudah di-cast
         return Excel::download(new TrackingExport($bulan, $tahun), $fileName);
     }
 }
