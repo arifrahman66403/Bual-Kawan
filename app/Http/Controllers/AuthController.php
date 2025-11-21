@@ -37,51 +37,41 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            // Opsi 'remember' (jika ada di form)
         ], [
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
-        // 2. Coba otentikasi pengguna. Gunakan 'remember' jika ada di form.
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        // 2. Coba otentikasi pengguna
+        if (Auth::attempt($credentials)) {
             
             // Otentikasi BERHASIL
             $request->session()->regenerate();
             $user = Auth::user(); 
             $role = $user->role;
             
-            // 3. Pengalihan (Redirection) berdasarkan role menggunakan if-else if
-            if ($role === 'superadmin') {
-                // Arahkan Superadmin
-                return redirect()->route('admin.dashboard')->with('success', "Selamat datang, Superadmin {$user->name}!");
-            } elseif ($role === 'admin') {
-                // Arahkan Admin
-                return redirect()->route('admin.dashboard')->with('success', "Selamat datang, Admin {$user->name}!");
+            // 3. Pengalihan berdasarkan role
+            if ($role === 'superadmin' || $role === 'admin') {
+                return redirect()->route('admin.dashboard')->with('success', "Selamat datang, {$user->name}!");
             } elseif ($role === 'operator') {
-                // Arahkan Operator
-                return redirect()->route('operator.dashboard')->with('success', "Selamat datang, Operator {$user->name}!");
+                return redirect()->route('operator.dashboard')->with('success', "Selamat datang, {$user->name}!");
             } else {
-                // 4. Role Tidak Diizinkan (Unauthorized Role)
-                
-                // Lakukan logout paksa untuk user dengan role yang tidak terdaftar di panel admin
+                // Role tidak diizinkan
                 Auth::logout(); 
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                // Kembalikan error menggunakan ValidationException
-                throw ValidationException::withMessages([
-                    'email' => ['Role Anda tidak memiliki akses ke panel administrasi ini.'],
-                ])->onlyInput('email');
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => 'Role Anda tidak memiliki akses ke panel administrasi ini.']);
             }
         }
 
         // 5. Otentikasi GAGAL (Email/Password salah)
-        // Melempar pengecualian validasi untuk menampilkan pesan error di form login
-        throw ValidationException::withMessages([
-            'email' => ['Kombinasi Email atau Kata Sandi salah. Silakan coba lagi.'],
-        ])->onlyInput('email');
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => 'Kombinasi Email atau Kata Sandi salah. Silakan coba lagi.']);
     }
 
     /**

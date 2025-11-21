@@ -1,293 +1,426 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Admin</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .login-card {
-      width: 400px;
-      background: rgba(33, 37, 41, 0.85);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-      transform: translateY(20px);
-      animation: float 0.8s ease-out forwards;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      perspective: 1000px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Bual Kawan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    @keyframes float {
-      to { transform: translateY(0); }
-    }
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
 
-    .login-card.tilt {
-      transform: translateY(0) rotateX(var(--rx)) rotateY(var(--ry));
-      box-shadow: 0 20px 40px rgba(0,0,0,0.55);
-    }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
 
-    .shake {
-      animation: shake 0.6s;
-    }
+        .login-wrapper {
+            width: 100%;
+            max-width: 450px;
+            padding: 15px;
+        }
 
-    @keyframes shake {
-      10%, 90% { transform: translateX(-1px); }
-      20%, 80% { transform: translateX(2px); }
-      30%, 50%, 70% { transform: translateX(-4px); }
-      40%, 60% { transform: translateX(4px); }
-    }
+        .login-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    /* Default form control (kept for dark-on-dark if needed) */
-    .form-control {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: white;
-      transition: all 0.25s ease;
-    }
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
 
-    .form-control:focus {
-      background: rgba(255,255,255,0.09);
-      border-color: rgba(255,255,255,0.8);
-      box-shadow: 0 0 12px rgba(255,255,255,0.06);
-      color: white;
-    }
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 50px 30px;
+            text-align: center;
+            color: white;
+        }
 
-    .btn-login {
-      background: linear-gradient(90deg,#0d6efd,#6610f2);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
+        .login-header .logo-box {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
 
-    .btn-login:active { transform: translateY(1px) scale(0.998); }
-    .btn-login:hover { box-shadow: 0 8px 20px rgba(13,110,253,0.28); }
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
 
-    /* Page background changed to white and bring text to dark for light mode */
-    .bg-gradient-page {
-      background: #ffffff;
-    }
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 0;
+            font-weight: 400;
+        }
 
-    /* Make body text dark when using the white page background */
-    body.bg-gradient-page {
-      color: #212529;
-    }
-    /* Ensure common utility classes inside the white page inherit dark color */
-    body.bg-gradient-page .text-white,
-    body.bg-gradient-page .text-light {
-      color: #212529 !important;
-    }
-    /* Adjust form controls for the white page background */
-    body.bg-gradient-page .form-control {
-      background: #ffffff;
-      border: 1px solid #e2e6ea;
-      color: #212529;
-      caret-color: #0d6efd;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
+        .login-body {
+            padding: 45px 35px;
+        }
 
-    body.bg-gradient-page .form-control::placeholder {
-      color: #6c757d;
-      opacity: 1;
-    }
+        .form-group {
+            margin-bottom: 25px;
+        }
 
-    body.bg-gradient-page .input-group-text,
-    body.bg-gradient-page .input-group .btn,
-    body.bg-gradient-page .toggle-pass {
-      background: transparent;
-      color: #495057;
-      border: 1px solid #e2e6ea;
-    }
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    body.bg-gradient-page .form-control:focus {
-      background: #ffffff;
-      border-color: rgba(13,110,253,0.25);
-      box-shadow: 0 0 0 0.15rem rgba(13,110,253,0.06);
-      color: #212529;
-      outline: none;
-    }
+        .input-group {
+            position: relative;
+        }
 
-    /* Validation states to match Bootstrap visuals on light background */
-    body.bg-gradient-page .form-control:invalid,
-    body.bg-gradient-page .form-control.is-invalid {
-      border-color: #dc3545;
-      box-shadow: 0 0 0 0.15rem rgba(220,53,69,0.06);
-    }
+        .input-group-text {
+            background: transparent;
+            border: 1.5px solid #e2e8f0;
+            color: #667eea;
+            font-size: 18px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
 
-    body.bg-gradient-page .form-control:valid,
-    body.bg-gradient-page .form-control.is-valid {
-      border-color: #198754;
-      box-shadow: 0 0 0 0.08rem rgba(25,135,84,0.04);
-    }
+        .form-control {
+            border: 1.5px solid #e2e8f0;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #2d3748;
+            background: #f7fafc;
+        }
 
-    .toggle-pass {
-      color: rgba(255,255,255,0.7);
-      cursor: pointer;
-    }
+        .form-control:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            color: #2d3748;
+        }
 
-    .bg-white {
-      background-color: white !important; /* !important digunakan untuk memastikan gaya ini menimpa gaya inline */
-    }
+        .form-control::placeholder {
+            color: #a0aec0;
+            font-weight: 400;
+        }
 
-    .border-light-gray {
-      border: 1px solid #ccc !important;
-    }
+        .input-group:focus-within .input-group-text {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
 
-    /* small floating effect for headings */
-    .title-float { transform: translateY(-6px); opacity: 0; animation: titleIn 0.7s 0.15s forwards; }
-    @keyframes titleIn { to { transform: translateY(0); opacity: 1; } }
+        .toggle-password {
+            background: transparent;
+            border: 1.5px solid #e2e8f0;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 12px 15px;
+            font-size: 16px;
+        }
 
-    /* toast custom */
-    .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 1080; }
-  </style>
+        .toggle-password:hover {
+            color: #764ba2;
+            background: #f7fafc;
+        }
+
+        .toggle-password:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 20px;
+            font-size: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            border: none;
+            padding: 12px 16px;
+        }
+
+        .alert-danger {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .invalid-feedback {
+            font-size: 12px;
+            margin-top: 6px;
+            color: #e53e3e;
+            display: block;
+        }
+
+        .shake {
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px 35px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .login-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .login-body {
+                padding: 35px 25px;
+            }
+
+            .login-header {
+                padding: 40px 25px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .login-header .logo-box {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+
+            .login-footer {
+                padding: 15px 25px;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner-border-sm {
+            width: 14px;
+            height: 14px;
+            border-width: 2px;
+        }
+    </style>
 </head>
-<body class="bg-gradient-page text-light d-flex align-items-center justify-content-center vh-100">
-  <div id="toastArea" class="toast-container"></div>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="logo-box">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <h1>Bual Kawan</h1>
+                <p>Admin Portal</p>
+            </div>
 
-  <div id="card" class="card p-5 login-card">
-    <!-- Header with Logo -->
-    <div class="d-flex align-items-center mb-4 pb-3 border-bottom border-secondary">
-      <div style="width:56px;height:56px;background-color: white; border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc;flex-shrink:0;">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="3" width="18" height="18" rx="4" fill="#0d6efd"/>
-          <text x="12" y="17" font-size="12" font-weight="bold" fill="white" text-anchor="middle">BK</text>
-        </svg>
-      </div>
-      <div class="ms-3">
-        <h5 class="mb-0 fw-bold text-white">Bual Kawan</h5>
-        <small class="text-light opacity-75">Admin Login</small>
-      </div>
+            <!-- Body -->
+            <div class="login-body">
+                <!-- Error Message -->
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <strong>Login Gagal!</strong> {{ $errors->first() }}
+                    </div>
+                @endif
+
+                <!-- Form -->
+                <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
+                    @csrf
+
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope"></i> Email
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input 
+                                id="email" 
+                                type="email" 
+                                name="email" 
+                                class="form-control" 
+                                placeholder="admin@example.com" 
+                                required 
+                                autofocus
+                                value="{{ old('email') }}">
+                        </div>
+                        <div class="invalid-feedback">
+                            <i class="bi bi-info-circle me-1"></i>Masukkan email yang valid
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock"></i> Password
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key"></i>
+                            </span>
+                            <input 
+                                id="password" 
+                                type="password" 
+                                name="password" 
+                                class="form-control" 
+                                placeholder="Masukkan password" 
+                                required>
+                            <button 
+                                type="button" 
+                                class="toggle-password" 
+                                id="togglePassword" 
+                                title="Tampilkan/Sembunyikan password"
+                                tabindex="-1">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback">
+                            <i class="bi bi-info-circle me-1"></i>Password tidak boleh kosong
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        id="submitBtn" 
+                        type="submit" 
+                        class="btn btn-login">
+                        <span id="btnText">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p class="mb-2">
+                    <i class="bi bi-question-circle me-1"></i>
+                    Kembali ke <a href="/">Beranda</a>
+                </p>
+                <small>© {{ date('Y') }} Bual Kawan. All rights reserved.</small>
+            </div>
+        </div>
     </div>
 
-    <!-- Title -->
-    <h3 class="text-white fw-bold mb-1">Selamat Datang</h3>
-    <p class="text-light opacity-75 mb-4">Masukkan kredensial Anda untuk melanjutkan</p>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            const form = document.getElementById('loginForm');
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.getElementById('togglePassword');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const card = document.querySelector('.login-card');
 
-    <!-- Form -->
-    <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
-      @csrf
+            // Toggle password visibility
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const isHidden = passwordInput.type === 'password';
+                passwordInput.type = isHidden ? 'text' : 'password';
+                
+                const icon = toggleBtn.querySelector('i');
+                icon.classList.remove(isHidden ? 'bi-eye' : 'bi-eye-slash');
+                icon.classList.add(isHidden ? 'bi-eye-slash' : 'bi-eye');
+            });
 
-        <!-- Email Field -->
-        <div class="mb-4">
-          <label for="email" class="form-label text-white fw-5 mb-2">Alamat Email</label>
-          <div class="input-group">
-            <span class="input-group-text bg-transparent border-light border-opacity-25 text-light" aria-hidden="true">📧</span>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" class="form-control border-light border-opacity-25 @error('email') is-invalid @enderror" placeholder="admin@example.com" required autofocus aria-describedby="emailHelp">
-          </div>
-          @error('email')
-            <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
-          @else
-            <div id="emailHelp" class="form-text text-light opacity-75 mt-1">Masukkan alamat email terdaftar.</div>
-          @enderror
-        </div>
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                if (!form.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    form.classList.add('was-validated');
+                    card.classList.add('shake');
+                    setTimeout(() => card.classList.remove('shake'), 400);
+                    
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                    return false;
+                }
 
-        <!-- Password Field -->
-        <div class="mb-3">
-          <label for="password" class="form-label text-white fw-5 mb-2">Kata Sandi</label>
-          <div class="input-group">
-            <span class="input-group-text bg-transparent border-light border-opacity-25 text-light" aria-hidden="true">🔒</span>
-            <input id="password" type="password" name="password" class="form-control border-light border-opacity-25 @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi" required aria-describedby="passwordHelp">
-            <button type="button" class="btn btn-outline-secondary toggle-pass border-light border-opacity-25" id="togglePass" title="Tampilkan/ sembunyikan kata sandi" aria-label="Toggle password">
-              <span id="toggleIcon">👁️</span>
-            </button>
-          </div>
-          @error('password')
-            <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
-          @else
-            <div id="passwordHelp" class="form-text text-light opacity-75 mt-1">Minimal 6 karakter.</div>
-          @enderror
-        </div>
+                // Disable button & show loading state
+                submitBtn.disabled = true;
+                btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Memproses...';
+            });
 
-      <!-- Forgot Password Link -->
-      <div class="mb-4 text-end">
-        <a href="#" class="small text-light opacity-75 text-decoration-none">Lupa password?</a>
-      </div>
-
-      <!-- Error Message -->
-      @if ($errors->any())
-        <div id="serverError" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-          <strong>Error!</strong> {{ $errors->first() }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      @endif
-
-      <!-- Submit Button -->
-      <button id="submitBtn" type="submit" class="btn btn-login text-white w-100 fw-bold py-2 mb-3">
-        <span id="btnText">Masuk</span>
-      </button>
-
-      <!-- Footer -->
-      <div class="text-center small">
-        <p class="text-light opacity-75 mb-2">Kembali ke <a href="/" class="text-white fw-bold text-decoration-none">Beranda</a></p>
-        <span class="text-light opacity-50 d-block">Versi 1.0 • © {{ date('Y') }} Bual Kawan</span>
-      </div>
-    </form>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    (function(){
-      const card = document.getElementById('card');
-      const form = document.getElementById('loginForm');
-      const pass = document.getElementById('password');
-      const toggle = document.getElementById('togglePass');
-      const toggleIcon = document.getElementById('toggleIcon');
-      const submitBtn = document.getElementById('submitBtn');
-      const btnText = document.getElementById('btnText');
-
-      // Tilt effect on mouse move
-      card.addEventListener('mousemove', function(e){
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width/2;
-        const y = e.clientY - rect.top - rect.height/2;
-        const rx = (-y / rect.height) * 6; // rotateX
-        const ry = (x / rect.width) * 6;   // rotateY
-        card.style.setProperty('--rx', rx + 'deg');
-        card.style.setProperty('--ry', ry + 'deg');
-        card.classList.add('tilt');
-      });
-      card.addEventListener('mouseleave', function(){
-        card.style.setProperty('--rx', '0deg');
-        card.style.setProperty('--ry', '0deg');
-        card.classList.remove('tilt');
-      });
-
-      // Toggle password visibility (change only the inner icon)
-      toggle.addEventListener('click', function(){
-        const isHidden = pass.type === 'password';
-        pass.type = isHidden ? 'text' : 'password';
-        if (toggleIcon) toggleIcon.textContent = isHidden ? '🙈' : '👁️';
-        toggle.setAttribute('aria-pressed', String(!isHidden));
-        pass.focus();
-      });
-
-      // Client-side validation with shake on invalid
-      form.addEventListener('submit', function(e){
-        if (!form.checkValidity()) {
-          e.preventDefault();
-          form.classList.add('was-validated');
-          card.classList.add('shake');
-          setTimeout(()=> card.classList.remove('shake'), 700);
-          const firstInvalid = form.querySelector(':invalid');
-          if (firstInvalid) firstInvalid.focus();
-          return;
-        }
-        submitBtn.disabled = true;
-        btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Masuk...';
-      });
-
-      // If server returned an error, show a Bootstrap toast for better UX
-      const serverErrorEl = document.getElementById('serverError');
-      if (serverErrorEl) {
-        const toastArea = document.getElementById('toastArea');
-        const toastId = 'serverToast';
-        // sanitize minimal: use textContent when inserting
-        const msg = serverErrorEl.textContent.trim();
-        toastArea.innerHTML = `\n          <div id="${toastId}" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">\n            <div class="d-flex">\n              <div class="toast-body text-white">${msg}</div>\n              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>\n            </div>\n          </div>`;
-        const toastEl = document.getElementById(toastId);
-        const bsToast = new bootstrap.Toast(toastEl, { delay: 5000 });
-        bsToast.show();
-        serverErrorEl.style.display = 'none';
-      }
-    })();
-  </script>
+            // Prefill email jika ada error sebelumnya
+            if (form.classList.contains('was-validated')) {
+                const firstInvalid = form.querySelector(':invalid');
+                if (firstInvalid) firstInvalid.focus();
+            }
+        })();
+    </script>
 </body>
 </html>
