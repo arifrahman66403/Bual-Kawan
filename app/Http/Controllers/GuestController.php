@@ -39,239 +39,45 @@ class GuestController extends Controller
     }
 
     /**
-     * Memproses dan menyimpan data pengajuan kunjungan ke 3 tabel.
-     */
-
-    public function storeKunjungan(Request $request)
-    {
-        // 1. Validasi Data
-        $request->validate([
-            'kode_daerah' => 'required|string|max:255',
-            'nama_instansi' => 'required|string|max:255',
-            'satuan_kerja' => 'required|string|max:255',
-            'tujuan' => 'required|string|max:255',
-            'tgl_kunjungan' => 'required|date',
-            'nama_perwakilan' => 'required|string|max:255',
-            'email_perwakilan' => 'required|email|max:255',
-            'wa_perwakilan' => 'required|string|max:20',
-            'file_spt' => 'nullable|file|mimes:pdf|max:2048',
-            'jabatan_perwakilan' => 'required|string|max:255',
-            'nip_perwakilan' => 'nullable|string|max:255',
-
-            // peserta dinamis
-            'peserta_nama.*' => 'nullable|string|max:255',
-            'peserta_jabatan.*' => 'nullable|string|max:255',
-            'peserta_kontak.*' => 'nullable|string|max:20',
-            'peserta_email.*' => 'nullable|email|max:255',
-            'peserta_ttd.*' => 'nullable|file|mimes:jpg,png|max:1024',
-        ]);
-
-        DB::beginTransaction();
-        $spt_path = null;
-        $ttd_files = $request->file('peserta_ttd');
-
-        try {
-            // 2. Simpan Data KisPengunjung (simpan data perwakilan di table pengunjung)
-            $pengunjung = KisPengunjung::create([
-                'uid' => Str::uuid(),
-                'kode_daerah' => $request->kode_daerah,
-                'nama_instansi' => $request->nama_instansi,
-                'satuan_kerja' => $request->satuan_kerja,
-                'tujuan' => $request->tujuan,
-                'tgl_kunjungan' => $request->tgl_kunjungan,
-                'nama_perwakilan' => $request->nama_perwakilan,
-                'email_perwakilan' => $request->email_perwakilan,
-                'wa_perwakilan' => $request->wa_perwakilan,
-                'jabatan' => $request->jabatan_perwakilan,        // simpan jabatan perwakilan ke kolom jabatan
-                'nip' => $request->nip_perwakilan,                // simpan nip perwakilan ke kolom nip
-                'status' => 'pengajuan',
-                'kode_qr' => 'QR-' . Str::random(8),
-                'created_by' => null,
-            ]);
-            $pengunjungUid = $pengunjung->uid;
-
-            // 3. Simpan File SPT
-            if ($request->hasFile('file_spt')) {
-                $spt_file = $request->file('file_spt');
-                $spt_path = Storage::disk('public')->putFile('spt', $spt_file);
-
-                KisDokumen::create([
-                    'uid' => Str::uuid(),
-                    'pengunjung_id' => $pengunjungUid,
-                    'file_spt' => $spt_path,
-                    'created_by' => null,
-                ]);
-            }
-
-            // 4. Siapkan peserta: pertama adalah perwakilan (jelas terpisah)
-            $peserta_data_massal = [];
-
-            $peserta_data_massal[] = [
-                'uid' => Str::uuid(),
-                'pengunjung_id' => $pengunjungUid,
-                'nama' => $request->nama_perwakilan,
-                'nip' => $request->nip_perwakilan ?? null,
-                'jabatan' => $request->jabatan_perwakilan ?? null,
-                'email' => $request->email_perwakilan ?? null,
-                'wa' => $request->wa_perwakilan ?? null,
-                'file_ttd' => null,
-                'is_perwakilan' => 1,
-                'created_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-
-            // 5. Tambahkan peserta rombongan tambahan dari array tanpa menimpa perwakilan
-            if ($request->has('peserta_nama') && is_array($request->peserta_nama)) {
-                $nama_array = $request->peserta_nama;
-                $jabatan_array = $request->peserta_jabatan ?? [];
-                $kontak_array = $request->peserta_kontak ?? [];
-                $email_array = $request->peserta_email ?? [];
-
-                $count = count($nama_array);
-                for ($i = 0; $i < $count; $i++) {
-                    $nama = trim($nama_array[$i] ?? '');
-                    if (empty($nama)) continue;
-
-                    $ttd_path = null;
-                    if (isset($ttd_files[$i]) && $ttd_files[$i] instanceof \Illuminate\Http\UploadedFile) {
-                        $ttd_path = Storage::disk('public')->putFile('ttd_peserta', $ttd_files[$i]);
-                    }
-
-                    $peserta_data_massal[] = [
-                        'uid' => Str::uuid(),
-                        'pengunjung_id' => $pengunjungUid,
-                        'nama' => $nama,
-                        'nip' => null,                                    // jika form tidak menyediakan NIP untuk peserta, simpan null
-                        'jabatan' => $jabatan_array[$i] ?? null,
-                        'email' => $email_array[$i] ?? null,
-                        'wa' => $kontak_array[$i] ?? null,
-                        'file_ttd' => $ttd_path,
-                        'is_perwakilan' => 0,
-                        'created_by' => null,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }
-            }
-
-            // 6. Insert massal peserta
-            if (!empty($peserta_data_massal)) {
-                KisPesertaKunjungan::insert($peserta_data_massal);
-            }
-
-            DB::commit();
-            return redirect()->route('kunjungan.index')->with('success', 'Pengajuan kunjungan berhasil dikirim!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            if (isset($spt_path)) {
-                Storage::disk('public')->delete($spt_path);
-            }
-            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi. Pesan Error: ' . $e->getMessage());
-        }
-    }
-    /**
-     * Mengunggah dan menyimpan file Surat Perintah Tugas (SPT)
-     * ke dalam tabel kis_dokumen.
-     */
-    public function uploadSpt(Request $request, $uid)
-    {
-        // 1. Validasi File
-        $request->validate([
-            'file_spt' => 'required|file|mimes:pdf|max:2048', // Maks 2MB
-        ], [
-            'file_spt.required' => 'File SPT wajib diunggah.',
-            'file_spt.mimes' => 'File harus berformat PDF.',
-            'file_spt.max' => 'Ukuran file tidak boleh lebih dari 2MB.',
-        ]);
-
-        $pengunjung = KisPengunjung::where('uid', $uid)->first();
-
-        if (!$pengunjung) {
-            return back()->with('error', 'Data pengajuan tidak ditemukan.');
-        }
-
-        DB::beginTransaction();
-
-        try {
-            // 2. Simpan File ke Storage
-            $file = $request->file('file_spt');
-            // Menghasilkan nama file yang unik dan menyimpan ke folder 'dokumen_spt' di disk 'public'
-            $path = $file->store('dokumen_spt', 'public'); 
-
-            // 3. Cek apakah dokumen untuk pengunjung ini sudah ada di tabel KisDokumen
-            // Jika ada, kita update. Jika belum ada, kita buat baru.
-            $dokumen = KisDokumen::firstOrNew(['pengunjung_id' => $uid]);
-
-            // Jika ini adalah record baru (INSERT):
-            if (!$dokumen->exists) {
-                // === BARIS PERBAIKAN UTAMA UNTUK ERROR 1364 ===
-                $dokumen->uid = Str::uuid(); 
-                // ===============================================
-            } else {
-                // Jika file SPT lama sudah ada, hapus file lama sebelum di-update
-                if ($dokumen->file_spt) {
-                    Storage::disk('public')->delete($dokumen->file_spt);
-                }
-            }
-            
-            // 4. Update path file dan simpan ke database
-            $dokumen->file_spt = $path;
-            $dokumen->save();
-
-            DB::commit();
-
-            return back()->with('success', 'Dokumen Surat Perintah Tugas (SPT) berhasil dilampirkan/diganti.');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // Jika terjadi error setelah file tersimpan, hapus file yang baru saja diupload
-            if (isset($path)) {
-                 Storage::disk('public')->delete($path);
-            }
-            return back()->with('error', 'Gagal mengunggah file SPT: ' . $e->getMessage());
-        }
-    }
-    /**
      * Menampilkan detail kunjungan untuk tampilan publik/user.
-     * Mengambil data kunjungan, memisahkan perwakilan dan rombongan di sini.
-     * * @param string $id UID dari KisPengunjung
+     * @param string $id UID dari KisPengunjung
      * @return \Illuminate\View\View
      */
     public function showDetail($id)
     {
         try {
-            // 1. Ambil data kunjungan dengan relasi yang dibutuhkan
+            // 1. Ambil data kunjungan dengan relasi dokumen dan peserta.
+            // Data Perwakilan diambil dari kolom utama KisPengunjung.
             $pengunjung = KisPengunjung::where('uid', $id)
-                ->with(['peserta', 'dokumen']) // Load peserta dan dokumen
+                ->with(['peserta', 'dokumen']) 
                 ->firstOrFail();
 
-            // 2. Pisahkan Perwakilan dan Rombongan dari koleksi peserta
-            $pesertaCollection = $pengunjung->peserta;
+            // 2. Siapkan Objek Data Perwakilan ($perwakilanPeserta)
+            // Data perwakilan diambil langsung dari kolom utama model KisPengunjung.
+            $perwakilanPeserta = (object) [
+                'nama' => $pengunjung->nama_perwakilan,
+                'email' => $pengunjung->email_perwakilan,
+                'wa' => $pengunjung->wa_perwakilan,
+                'jabatan' => $pengunjung->jabatan_perwakilan, // diambil dari kolom jabatan di KisPengunjung
+                'nip' => $pengunjung->nip_perwakilam,         // diambil dari kolom nip di KisPengunjung
+            ];
 
-            // Perwakilan Peserta (is_perwakilan = 1)
-            $perwakilanPeserta = $pesertaCollection->first(function ($peserta) {
-                return (int)$peserta->is_perwakilan === 1;
-            });
-            // Catatan: Menggunakan first() lebih cepat daripada filter()->first()
 
-            // Rombongan (sisanya, is_perwakilan = 0)
-            $anggotaRombongan = $pesertaCollection->filter(function ($peserta) {
-                return (int)$peserta->is_perwakilan === 0;
-            });
+            // 3. Siapkan Koleksi Anggota Rombongan ($anggotaRombongan)
+            // Karena kolom 'is_perwakilan' diabaikan/dihapus, kita asumsikan 
+            // SEMUA data di relasi 'peserta' adalah anggota rombongan tambahan.
+            // Kita tidak perlu lagi memfilter.
+            $anggotaRombongan = $pengunjung->peserta; 
 
-            // 3. Kirim data yang sudah bersih ke View
+            // 4. Kirim data yang dibutuhkan ke View
             return view('kunjungan.detail', [
-                'perwakilanPeserta' => $perwakilanPeserta, // Data Perwakilan (Model/null)
-                'anggotaRombongan' => $anggotaRombongan,   // Data Rombongan (Collection)
-                'pengunjung' => $pengunjung,
+                'perwakilanPeserta' => $perwakilanPeserta, // Objek Data Perwakilan (dari KisPengunjung)
+                'anggotaRombongan' => $anggotaRombongan, // Koleksi Rombongan (Seluruh relasi peserta)
+                'pengunjung' => $pengunjung, // Data utama (Instansi, Tanggal, Status, Dokumen, QR)
                 'title' => 'Detail Kunjungan',
             ]);
 
         } catch (ModelNotFoundException $e) {
-            // Jika data tidak ditemukan, alihkan atau tampilkan error
-            // Asumsi ini adalah tampilan publik, bisa dialihkan ke halaman error atau index
             return redirect()->route('kunjungan.index')->with('error', 'Kunjungan tidak ditemukan atau URL tidak valid.');
         }
     }

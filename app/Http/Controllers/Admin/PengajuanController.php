@@ -75,7 +75,7 @@ class PengajuanController extends Controller
                 'status' => $newStatus,
                 'catatan' => $newStatus == 'disetujui'
                     ? "Pengajuan disetujui oleh Admin."
-                    : "Pengajuan ditolak oleh Admin.",
+                    : "Kunjungan telah selesai.",
                 'created_by' => Auth::id() ?? 1,
             ]);
 
@@ -146,11 +146,7 @@ class PengajuanController extends Controller
             // TIDAK ADA FILTER is_perwakilan pada Model KisPengunjung di sini.
             $pengunjung = KisPengunjung::where('uid', $uid)
                 ->with([
-                    // 1. FILTER RELASI: Filter hanya diterapkan pada KisPesertaKunjungan (relasi 'peserta')
-                    'peserta' => function ($query) {
-                        $query->where('is_perwakilan', 0); // HANYA memuat peserta non-perwakilan
-                    },
-                    // 2. Load relasi lainnya
+                    'peserta',
                     'qrCode', 
                     'dokumen', 
                     'tracking', 

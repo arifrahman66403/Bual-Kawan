@@ -8,6 +8,7 @@ use App\Http\Controllers\KisUserController;
 use App\Http\Controllers\KisQrCodeController;
 use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\GalleryController;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 
 // Route Beranda (Area publik)
 Route::view('/', 'beranda')->name('beranda');
+Route::get('/', [HomeController::class, 'index'])->name('beranda');
 Route::view('/statistik', 'statistik')->name('statistik');
 Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
 Route::view('/tentang/visi-misi', 'tentang.visi-misi')->name('tentang.visi-misi');
@@ -31,13 +33,21 @@ Route::view('/berita', 'berita.berita')->name('berita.berita');
 Route::view('/berita-detail', 'berita.berita-detail')->name('berita.detail');   
 
 Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
-// Form Pengajuan Kunjungan (Tambah Kunjungan)
-Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
-Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
-Route::get('/kunjungan/detail/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
-Route::post('/kunjungan/upload-spt/{uid}', [GuestController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
+Route::get('/kunjungan/create', [KisPengunjungController::class, 'showCreateForm'])->name('kunjungan.create');
+Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
+Route::post('/kunjungan', [KisPengunjungController::class, 'storeKunjungan'])->name('kunjungan.store');
+Route::post('/kunjungan/upload-spt/{uid}', [KisPengunjungController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
 Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
 Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
+
+// Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
+// // Form Pengajuan Kunjungan (Tambah Kunjungan)
+// Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
+// Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
+// Route::get('/kunjungan/detail/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
+// Route::post('/kunjungan/upload-spt/{uid}', [GuestController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
+// Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
+// Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
 
 // Route Login Admin (Area publik)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

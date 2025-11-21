@@ -1,9 +1,19 @@
 <x-layout-admin title="Detail Pengajuan">
     <div class="container-fluid p-4">
+        {{-- Pesan Sukses/Error dari Controller --}}
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+        
         <a href="{{ route('admin.pengajuan') }}" class="btn btn-outline-secondary mb-3">&larr; Kembali</a>
 
         <div class="row g-3">
             <div class="col-lg-8">
+                
+                {{-- INFORMASI PENGAJUAN --}}
                 <div class="card mb-3">
                     <div class="card-body">
                         <h4 class="mb-3">Informasi Pengajuan</h4>
@@ -19,15 +29,17 @@
                     </div>
                 </div>
 
+                {{-- DATA PERWAKILAN (Diambil dari kolom utama KisPengunjung) --}}
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5>Perwakilan</h5>
-                        <p><strong>{{ $pengunjung->nama_perwakilan }}</strong> — {{ $pengunjung->jabatan ?? '-' }}<br>
+                        <h5>Perwakilan Utama</h5>
+                        <p><strong>{{ $pengunjung->nama_perwakilan ?? '-' }}</strong> — {{ $pengunjung->jabatan ?? '-' }}<br>
                         Email: {{ $pengunjung->email_perwakilan ?? '-' }} — WA: {{ $pengunjung->wa_perwakilan ?? '-' }}<br>
                         NIP: {{ $pengunjung->nip ?? '-' }}</p>
                     </div>
                 </div>
 
+                {{-- DOKUMEN / FILE --}}
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5>Dokumen / File</h5>
@@ -52,62 +64,67 @@
                                 <i class="bi bi-x-circle-fill text-danger me-1"></i> Belum ada dokumen SPT yang terlampir.
                             </div>
                         @endif
-                        
                     </div>
                 </div>
 
-                 <div class="card mb-3">
-                     <div class="card-body">
-                         <h5>Peserta Rombongan</h5>
+                {{-- PESERTA ROMBONGAN (is_perwakilan logic REMOVED) --}}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Anggota Rombongan (Tambahan)</h5>
+                        {{-- Logika filter is_perwakilan dihapus. Semua relasi 'peserta' dianggap anggota rombongan. --}}
                         @if ($pengunjung->peserta && is_iterable($pengunjung->peserta) && count($pengunjung->peserta) > 0)
-                             <table class="table table-sm">
-                                 <thead>
-                                     <tr><th>No</th><th>Nama</th><th>Jabatan</th><th>Nip</th></tr>
-                                 </thead>
-                                 <tbody>
-                                     @foreach($pengunjung->peserta as $i => $peserta)
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr><th>No</th><th>Nama</th><th>Jabatan</th><th>Nip</th></tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pengunjung->peserta as $peserta)
                                         @if($peserta && is_object($peserta))
-                                         <tr>
-                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $peserta->nama ?? '-' }}</td>
-                                            <td>{{ $peserta->jabatan ?? '-' }}</td>
-                                            <td>{{ $peserta->nip ?? '-' }}</td>
-                                         </tr>
-                                         @endif
-                                     @endforeach
-                                 </tbody>
-                             </table>
-                         @else
-                             <div class="text-muted">Belum ada peserta terdaftar.</div>
-                         @endif
-                     </div>
-                 </div>
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $peserta->nama ?? '-' }}</td>
+                                                <td>{{ $peserta->jabatan ?? '-' }}</td>
+                                                <td>{{ $peserta->nip ?? '-' }}</td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <div class="text-muted">Belum ada peserta rombongan tambahan yang terdaftar.</div>
+                        @endif
+                    </div>
+                </div>
 
-                 <div class="card mb-3">
-                     <div class="card-body">
-                         <h5>Riwayat Tracking</h5>
+                {{-- RIWAYAT TRACKING --}}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Riwayat Tracking</h5>
                         @if ($pengunjung->tracking && is_iterable($pengunjung->tracking) && count($pengunjung->tracking) > 0)
-                             <ul class="list-group">
+                            <ul class="list-group">
                                 @foreach($pengunjung->tracking as $track)
                                     @if($track && is_object($track))
-                                     <li class="list-group-item">
-                                        <strong>{{ $track->status ?? '-' }}</strong>
-                                        <div class="small text-muted">oleh: {{ $track->createdBy && $track->createdBy->name ? $track->createdBy->name : 'System' }} — {{ $track->created_at ? $track->created_at->format('Y-m-d H:i') : '-' }}</div>
-                                         @if(!empty($track->catatan))
-                                             <div class="mt-1">{{ $track->catatan }}</div>
-                                         @endif
-+                                    @endif
-                                     </li>
-                                 @endforeach
-                             </ul>
-                         @else
-                             <div class="text-muted">Belum ada riwayat tracking.</div>
-                         @endif
-                     </div>
-                 </div>
+                                        <li class="list-group-item">
+                                            <strong>{{ $track->status ?? '-' }}</strong>
+                                            <div class="small text-muted">oleh: {{ $track->createdBy && $track->createdBy->name ? $track->createdBy->name : 'System' }} — {{ $track->created_at ? $track->created_at->format('Y-m-d H:i') : '-' }}</div>
+                                            @if(!empty($track->catatan))
+                                                <div class="mt-1">{{ $track->catatan }}</div>
+                                            @endif
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        @else
+                            <div class="text-muted">Belum ada riwayat tracking.</div>
+                        @endif
+                    </div>
+                </div>
             </div>
 
+            {{-- Kolom Kanan (QR Code & Aksi Admin) --}}
             <div class="col-lg-4">
+                
+                {{-- QR Code --}}
                 <div class="card mb-3">
                     <div class="card-body text-center">
                         <h5>QR Code</h5>
@@ -126,6 +143,7 @@
                     </div>
                 </div>
 
+                {{-- Aksi Admin --}}
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5>Aksi Admin</h5>
@@ -148,7 +166,6 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

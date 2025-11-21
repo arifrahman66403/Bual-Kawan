@@ -21,18 +21,12 @@ class KisPesertaKunjungan extends Model
         'nama',
         'nip',
         'jabatan',
-        'is_perwakilan',
         'email',
         'wa',
         'file_ttd',
         'created_by',
         'edited_by',
         'deleted_by',
-    ];
-    
-    // Peningkatan: Casting kolom is_perwakilan ke boolean
-    protected $casts = [
-        'is_perwakilan' => 'boolean',
     ];
 
     // Relasi

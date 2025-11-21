@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KisPengunjung;
 use App\Models\KisPesertaKunjungan;
+use App\Models\KisTracking;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -65,6 +66,7 @@ class KisQrCodeController extends Controller
 
     /**
      * Menyimpan data peserta rombongan dari formulir yang diakses melalui QR.
+     * Menambahkan KisTracking saat status berubah menjadi 'kunjungan'.
      */
     public function storeParticipantData(Request $request, $uid)
     {
@@ -87,16 +89,12 @@ class KisQrCodeController extends Controller
 
         $request->validate([
             // Diubah menjadi nullable agar baris kosong (jika dihapus di FE) tidak menyebabkan error required
-
             'peserta_nama.*' => 'nullable|string|max:255',
-
             'peserta_jabatan.*' => 'nullable|string|max:255',
             'peserta_kontak.*' => 'nullable|string|max:20',
             'peserta_email.*' => 'nullable|email|max:255',
             // Ini tetap required karena TTD harus ada jika Nama Peserta diisi (validasi JS)
-
             'peserta_ttd_data.*' => 'nullable|string',
-
         ]);
 
         DB::beginTransaction();
@@ -108,14 +106,18 @@ class KisQrCodeController extends Controller
             $kontak_array = $request->peserta_kontak;
             $email_array = $request->peserta_email;
             $count = count($nama_array);
+            
             // Kita akan menghitung berapa peserta baru yang valid di submit
             $newly_added_count = 0;
+            
             for ($i = 0; $i < $count; $i++) {
                 $nama = trim($nama_array[$i] ?? '');
+                
                 if (!empty($nama)) {
                     $newly_added_count++;
                     $ttd_path = null;
-                    // === LOGIKA BASE64 ===
+                    
+                    // === LOGIKA BASE64 TANDA TANGAN ===
                     $base64Image = $ttd_data_array[$i] ?? null;
                     if ($base64Image) {
                         $base64Image = str_replace('data:image/png;base64,', '', $base64Image);
@@ -125,7 +127,10 @@ class KisQrCodeController extends Controller
                         if ($imageData === false) {
                             throw new \Exception("Gagal mengkonversi tanda tangan peserta ke-" . ($i + 1));
                         }
-                        $fileName = 'ttd_' . $pengunjung->uid . '' . ($i + 1) . '' . time() . '.png';
+                        
+                        // Gunakan Str::random() agar nama file lebih unik
+                        $fileName = 'ttd_' . $pengunjung->uid . '_' . Str::random(10) . '.png';
+                        
                         Storage::disk('public')->put('ttd_peserta/' . $fileName, $imageData);
                         $ttd_path = 'ttd_peserta/' . $fileName;
 
@@ -135,10 +140,11 @@ class KisQrCodeController extends Controller
                         'uid' => Str::uuid(),
                         'pengunjung_id' => $pengunjung->uid,
                         'nama' => $nama,
-                        'nip' => $kontak_array[$i] ?? null,
+                        // Di sini saya asumsikan kontak array digunakan untuk NIP dan WA
+                        'nip' => $kontak_array[$i] ?? null, 
                         'jabatan' => $jabatan_array[$i] ?? null,
                         'email' => $email_array[$i] ?? null,
-                        'wa' => $kontak_array[$i] ?? null,
+                        'wa' => $kontak_array[$i] ?? null, 
                         'file_ttd' => $ttd_path,
                         'created_by' => null,
                         'created_at' => now(),
@@ -148,24 +154,35 @@ class KisQrCodeController extends Controller
             }
 
             if (!empty($peserta_data_massal)) {
-                // Insert data baru (append)
+                // 1. Insert data baru (append)
                 KisPesertaKunjungan::insert($peserta_data_massal);
             }
 
-            // Hitung ulang total peserta setelah penambahan
-
+            // 2. Hitung ulang total peserta setelah penambahan
             $total_peserta_sekarang = KisPesertaKunjungan::where('pengunjung_id', $pengunjung->uid)->count();
 
-            // Update status KisPengunjung
+            // 3. Update status KisPengunjung
             $pengunjung->update([
                 'status' => 'kunjungan',
                 'jumlah_peserta_diinput' => $total_peserta_sekarang, // Update total count yang sebenarnya
             ]);
 
+            // 4. Tambahkan KisTracking untuk status 'kunjungan' 👈 BARU DITAMBAHKAN
+            KisTracking::create([
+                'pengajuan_id' => $pengunjung->uid,
+                'status' => 'kunjungan', // Status yang sudah diupdate
+                // Catatan yang menunjukkan aksi dilakukan oleh pengunjung
+                'catatan' => 'Data peserta rombongan berhasil diisi dan diverifikasi melalui QR Code oleh perwakilan.', 
+                // Karena ini diakses publik, created_by diisi null atau user_id default jika ada.
+                'created_by' => null, 
+            ]);
+
+
             DB::commit();
 
             return view('kunjungan.konfirmasi')->with('pengunjung', $pengunjung)
-                    ->with('success', 'Data rombongan berhasil ditambahkan. Terima kasih!');
+                ->with('success', 'Data rombongan berhasil ditambahkan. Terima kasih!');
+                
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());

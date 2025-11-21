@@ -18,11 +18,9 @@
             @else
             
             <div class="row">
-                @php
-                    // Ambil data perwakilan dari koleksi peserta
-                    // Pastikan $pengunjung->peserta tersedia sebelum memanggil where()
-                    $perwakilanPeserta = isset($pengunjung->peserta) ? $pengunjung->peserta->where('is_perwakilan', true)->first() : null;
-                @endphp
+                
+                {{-- HILANGKAN BLOK @php LAMA YANG MENGGUNAKAN is_perwakilan di View --}}
+                
                 {{-- ==================== DATA INSTANSI ==================== --}}
                 <div class="col-md-6 border-end pe-md-5">
                     <h4 class="section-title">Data Instansi</h4>
@@ -62,7 +60,7 @@
                                     <i class="bi bi-file-earmark-pdf-fill me-1"></i> Lihat SPT
                                 </a>
                                 
-                                {{-- Tambahkan Opsi Ganti File (Opsional, gunakan modal yang sama) --}}
+                                {{-- Tombol untuk Ganti File (Gunakan Modal) --}}
                                 <button type="button" class="btn btn-sm btn-outline-warning ms-2" 
                                         data-bs-toggle="modal" data-bs-target="#uploadSptModal">
                                     <i class="bi bi-arrow-repeat me-1"></i> Ganti File
@@ -80,41 +78,35 @@
                             @endif
                         </div>
                     </div>
-                    {{-- Modal di pindahkan ke bagian bawah code ini agar lebih rapi --}}
                 </div>
                 
                 {{-- ==================== DATA PERWAKILAN ==================== --}}
+                {{-- Menggunakan variabel $perwakilanPeserta yang dikirim dari Controller --}}
                 <div class="col-md-6 ps-md-5">
                     <h4 class="section-title">Data Perwakilan</h4>
                     
                     <div class="mb-3">
                         <div class="detail-label">Nama:</div>
-                        <div class="detail-value">{{ $pengunjung->nama_perwakilan ?? '-' }}</div>
+                        {{-- Menggunakan data dari KisPengunjung (diakses via $perwakilanPeserta) --}}
+                        <div class="detail-value">{{ $perwakilanPeserta->nama ?? '-' }}</div>
                     </div>
-                    
-                    {{-- PERMINTAAN 2: Hilangkan NIP jika status 'selesai' --}}
-                    @if ($pengunjung->status !== 'selesai')
-                        <div class="mb-3">
-                            <div class="detail-label">NIP:</div>
-                            {{-- Pengecekan null untuk perwakilanPeserta --}}
-                            <div class="detail-value">{{ $perwakilanPeserta ? ($perwakilanPeserta->nip ?? '-') : '-' }}</div>
-                        </div>
-                    @endif
                     
                     <div class="mb-3">
                         <div class="detail-label">Jabatan:</div>
-                         {{-- Pengecekan null untuk perwakilanPeserta --}}
-                        <div class="detail-value">{{ $perwakilanPeserta ? ($perwakilanPeserta->jabatan ?? '-') : '-' }}</div>
+                        {{-- Menggunakan data dari KisPengunjung (diakses via $perwakilanPeserta) --}}
+                        <div class="detail-value">{{ $perwakilanPeserta->jabatan ?? '-' }}</div>
                     </div>
                     
                     <div class="mb-3">
                         <div class="detail-label">Email:</div>
-                        <div class="detail-value">{{ $pengunjung->email_perwakilan ?? '-' }}</div>
+                        {{-- Menggunakan data dari KisPengunjung (diakses via $perwakilanPeserta) --}}
+                        <div class="detail-value">{{ $perwakilanPeserta->email ?? '-' }}</div>
                     </div>
                     
                     <div class="mb-3">
                         <div class="detail-label">WhatsApp:</div>
-                        <div class="detail-value">{{ $pengunjung->wa_perwakilan ?? '-' }}</div>
+                        {{-- Menggunakan data dari KisPengunjung (diakses via $perwakilanPeserta) --}}
+                        <div class="detail-value">{{ $perwakilanPeserta->wa ?? '-' }}</div>
                     </div>
                 </div>
             </div>
@@ -137,7 +129,6 @@
                             @if ($pengunjung->qrCode && $pengunjung->qrCode->qr_scan_path)
                                 
                                 {{-- 1. Tampilkan Gambar QR Code --}}
-                                {{-- FIX: Mengganti asset() dengan Storage::url() untuk path di storage disk --}}
                                 <img src="{{ Storage::url($pengunjung->qrCode->qr_scan_path) }}" 
                                     alt="QR Code Kunjungan"
                                     width="200"
@@ -179,10 +170,12 @@
                                     <th>Nama</th>
                                     <th>NIP</th>
                                     <th>Jabatan</th>
+                                    {{-- Kolom Tambahan jika diperlukan --}}
                                 </tr>
                             </thead>
 
                             <tbody>
+                                {{-- Menggunakan variabel $anggotaRombongan yang sudah difilter di Controller --}}
                                 @forelse ($anggotaRombongan as $index => $peserta)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
@@ -211,7 +204,8 @@
         </div>
     </div>
     
-    {{-- MODAL UPLOAD SPT (Ditempatkan di luar container utama) --}}
+    {{-- MODAL UPLOAD SPT (Tetap di sini) --}}
+    @if (isset($pengunjung))
     <div class="modal fade" id="uploadSptModal" tabindex="-1" aria-labelledby="uploadSptModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -248,4 +242,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-layout>

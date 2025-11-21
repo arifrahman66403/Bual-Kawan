@@ -2,11 +2,11 @@
 <x-layout title="Daftar Kunjungan">
     {{-- Hapus script qrcode.js karena kita menggunakan QR code yang sudah dibuat di server --}}
 
-    <div class="container py-5">
-        <div class="card shadow-lg">
-            <div class="card-body p-4">
+    <div class="container py-3 py-md-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-3 p-md-4">
                 
-                <h2 class="mb-4 fw-bold">Daftar Kunjungan Aktif</h2>
+                <h2 class="mb-4 fw-bold fs-4">Daftar Kunjungan Aktif</h2>
                 
                 @if (session('success'))
                     <div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> {!! session('success') !!}</div>
@@ -16,43 +16,54 @@
                     <div class="alert alert-danger"><i class="bi bi-x-circle-fill"></i> {{ session('error') }}</div>
                 @endif
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <a href="{{ route('kunjungan.create') }}" class="btn btn-success me-3">
-                        <i class="bi bi-plus-circle-fill me-1"></i> Tambah Kunjungan
-                    </a>
+                {{-- Aksi Atas: Tambah Kunjungan & Pencarian --}}
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
                     
-                    <button onclick="window.location.reload()" class="btn btn-outline-secondary me-auto" title="Refresh Data">
-                        <i class="bi bi-arrow-clockwise"></i>
-                    </button>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('kunjungan.create') }}" class="btn btn-primary me-md-3">
+                            <i class="bi bi-plus-circle-fill me-1"></i> Tambah Kunjungan
+                        </a>
+                        <button onclick="window.location.reload()" class="btn btn-outline-secondary" title="Refresh Data">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
 
-                    <form method="GET" action="{{ route('kunjungan.index') }}">
-                        <div class="input-group" style="width: 300px;">
+                    <form method="GET" action="{{ route('kunjungan.index') }}" class="w-md-auto">
+                        <div class="input-group">
                             <input type="text" name="search" class="form-control" placeholder="Cari nama / instansi..." value="{{ request('search') }}">
-                            <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                            <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
                         </div>
                     </form>
                 </div>
                 
+                {{-- TABEL RESPONSIVE --}}
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
-                        <thead class="card-header-custom">
+                        <thead class="bg-light">
                             <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Instansi</th>
-                                <th scope="col">Satuan Kerja</th>
-                                <th scope="col">Tujuan Kunjungan</th>
-                                <th scope="col">Tanggal</th>
-                                <th scope="col">Aksi</th>
+                                <th scope="col" style="width: 50px;">No</th>
+                                <th scope="col">Instansi / PIC</th>
+                                <th scope="col" class="d-none d-md-table-cell">Satuan Kerja</th>
+                                <th scope="col" class="d-none d-lg-table-cell">Tujuan Kunjungan</th>
+                                <th scope="col" class="d-none d-sm-table-cell" style="width: 120px;">Tanggal</th>
+                                <th scope="col" style="width: 80px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($kunjunganAktif as $index => $kunjungan)
                             <tr>
                                 <td>{{ $kunjunganAktif->firstItem() + $index }}</td>
-                                <td>{{ $kunjungan->nama_instansi }}</td>
-                                <td>{{ $kunjungan->satuan_kerja }}</td>
-                                <td>{{ $kunjungan->tujuan ?? 'Koordinasi' }}</td> 
-                                <td>{{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('d-m-Y') }}</td>
+                                <td>
+                                    <span class="fw-bold">{{ $kunjungan->nama_instansi }}</span>
+                                    {{-- Tampilkan detail penting di mobile --}}
+                                    <div class="d-md-none small text-muted">
+                                        {{ $kunjungan->satuan_kerja }}<br>
+                                        <i class="bi bi-calendar-event me-1"></i> {{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('d-m-Y') }}
+                                    </div>
+                                </td>
+                                <td class="d-none d-md-table-cell">{{ $kunjungan->satuan_kerja }}</td>
+                                <td class="d-none d-lg-table-cell">{{ $kunjungan->tujuan ?? 'Koordinasi' }}</td> 
+                                <td class="d-none d-sm-table-cell">{{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('d-m-Y') }}</td>
                                 <td>
                                     {{-- TOMBOL TUNGGAL: Ikon Mata yang memicu Modal QR --}}
                                     <button 
@@ -62,8 +73,6 @@
                                         data-bs-target="#qrModal"
                                         data-kunjungan-nama="{{ $kunjungan->nama_instansi }}"
                                         data-detail-link="{{ route('kunjungan.detail', $kunjungan->uid) }}"
-                                        {{-- 🛑 PERUBAHAN UTAMA DI SINI: Menggunakan 'qr_detail_url' --}}
-                                        {{-- Diasumsikan 'qr_detail_url' adalah accessor di Model KisPengunjung yang mengambil path QR Detail --}}
                                         data-qr-url="{{ $kunjungan->qr_detail_url }}" 
                                         data-kunjungan-status="{{ $kunjungan->status }}"
                                         title="Tampilkan QR Code & Detail Kunjungan">
@@ -80,6 +89,7 @@
                     </table>
                 </div>
 
+                {{-- PAGINATION --}}
                 <div class="d-flex justify-content-center mt-3">
                     {{ $kunjunganAktif->links() }}
                 </div>
@@ -121,12 +131,13 @@
 
     {{-- ---------------------------------------------------------------- --}}
     {{-- JAVASCRIPT (MEMUAT QR CODE DAN MENGATUR LINK) --}}
+    {{-- Tidak ada perubahan fungsional di JS karena sudah cukup responsif --}}
     {{-- ---------------------------------------------------------------- --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const qrModal = document.getElementById('qrModal');
             const qrcodeDiv = document.getElementById('qrcode');
-            const qrLinkDisplay = document.getElementById('qrLinkDisplay'); // Ambil elemen link modal
+            const qrLinkDisplay = document.getElementById('qrLinkDisplay'); 
             
             // Status yang valid untuk menampilkan QR Code
             const statusValid = ['disetujui', 'kunjungan']; 
@@ -136,8 +147,8 @@
                     
                     const button = event.relatedTarget; 
                     const kunjunganNama = button.getAttribute('data-kunjungan-nama');
-                    const detailLink = button.getAttribute('data-detail-link'); // Ambil URL Detail Link
-                    const qrImageUrl = button.getAttribute('data-qr-url'); // Ambil URL Gambar QR (yaitu qr_detail_url)
+                    const detailLink = button.getAttribute('data-detail-link'); 
+                    const qrImageUrl = button.getAttribute('data-qr-url'); 
                     const kunjunganStatus = button.getAttribute('data-kunjungan-status');
 
                     // 1. Atur Nama Instansi
@@ -159,7 +170,7 @@
                         // Tampilkan pesan error/warning
                         qrcodeDiv.innerHTML = `<div class="alert alert-warning">
                                                     QR Code akan tersedia setelah disetujui Admin. Status saat ini: <strong>${kunjunganStatus.toUpperCase()}</strong>
-                                                  </div>`;
+                                                </div>`;
                     }
                 });
                 
