@@ -75,18 +75,47 @@
     body.bg-gradient-page .text-light {
       color: #212529 !important;
     }
-
     /* Adjust form controls for the white page background */
     body.bg-gradient-page .form-control {
-      background: rgba(0,0,0,0.04);
-      border: 1px solid rgba(0,0,0,0.12);
+      background: #ffffff;
+      border: 1px solid #e2e6ea;
       color: #212529;
+      caret-color: #0d6efd;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
+
+    body.bg-gradient-page .form-control::placeholder {
+      color: #6c757d;
+      opacity: 1;
+    }
+
+    body.bg-gradient-page .input-group-text,
+    body.bg-gradient-page .input-group .btn,
+    body.bg-gradient-page .toggle-pass {
+      background: transparent;
+      color: #495057;
+      border: 1px solid #e2e6ea;
+    }
+
     body.bg-gradient-page .form-control:focus {
-      background: rgba(0,0,0,0.06);
-      border-color: rgba(33,37,41,0.15);
-      box-shadow: 0 0 8px rgba(0,0,0,0.04);
+      background: #ffffff;
+      border-color: rgba(13,110,253,0.25);
+      box-shadow: 0 0 0 0.15rem rgba(13,110,253,0.06);
       color: #212529;
+      outline: none;
+    }
+
+    /* Validation states to match Bootstrap visuals on light background */
+    body.bg-gradient-page .form-control:invalid,
+    body.bg-gradient-page .form-control.is-invalid {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 0.15rem rgba(220,53,69,0.06);
+    }
+
+    body.bg-gradient-page .form-control:valid,
+    body.bg-gradient-page .form-control.is-valid {
+      border-color: #198754;
+      box-shadow: 0 0 0 0.08rem rgba(25,135,84,0.04);
     }
 
     .toggle-pass {
@@ -108,7 +137,6 @@
 
     /* toast custom */
     .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 1080; }
-  </style>
   </style>
 </head>
 <body class="bg-gradient-page text-light d-flex align-items-center justify-content-center vh-100">
@@ -137,28 +165,36 @@
     <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
       @csrf
 
-      <!-- Email Field -->
-      <div class="mb-4">
-        <label for="email" class="form-label text-white fw-5 mb-2">Email Address</label>
-        <div class="input-group">
-          <span class="input-group-text bg-transparent border-light border-opacity-25 text-light">📧</span>
-          <input id="email" type="email" name="email" class="form-control border-light border-opacity-25" placeholder="admin@example.com" required autofocus>
+        <!-- Email Field -->
+        <div class="mb-4">
+          <label for="email" class="form-label text-white fw-5 mb-2">Alamat Email</label>
+          <div class="input-group">
+            <span class="input-group-text bg-transparent border-light border-opacity-25 text-light" aria-hidden="true">📧</span>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" class="form-control border-light border-opacity-25 @error('email') is-invalid @enderror" placeholder="admin@example.com" required autofocus aria-describedby="emailHelp">
+          </div>
+          @error('email')
+            <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
+          @else
+            <div id="emailHelp" class="form-text text-light opacity-75 mt-1">Masukkan alamat email terdaftar.</div>
+          @enderror
         </div>
-        <div class="invalid-feedback text-warning d-block mt-1">Masukkan email yang valid.</div>
-      </div>
 
-      <!-- Password Field -->
-      <div class="mb-3">
-        <label for="password" class="form-label text-white fw-5 mb-2">Password</label>
-        <div class="input-group">
-          <span class="input-group-text bg-transparent border-light border-opacity-25 text-light">🔒</span>
-          <input id="password" type="password" name="password" class="form-control border-light border-opacity-25" placeholder="Masukkan password" required>
-          <button type="button" class="btn btn-outline-secondary toggle-pass border-light border-opacity-25" id="togglePass" title="Toggle password">
-            <span id="toggleIcon">👁️</span>
-          </button>
+        <!-- Password Field -->
+        <div class="mb-3">
+          <label for="password" class="form-label text-white fw-5 mb-2">Kata Sandi</label>
+          <div class="input-group">
+            <span class="input-group-text bg-transparent border-light border-opacity-25 text-light" aria-hidden="true">🔒</span>
+            <input id="password" type="password" name="password" class="form-control border-light border-opacity-25 @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi" required aria-describedby="passwordHelp">
+            <button type="button" class="btn btn-outline-secondary toggle-pass border-light border-opacity-25" id="togglePass" title="Tampilkan/ sembunyikan kata sandi" aria-label="Toggle password">
+              <span id="toggleIcon">👁️</span>
+            </button>
+          </div>
+          @error('password')
+            <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
+          @else
+            <div id="passwordHelp" class="form-text text-light opacity-75 mt-1">Minimal 6 karakter.</div>
+          @enderror
         </div>
-        <div class="invalid-feedback text-warning d-block mt-1">Password tidak boleh kosong.</div>
-      </div>
 
       <!-- Forgot Password Link -->
       <div class="mb-4 text-end">
@@ -169,7 +205,7 @@
       @if ($errors->any())
         <div id="serverError" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
           <strong>Error!</strong> {{ $errors->first() }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       @endif
 
@@ -193,6 +229,7 @@
       const form = document.getElementById('loginForm');
       const pass = document.getElementById('password');
       const toggle = document.getElementById('togglePass');
+      const toggleIcon = document.getElementById('toggleIcon');
       const submitBtn = document.getElementById('submitBtn');
       const btnText = document.getElementById('btnText');
 
@@ -213,11 +250,13 @@
         card.classList.remove('tilt');
       });
 
-      // Toggle password visibility
+      // Toggle password visibility (change only the inner icon)
       toggle.addEventListener('click', function(){
         const isHidden = pass.type === 'password';
         pass.type = isHidden ? 'text' : 'password';
-        toggle.textContent = isHidden ? '🙈' : '🙉';
+        if (toggleIcon) toggleIcon.textContent = isHidden ? '🙈' : '👁️';
+        toggle.setAttribute('aria-pressed', String(!isHidden));
+        pass.focus();
       });
 
       // Client-side validation with shake on invalid
@@ -240,13 +279,9 @@
       if (serverErrorEl) {
         const toastArea = document.getElementById('toastArea');
         const toastId = 'serverToast';
-        toastArea.innerHTML = `
-          <div id="${toastId}" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-              <div class="toast-body text-white">${serverErrorEl.textContent.trim()}</div>
-              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-          </div>`;
+        // sanitize minimal: use textContent when inserting
+        const msg = serverErrorEl.textContent.trim();
+        toastArea.innerHTML = `\n          <div id="${toastId}" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">\n            <div class="d-flex">\n              <div class="toast-body text-white">${msg}</div>\n              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>\n            </div>\n          </div>`;
         const toastEl = document.getElementById(toastId);
         const bsToast = new bootstrap.Toast(toastEl, { delay: 5000 });
         bsToast.show();
