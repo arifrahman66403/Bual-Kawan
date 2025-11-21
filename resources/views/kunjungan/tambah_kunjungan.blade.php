@@ -76,12 +76,6 @@
                             <input type="text" class="form-control" id="nama_perwakilan" name="nama_perwakilan" placeholder="Nama lengkap" value="{{ old('nama_perwakilan') }}">
                         </div>
                         
-                        {{-- NIP (kis_peserta_kunjungan.nip) - Perwakilan dijadikan Peserta 0 --}}
-                        <div class="mb-3">
-                            <label for="nip_perwakilan" class="form-label">NIP</label>
-                            <input type="text" class="form-control" id="nip_perwakilan" name="nip_perwakilan" placeholder="NIP (jika ada)" value="{{ old('nip_perwakilan') }}">
-                        </div>
-                        
                         {{-- Jabatan (kis_peserta_kunjungan.jabatan) - Perwakilan dijadikan Peserta 0 --}}
                         <div class="mb-3">
                             <label for="jabatan_perwakilan" class="form-label">Jabatan</label>

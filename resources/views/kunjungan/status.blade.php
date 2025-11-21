@@ -49,8 +49,8 @@
                         @endif
                     </p>
 
-                    <a href="/" class="btn btn-outline-secondary mt-4">
-                        <i class="bi bi-house"></i> Kembali ke Beranda
+                    <a href="{{ route('kunjungan.index')}}" class="btn btn-outline-secondary mt-4">
+                        <i class="bi bi-house"></i> Kembali ke Buku Tamu
                     </a>
                 </div>
             </div>

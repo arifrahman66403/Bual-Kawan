@@ -19,11 +19,7 @@ class RiwayatController extends Controller
     // Menampilkan semua tracking
     public function index()
     {
-        $trackings = \App\Models\KisTracking::with('pengunjung')->latest()->get();
-        return view('admin.riwayat', compact('trackings'));
-
         $data = KisTracking::with('pengunjung')->get();
-        return response()->json($data);
 
         $trackings = KisTracking::when(request('minggu'), function ($query) {
                 $query->whereRaw("WEEK(created_at) = ?", [request('minggu')]);
@@ -37,7 +33,7 @@ class RiwayatController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-
+        return view('admin.riwayat', compact('trackings', 'data'));
     }
     /**
      * Mengekspor data riwayat tracking ke file Excel dengan filter.

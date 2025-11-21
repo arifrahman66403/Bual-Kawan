@@ -28,7 +28,7 @@ class PengajuanController extends Controller
     public function index()
     {
         $pengunjungs = KisPengunjung::orderByRaw("FIELD(status, 'pengajuan', 'disetujui', 'kunjungan', 'selesai')")
-            ->orderBy('tgl_kunjungan', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('admin.pengajuan', compact('pengunjungs'));
@@ -51,7 +51,7 @@ class PengajuanController extends Controller
     public function updateStatus(Request $request, $uid)
     {
         $request->validate([
-            'status' => 'required|in:disetujui,ditolak,selesai',
+            'status' => 'required|in:disetujui,kunjungan,selesai',
         ]);
 
         $newStatus = $request->status;

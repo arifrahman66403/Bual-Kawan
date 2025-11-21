@@ -90,6 +90,7 @@ class KisQrCodeController extends Controller
         $request->validate([
             // Diubah menjadi nullable agar baris kosong (jika dihapus di FE) tidak menyebabkan error required
             'peserta_nama.*' => 'nullable|string|max:255',
+            'peserta_nip.*' => 'nullable|string|max:255',
             'peserta_jabatan.*' => 'nullable|string|max:255',
             'peserta_kontak.*' => 'nullable|string|max:20',
             'peserta_email.*' => 'nullable|email|max:255',
@@ -102,6 +103,7 @@ class KisQrCodeController extends Controller
             $ttd_data_array = $request->peserta_ttd_data;
             $peserta_data_massal = [];
             $nama_array = $request->peserta_nama;
+            $nip_array = $request->peserta_nip;
             $jabatan_array = $request->peserta_jabatan;
             $kontak_array = $request->peserta_kontak;
             $email_array = $request->peserta_email;
@@ -141,7 +143,7 @@ class KisQrCodeController extends Controller
                         'pengunjung_id' => $pengunjung->uid,
                         'nama' => $nama,
                         // Di sini saya asumsikan kontak array digunakan untuk NIP dan WA
-                        'nip' => $kontak_array[$i] ?? null, 
+                        'nip' => $nip_array[$i] ?? null, 
                         'jabatan' => $jabatan_array[$i] ?? null,
                         'email' => $email_array[$i] ?? null,
                         'wa' => $kontak_array[$i] ?? null, 

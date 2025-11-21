@@ -26,7 +26,9 @@ class KisPengunjungController extends Controller
 
     public function storeKunjungan(Request $request)
     {
+        // 1. Validasi Input
         $request->validate([
+            'kode_daerah' => 'required|string|max:255',
             'nama_instansi' => 'required|string|max:255',
             'satuan_kerja' => 'required|string|max:255',
             'tujuan' => 'required|string|max:255',
@@ -35,25 +37,69 @@ class KisPengunjungController extends Controller
             'email_perwakilan' => 'required|email',
             'wa_perwakilan' => 'required|string|max:20',
             'jabatan_perwakilan' => 'required|string|max:255',
+            'file_spt' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', 
         ]);
 
-        $pengunjung = KisPengunjung::create([
-            'uid' => Str::uuid(),
-            'kode_daerah' => 'K-' . rand(1000, 9999),
-            'nama_instansi' => $request->nama_instansi,
-            'satuan_kerja' => $request->satuan_kerja,
-            'tujuan' => $request->tujuan,
-            'tgl_kunjungan' => $request->tgl_kunjungan,
-            'nama_perwakilan' => $request->nama_perwakilan,
-            'email_perwakilan' => $request->email_perwakilan,
-            'wa_perwakilan' => $request->wa_perwakilan,
-            'jabatan_perwakilan' => $request->jabatan_perwakilan,
-            'status' => 'pengajuan',
-            // 'created_by' => Auth::user()->id,
-        ]);
+        // 2. Mulai Database Transaction
+        // Semua query di dalamnya akan di-commit (disimpan) HANYA jika semua berhasil, 
+        // jika ada yang gagal, semua akan di-rollback (dibatalkan).
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('kunjungan.index')
-            ->with('success', 'Data pengunjung berhasil diajukan!');
+            // A. 💾 SIMPAN DATA PENGUNJUNG (KIS_PENGUNJUNG)
+            $pengunjung = KisPengunjung::create([
+                'uid' => Str::uuid(),
+                'kode_daerah' => $request->kode_daerah,
+                'nama_instansi' => $request->nama_instansi,
+                'satuan_kerja' => $request->satuan_kerja,
+                'tujuan' => $request->tujuan,
+                'tgl_kunjungan' => $request->tgl_kunjungan,
+                'nama_perwakilan' => $request->nama_perwakilan,
+                'email_perwakilan' => $request->email_perwakilan,
+                'wa_perwakilan' => $request->wa_perwakilan,
+                'jabatan_perwakilan' => $request->jabatan_perwakilan,
+                'status' => 'pengajuan',
+            ]);
+            
+            $sptPath = null;
+            $catatanDokumen = 'Tidak ada SPT terlampir.';
+
+            // C. 🖼️ TANGANI UPLOAD FILE DAN SIMPAN DATA DOKUMEN (KIS_DOKUMEN)
+            if ($request->hasFile('file_spt')) {
+                // 1. Simpan file ke Storage
+                $filePath = $request->file('file_spt');
+                $sptPath = Storage::disk('public')->putFile('spt', $filePath);
+
+                // 2. Simpan path dan relasi di KisDokumen
+                KisDokumen::create([
+                    // Pastikan SEMUA kolom yang diperlukan ada di sini:
+                    'uid' => Str::uuid(), // 🚨 HARUS DITAMBAHKAN
+                    'pengunjung_id' => $pengunjung->uid, 
+                    'file_spt' => $sptPath, 
+                ]);
+                // ...
+            }
+
+            // 3. Commit Transaction (Semua data disimpan permanen)
+            DB::commit();
+
+            return redirect()->route('kunjungan.index')
+                ->with('success', 'Data pengunjung berhasil diajukan!');
+
+        } catch (\Exception $e) {
+            // 4. Rollback Transaction (Batalkan semua yang sudah terjadi di Try block)
+            DB::rollBack();
+
+            // Jika file sudah sempat ter-upload sebelum error terjadi, hapus file tersebut
+            if (isset($filePath) && Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
+            
+            // Log error (Opsional: tambahkan Log::error($e) untuk debug)
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal mengajukan kunjungan: ' . $e->getMessage());
+        }
     }
 
     /**

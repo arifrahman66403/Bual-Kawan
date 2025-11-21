@@ -28,8 +28,11 @@
             <button class="btn btn-sm btn-outline-success" data-filter="Disetujui">
               <i class="bi bi-check-circle"></i> Disetujui ({{ $pengunjungs->where('status','disetujui')->count() }})
             </button>
-            <button class="btn btn-sm btn-outline-danger" data-filter="Ditolak">
-              <i class="bi bi-x-circle"></i> Ditolak ({{ $pengunjungs->where('status','ditolak')->count() }})
+            <button class="btn btn-sm btn-outline-info text-dark" data-filter="Kunjungan">
+              <i class="bi bi-people-fill"></i> Kunjungan ({{ $pengunjungs->where('status','kunjungan')->count() }})
+            </button>
+            <button class="btn btn-sm btn-outline-primary" data-filter="Selesai">
+              <i class="bi bi-check2-square"></i> Selesai ({{ $pengunjungs->where('status','selesai')->count() }})
             </button>
           </div>
         </div>
@@ -84,7 +87,7 @@
           <!-- Tombol Detail (boleh tetap) -->
           <a href="{{ route('admin.pengajuan.show', $p->uid) }}" class="btn btn-sm btn-genz" title="Lihat Detail"><i class="bi bi-eye"></i></a>
 
-            @if($p->status == 'disetujui' || $p->status == 'kunjungan')
+            @if($p->status == 'kunjungan')
             <!-- Jika sudah disetujui: tampilkan tombol Selesai -->
             <button type="button"
               class="btn btn-sm btn-primary ms-1 btn-action"
@@ -94,7 +97,7 @@
               data-message="Apakah kamu yakin ingin menandai pengajuan ini SELESAI?">
               <i class="bi bi-check2-square"></i> Selesai
             </button>
-            @elseif($p->status == 'selesai')
+            @elseif($p->status == 'disetujui' || $p->status == 'selesai')
             <button class="btn btn-sm btn-secondary ms-1" title="Tidak Ada Aksi Lagi" disabled><i class="bi bi-lock"></i></button>
             @else
             <!-- Tombol Setujui: hanya data-* attributes, buka modal lewat JS -->

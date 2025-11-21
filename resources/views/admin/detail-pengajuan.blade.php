@@ -33,9 +33,8 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5>Perwakilan Utama</h5>
-                        <p><strong>{{ $pengunjung->nama_perwakilan ?? '-' }}</strong> — {{ $pengunjung->jabatan ?? '-' }}<br>
+                        <p><strong>{{ $pengunjung->nama_perwakilan ?? '-' }}</strong> — {{ $pengunjung->jabatan_perwakilan ?? '-' }}<br>
                         Email: {{ $pengunjung->email_perwakilan ?? '-' }} — WA: {{ $pengunjung->wa_perwakilan ?? '-' }}<br>
-                        NIP: {{ $pengunjung->nip ?? '-' }}</p>
                     </div>
                 </div>
 
@@ -173,6 +172,7 @@
                                 <select name="status" class="form-select" required>
                                     <option value="pengajuan" {{ $pengunjung->status === 'pengajuan' ? 'selected' : '' }}>Pengajuan</option>
                                     <option value="disetujui" {{ $pengunjung->status === 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                                    <option value="kunjungan" {{ $pengunjung->status === 'kunjungan' ? 'selected' : '' }}>Kunjungan</option>
                                     <option value="selesai" {{ $pengunjung->status === 'selesai' ? 'selected' : '' }}>Selesai</option>
                                 </select>
                             </div>

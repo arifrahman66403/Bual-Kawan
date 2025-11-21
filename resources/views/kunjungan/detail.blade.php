@@ -182,7 +182,7 @@
                                         <td>{{ $peserta->nama }}</td>
                                         <td>
                                             @if (in_array($pengunjung->status, ['disetujui', 'kunjungan', 'selesai']))
-                                                &#9733;
+                                                ***************
                                             @else
                                                 {{ $peserta->nip ?? '-' }}
                                             @endif

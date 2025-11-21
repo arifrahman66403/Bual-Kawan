@@ -49,9 +49,15 @@
             
             {{-- Kontak (col-md-2) --}}
             <div class="col-md-2">
-                <label class="form-label small mb-1">No. WA/NIP</label>
-                <input type="text" class="form-control form-control-sm" name="peserta_kontak[]" placeholder="08xx atau NIP">
+                <label class="form-label small mb-1">No. WA</label>
+                <input type="text" class="form-control form-control-sm" name="peserta_kontak[]" placeholder="08xx xxxx xxxx">
             </div>
+
+            {{-- NIP (col-md-2) --}}
+            <div class="col-md-2">
+                <label class="form-label small mb-1">NIP</label>
+                <input type="text" class="form-control form-control-sm" name="peserta_nip[]" placeholder="NIP Peserta">
+            </div>  
             
             {{-- EMAIL (col-md-3) --}}
             <div class="col-md-3">

@@ -31,14 +31,6 @@ class GuestController extends Controller
     }
 
     /**
-     * Menampilkan Form Pengajuan Kunjungan (Form Tambah Kunjungan).
-     */
-    public function showCreateForm()
-    {
-        return view('kunjungan.tambah_kunjungan');
-    }
-
-    /**
      * Menampilkan detail kunjungan untuk tampilan publik/user.
      * @param string $id UID dari KisPengunjung
      * @return \Illuminate\View\View
