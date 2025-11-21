@@ -75,7 +75,12 @@
                         @if ($pengunjung->peserta && is_iterable($pengunjung->peserta) && count($pengunjung->peserta) > 0)
                             <table class="table table-sm table-striped">
                                 <thead>
-                                    <tr><th>No</th><th>Nama</th><th>Jabatan</th><th>Nip</th></tr>
+                                    <tr><th>No</th>
+                                        <th>Nama</th>
+                                        <th>Jabatan</th>
+                                        <th>Nip</th>
+                                        <th>TTD</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($pengunjung->peserta as $peserta)
@@ -85,6 +90,19 @@
                                                 <td>{{ $peserta->nama ?? '-' }}</td>
                                                 <td>{{ $peserta->jabatan ?? '-' }}</td>
                                                 <td>{{ $peserta->nip ?? '-' }}</td>
+                                                {{-- TAMPILAN TANDA TANGAN LANGSUNG --}}
+                                                <td class="text-center">
+                                                    @if($peserta->file_ttd)
+                                                        <div class="ttd-container p-1 border rounded bg-white d-inline-block">
+                                                            <img src="{{ Storage::url($peserta->file_ttd) }}" 
+                                                                alt="TTD {{ $peserta->nama }}" 
+                                                                class="img-fluid" 
+                                                                style="height: 60px; max-width: 100px; object-fit: contain;">
+                                                        </div>
+                                                    @else
+                                                        <span class="text-muted small font-italic">-</span>
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endif
                                     @endforeach

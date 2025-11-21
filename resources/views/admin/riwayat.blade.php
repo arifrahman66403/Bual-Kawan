@@ -1,24 +1,61 @@
 <x-layout-admin title="Riwayat Tracking">
-
   <h2 class="mb-4 fw-bold text-color">Riwayat Perubahan Status Kunjungan 🔄</h2>
-
   <div class="card p-4">
-
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-        <h5 class="fw-bold text-color mb-2 mb-md-0">Data Perubahan Terbaru</h5>
-        <div class="d-flex gap-2">
-            
-            {{-- TOMBOL EXPORT --}}
-            <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportModal">
-                <i class="bi bi-file-earmark-excel"></i> Export Excel
-            </button>
-            
-            <button class="btn btn-sm btn-genz" onclick="window.location.reload()">
-                <i class="bi bi-clock-history"></i> Refresh
-            </button>
-        </div>
-    </div>
+      <h5 class="fw-bold text-color mb-2 mb-md-0">Data Perubahan Terbaru</h5>
 
+      <form action="{{ route('admin.riwayat') }}" method="GET" class="d-flex gap-2">
+          
+          {{-- Filter Minggu --}}
+          <select name="minggu" class="form-select form-select-sm">
+              <option value="">Semua Minggu</option>
+              @foreach(range(1,5) as $week)
+                  <option value="{{ $week }}" {{ request('minggu') == $week ? 'selected' : '' }}>
+                      Minggu {{ $week }}
+                  </option>
+              @endforeach
+          </select>
+
+          {{-- Filter Bulan --}}
+          <select name="bulan" class="form-select form-select-sm">
+              <option value="">Semua Bulan</option>
+              @foreach(range(1,12) as $month)
+                  <option value="{{ $month }}" {{ request('bulan') == $month ? 'selected' : '' }}>
+                      {{ \Carbon\Carbon::create()->month($month)->locale('id')->monthName }}
+                  </option>
+              @endforeach
+          </select>
+
+          {{-- Filter Tahun --}}
+          <select name="tahun" class="form-select form-select-sm">
+              <option value="">Semua Tahun</option>
+              @for($year = date('Y'); $year >= date('Y') - 5; $year--)
+                  <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>
+                      {{ $year }}
+                  </option>
+              @endfor
+          </select>
+
+          {{-- Tombol Cari --}}
+          <button type="submit" class="btn btn-sm btn-primary">
+              <i class="bi bi-search"></i>
+          </button>
+
+          {{-- Tombol Reset Filter --}}
+          <a href="{{ route('admin.riwayat') }}" class="btn btn-sm btn-secondary">
+              <i class="bi bi-arrow-clockwise"></i>
+          </a>
+
+          {{-- Export Excel --}}
+          <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportModal">
+              <i class="bi bi-file-earmark-excel"></i>
+          </button>
+
+          <button class="btn btn-sm btn-genz" onclick="window.location.reload()">
+              <i class="bi bi-clock-history"></i>
+          </button>
+      </form>
+  </div>
     <div class="table-responsive">
       <table class="table table-hover align-middle table-borderless" id="dataRiwayat">
         <thead class="table-primary">

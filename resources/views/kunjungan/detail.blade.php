@@ -180,7 +180,13 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $peserta->nama }}</td>
-                                        <td>{{ $peserta->nip ?? '-' }}</td>
+                                        <td>
+                                            @if (in_array($pengunjung->status, ['disetujui', 'kunjungan', 'selesai']))
+                                                &#9733;
+                                            @else
+                                                {{ $peserta->nip ?? '-' }}
+                                            @endif
+                                        </td>
                                         <td>{{ $peserta->jabatan ?? '-' }}</td>
                                     </tr>
                                 @empty
