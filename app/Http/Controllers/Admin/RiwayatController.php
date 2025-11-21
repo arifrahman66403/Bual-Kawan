@@ -27,13 +27,26 @@ class RiwayatController extends Controller
 
     }
     /**
-     * Mengekspor data riwayat tracking ke file Excel.
+     * Mengekspor data riwayat tracking ke file Excel dengan filter.
      */
-    public function exportTracking()
+    public function exportTracking(Request $request)
     {
-        $fileName = 'Riwayat_Tracking_' . Carbon::now()->format('Ymd_His') . '.xlsx';
+        // Ambil input bulan dan tahun dari request
+        $bulan = $request->input('bulan');
+        $tahun = $request->input('tahun');
+        
+        // Buat nama file yang dinamis
+        $periode = 'Semua_Data';
+        if ($bulan && $tahun) {
+            $namaBulan = \Carbon\Carbon::create()->month($bulan)->locale('id')->monthName;
+            $periode = $namaBulan . '_' . $tahun;
+        } elseif ($tahun) {
+            $periode = 'Tahun_' . $tahun;
+        }
 
-        // Panggil Export Class yang sudah kita buat
-        return Excel::download(new TrackingExport, $fileName);
+        $fileName = 'Riwayat_Tracking_' . $periode . '_' . date('Ymd_His') . '.xlsx';
+
+        // Panggil Export Class dengan parameter
+        return Excel::download(new TrackingExport($bulan, $tahun), $fileName);
     }
 }

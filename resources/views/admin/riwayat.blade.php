@@ -8,15 +8,59 @@
 
     <!-- Header tabel -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-      <h5 class="fw-bold text-color mb-2 mb-md-0">Data Perubahan Terbaru</h5>
-      <div class="d-flex gap-2">
-        <a href="{{ route('admin.riwayat.export') }}" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-download"></i> Export Excel
-        </a>
-        <button class="btn btn-sm btn-genz">
-          <i class="bi bi-clock-history"></i> Refresh
-        </button>
-      </div>
+        <h5 class="fw-bold text-color mb-2 mb-md-0">Data Perubahan Terbaru</h5>
+        <div class="d-flex gap-2">
+            
+            {{-- TOMBOL EXPORT: Memicu Modal Filter --}}
+            <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportModal">
+                <i class="bi bi-file-earmark-excel"></i> Export Excel
+            </button>
+            
+            <button class="btn btn-sm btn-genz" onclick="window.location.reload()">
+                <i class="bi bi-clock-history"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    {{-- MODAL FILTER EXPORT --}}
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="exportModalLabel">Filter Export Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.riwayat.export') }}" method="GET">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="bulan" class="form-label small fw-semibold">Pilih Bulan</label>
+                            <select class="form-select form-select-sm" name="bulan" id="bulan">
+                                <option value="">Semua Bulan</option>
+                                @foreach(range(1, 12) as $month)
+                                    <option value="{{ $month }}" {{ date('n') == $month ? 'selected' : '' }}>
+                                        {{ \Carbon\Carbon::create()->month($month)->locale('id')->monthName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tahun" class="form-label small fw-semibold">Pilih Tahun</label>
+                            <select class="form-select form-select-sm" name="tahun" id="tahun">
+                                @for($year = date('Y'); $year >= date('Y') - 5; $year--)
+                                    <option value="{{ $year }}">{{ $year }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-sm btn-success w-100">
+                            <i class="bi bi-download me-1"></i> Download
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Tabel -->
