@@ -144,7 +144,8 @@
                     {{-- Ganti aos effect sesuai kebutuhan --}}
                     <img 
                         src="{{ Storage::url($gallery->image) }}" 
-                        alt="{{ $gallery->caption ?? 'Galeri Kegiatan' }}"
+                        alt="{{ $gallery->title ?? 'Galeri Kegiatan' }}"
+                        title="{{ $gallery->description ?? 'Galeri Kegiatan' }}"
                         data-aos="fade-up" 
                         data-aos-delay="{{ $loop->iteration * 100 }}"
                     >

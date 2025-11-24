@@ -19,6 +19,7 @@
                         <h4 class="mb-3">Informasi Pengajuan</h4>
                         <table class="table table-borderless">
                             <tr><th>UID</th><td>{{ $pengunjung->uid }}</td></tr>
+                            <tr><th>Tipe Pengunjung</th><td>{{ $pengunjung->tipe_pengunjung }}</td></tr>
                             <tr><th>Kode Daerah</th><td>{{ $pengunjung->kode_daerah }}</td></tr>
                             <tr><th>Nama Instansi</th><td>{{ $pengunjung->nama_instansi }}</td></tr>
                             <tr><th>Satuan Kerja</th><td>{{ $pengunjung->satuan_kerja }}</td></tr>

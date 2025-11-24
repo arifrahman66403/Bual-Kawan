@@ -25,7 +25,7 @@ class KisDokumenFactory extends Factory
         return [
             'uid' => (string) Str::uuid(),
             'pengunjung_id' => KisPengunjung::inRandomOrder()->first()?->uid,
-            'file_spt' => 'uploads/spt/' . $this->faker->uuid() . '.pdf',
+            'file_spt' => 'spt/' . $this->faker->uuid() . '.pdf',
             'created_by' => KisUser::inRandomOrder()->first()?->id,
         ];
     }

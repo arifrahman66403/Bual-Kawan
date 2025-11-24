@@ -27,6 +27,15 @@
                     {{-- ==================== KOLOM KIRI: DATA INSTANSI & DOKUMEN ==================== --}}
                     <div class="col-md-6 border-end pe-md-4">
                         <h5 class="mt-2 mb-4 input-group-label">Data Instansi</h5>
+
+                        {{-- Tipe Pengunjung (kis_pengunjung.tipe_pengunjung) --}}
+                        <div class="mb-3">
+                            <label class="form-label d-block">Tipe Pengunjung</label>
+                                <input type="radio" name="tipe_pengunjung" value="instansi pemerintah" id="tipe_instansi" {{ old('tipe_pengunjung') == 'instansi pemerintah' ? 'checked' : '' }}>
+                                <label for="tipe_instansi" class="me-3">Instansi Pemerintah</label>
+                                <input type="radio" name="tipe_pengunjung" value="masyarakat umum" id="tipe_masyarakat" {{ old('tipe_pengunjung') == 'masyarakat umum' ? 'checked' : '' }}>
+                                <label for="tipe_masyarakat">Masyarakat Umum</label>
+                        </div>
                         
                         {{-- Asal Daerah (kis_pengunjung.kode_daerah) --}}
                         <div class="mb-3">

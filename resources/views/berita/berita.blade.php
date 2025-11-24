@@ -24,17 +24,17 @@
     <h2 id="beritaTitle" style="margin:8px 0 12px">Berita Terbaru</h2>
     <div class="berita-list">
       <article class="berita-item">
-        <h3><a href="#">Judul Berita Pertama</a></h3>
+        <h3><a href="{{ route('berita-detail') }}">Judul Berita Pertama</a></h3>
         <p class="berita-meta">Dipublikasikan pada 1 Januari 2024</p>
         <p>Ringkasan singkat dari berita pertama. Ini adalah deskripsi singkat yang memberikan gambaran tentang isi berita.</p>
       </article>
       <article class="berita-item">
-        <h3><a href="#">Judul Berita Kedua</a></h3>
+        <h3><a href="{{ route('berita-detail') }}">Judul Berita Kedua</a></h3>
         <p class="berita-meta">Dipublikasikan pada 15 Januari 2024</p>
         <p>Ringkasan singkat dari berita kedua. Ini adalah deskripsi singkat yang memberikan gambaran tentang isi berita.</p>
       </article>
       <article class="berita-item">
-        <h3><a href="#">Judul Berita Ketiga</a></h3>
+        <h3><a href="{{ route('berita-detail') }}">Judul Berita Ketiga</a></h3>
         <p class="berita-meta">Dipublikasikan pada 28 Januari 2024</p>
         <p>Ringkasan singkat dari berita ketiga. Ini adalah deskripsi singkat yang memberikan gambaran tentang isi berita.</p>
       </article>

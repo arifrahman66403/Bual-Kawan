@@ -23,15 +23,48 @@ use Endroid\QrCode\Color\Color;
 class PengajuanController extends Controller
 {
     /**
-     * Menampilkan daftar semua pengajuan kunjungan (Verifikasi Admin).
+     * Menampilkan daftar semua pengajuan kunjungan (Verifikasi Admin)
+     * dengan dukungan filter status, tipe pengunjung, dan pencarian.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pengunjungs = KisPengunjung::orderByRaw("FIELD(status, 'pengajuan', 'disetujui', 'kunjungan', 'selesai')")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        // Ambil nilai filter dari query string (URL)
+        $filterStatus = $request->get('status');
+        $filterTipe = $request->get('tipe');
+        $searchQuery = $request->get('search'); // 🆕 Ambil keyword pencarian
+        
+        // 1. Inisialisasi Query
+        $pengunjungs = KisPengunjung::query();
 
-        return view('admin.pengajuan', compact('pengunjungs'));
+        // 2. Terapkan Filter Status
+        if ($filterStatus && $filterStatus !== 'all') {
+            $pengunjungs->where('status', $filterStatus);
+        }
+        
+        // 3. Terapkan Filter Tipe Pengunjung
+        if ($filterTipe && $filterTipe !== 'all') {
+            $pengunjungs->where('tipe_pengunjung', $filterTipe);
+        }
+
+        // 4. Terapkan Pencarian (Search) 🆕
+        if ($searchQuery) {
+            $pengunjungs->where(function ($query) use ($searchQuery) {
+                $query->where('nama_instansi', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('nama_perwakilan', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('satuan_kerja', 'like', '%' . $searchQuery . '%');
+            });
+        }
+
+        // 5. Terapkan Urutan Kustom (Status: 'pengajuan' selalu di atas)
+        $pengunjungs->orderByRaw("FIELD(status, 'pengajuan', 'disetujui', 'kunjungan', 'selesai')");
+
+        // 6. Urutan Tambahan dan Pagination
+        $pengunjungs = $pengunjungs->orderBy('created_at', 'desc')
+                                ->paginate(10)
+                                ->withQueryString(); 
+
+        // Kembalikan ke view
+        return view('admin.pengajuan', compact('pengunjungs', 'filterStatus', 'filterTipe', 'searchQuery'));
     }
 
     /**

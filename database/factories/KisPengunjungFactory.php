@@ -23,6 +23,7 @@ class KisPengunjungFactory extends Factory
     {
         return [
             'uid' => (string) Str::uuid(),
+            'tipe_pengunjung' => $this->faker->randomElement(['instansi pemerintah', 'masyarakat umum']),
             'kode_daerah' => strtoupper($this->faker->lexify('DA??')),
             'nama_instansi' => $this->faker->company(),
             'satuan_kerja' => $this->faker->company(),

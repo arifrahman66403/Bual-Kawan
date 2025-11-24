@@ -16,26 +16,56 @@
       @endif
 
         <!-- Filter -->
-        <div class="card p-3 mb-4 filter-status-box">
-          <div class="d-flex flex-wrap gap-2 align-items-center">
-            <span class="fw-semibold text-color me-2 d-none d-md-inline">Filter Status:</span>
-            <button class="btn btn-sm btn-genz active" data-filter="Semua">
-              <i class="bi bi-list-ul"></i> Semua ({{ $pengunjungs->count() }})
-            </button>
-            <button class="btn btn-sm btn-outline-warning text-dark" data-filter="Menunggu">
-              <i class="bi bi-hourglass"></i> Menunggu ({{ $pengunjungs->where('status','pengajuan')->count() }})
-            </button>
-            <button class="btn btn-sm btn-outline-success" data-filter="Disetujui">
-              <i class="bi bi-check-circle"></i> Disetujui ({{ $pengunjungs->where('status','disetujui')->count() }})
-            </button>
-            <button class="btn btn-sm btn-outline-info text-dark" data-filter="Kunjungan">
-              <i class="bi bi-people-fill"></i> Kunjungan ({{ $pengunjungs->where('status','kunjungan')->count() }})
-            </button>
-            <button class="btn btn-sm btn-outline-primary" data-filter="Selesai">
-              <i class="bi bi-check2-square"></i> Selesai ({{ $pengunjungs->where('status','selesai')->count() }})
-            </button>
-          </div>
-        </div>
+        <form method="GET" action="{{ route('admin.pengajuan') }}" class="mb-4">
+            <div class="card p-3 filter-box shadow-sm">
+                <h5 class="fw-bold mb-3"><i class="bi bi-funnel-fill me-2"></i> Filter dan Pencarian</h5>
+                
+                <div class="row g-3">
+                    
+                    {{-- 1. FILTER STATUS --}}
+                    <div class="col-md-3">
+                        <label for="statusFilter" class="form-label fw-semibold">Status Kunjungan</label>
+                        <select name="status" id="statusFilter" class="form-select form-select-sm">
+                            <option value="all">-- Semua Status --</option>
+                            <option value="pengajuan" {{ request('status') == 'pengajuan' ? 'selected' : '' }}>Menunggu (Pengajuan)</option>
+                            <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                            <option value="kunjungan" {{ request('status') == 'kunjungan' ? 'selected' : '' }}>Kunjungan Aktif</option>
+                            <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        </select>
+                    </div>
+
+                    {{-- 2. FILTER TIPE PENGUNJUNG --}}
+                    <div class="col-md-3">
+                        <label for="tipeFilter" class="form-label fw-semibold">Tipe Pengunjung</label>
+                        <select name="tipe" id="tipeFilter" class="form-select form-select-sm">
+                            <option value="all">-- Semua Tipe --</option>
+                            {{-- 💡 Sesuaikan nilai value dengan kolom 'tipe_pengunjung' di DB --}}
+                            <option value="instansi pemerintah" {{ request('tipe') == 'instansi pemerintah' ? 'selected' : '' }}>Instansi Pemerintah</option>
+                            <option value="masyarakat umum" {{ request('tipe') == 'masyarakat umum' ? 'selected' : '' }}>Umum/Perorangan</option>
+                        </select>
+                    </div>
+                    
+                    {{-- 3. KOLOM PENCARIAN (SEARCH) --}}
+                    <div class="col-md-4">
+                        <label for="searchQuery" class="form-label fw-semibold">Pencarian</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="search" id="searchQuery" class="form-control" placeholder="Cari Instansi / Perwakilan..." value="{{ request('search') }}">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i> Cari
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- 4. TOMBOL RESET FILTER --}}
+                    <div class="col-md-2 d-flex align-items-end">
+                        <a href="{{ route('admin.pengajuan') }}" class="btn btn-sm btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-clockwise"></i> Reset Filter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
 
         <!-- Tabel -->
         <div class="card p-4">
@@ -62,7 +92,7 @@
             </tr>
           </thead>
           <tbody>
-            @foreach($pengunjungs as $no => $p)
+            @forelse($pengunjungs as $no => $p)
             <tr data-status="{{ ucfirst($p->status) }}">
               <td>{{ $no+1 }}</td>
               <td>
@@ -122,7 +152,11 @@
             @endif
               </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+              <td colspan="6" class="text-center text-muted">Tidak ada data pengajuan kunjungan.</td>
+            </tr>
+            @endforelse
           </tbody>
         </table>
       </div>

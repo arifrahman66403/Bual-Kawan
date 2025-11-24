@@ -12,8 +12,8 @@
                   {{-- Filter Tipe Pengunjung --}}
                   <select name="tipe" class="form-select form-select-sm" style="width: 160px;" onchange="this.form.submit()">
                       <option value="">Semua Tipe</option>
-                      <option value="instansi" {{ request('tipe') == 'instansi' ? 'selected' : '' }}>Instansi Pemerintah</option>
-                      <option value="umum" {{ request('tipe') == 'umum' ? 'selected' : '' }}>Masyarakat Umum</option>
+                      <option value="instansi pemerintah" {{ request('tipe') == 'instansi pemerintah' ? 'selected' : '' }}>Instansi Pemerintah</option>
+                      <option value="masyarakat umum" {{ request('tipe') == 'masyarakat umum' ? 'selected' : '' }}>Masyarakat Umum</option>
                   </select>    
   
                   {{-- Filter Bulan --}}
@@ -40,6 +40,11 @@
               {{-- 2. TOMBOL EXPORT (Memicu Modal) --}}
               <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportModal">
                   <i class="bi bi-file-earmark-excel"></i> Export
+              </button>
+
+              {{-- 3. TOMBOL REFRESH --}}
+              <button class="btn btn-sm btn-genz" onclick="window.location.reload()">
+                  <i class="bi bi-clock-history"></i>
               </button>
           </div>
       </div>

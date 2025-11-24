@@ -23,7 +23,7 @@
                 
                 {{-- ==================== DATA INSTANSI ==================== --}}
                 <div class="col-md-6 border-end pe-md-5">
-                    <h4 class="section-title">Data Instansi</h4>
+                    <h4 class="section-title">Data {{ ucfirst($pengunjung->tipe_pengunjung) }}</h4>
                     
                     <div class="mb-3">
                         <div class="detail-label">Asal Daerah:</div>

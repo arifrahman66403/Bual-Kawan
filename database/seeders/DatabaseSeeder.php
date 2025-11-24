@@ -10,7 +10,9 @@ use App\Models\{
     KisDokumen,
     KisQrCode,
     KisTracking,
-    KisLog
+    KisLog,
+    Gallery,
+    Slider
 };
 
 class DatabaseSeeder extends Seeder
@@ -34,5 +36,7 @@ class DatabaseSeeder extends Seeder
         KisQrCode::factory(10)->create();
         KisTracking::factory(15)->create();
         KisLog::factory(30)->create();
+        Gallery::factory(10)->create();
+        Slider::factory(5)->create();
     }
 }

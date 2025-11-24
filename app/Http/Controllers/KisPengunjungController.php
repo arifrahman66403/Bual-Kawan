@@ -28,6 +28,7 @@ class KisPengunjungController extends Controller
     {
         // 1. Validasi Input
         $request->validate([
+            'tipe_pengunjung' => 'required|in:instansi pemerintah,masyarakat umum',
             'kode_daerah' => 'required|string|max:255',
             'nama_instansi' => 'required|string|max:255',
             'satuan_kerja' => 'required|string|max:255',
@@ -49,6 +50,7 @@ class KisPengunjungController extends Controller
             // A. 💾 SIMPAN DATA PENGUNJUNG (KIS_PENGUNJUNG)
             $pengunjung = KisPengunjung::create([
                 'uid' => Str::uuid(),
+                'tipe_pengunjung' => $request->tipe_pengunjung,
                 'kode_daerah' => $request->kode_daerah,
                 'nama_instansi' => $request->nama_instansi,
                 'satuan_kerja' => $request->satuan_kerja,

@@ -4,7 +4,7 @@
       
       <button id="mb-tentang"><i class="fas fa-info-circle"></i><small>Tentang</small></button>
       
-      <button id="mb-berita" data-href="https://bualkawan.siakkab.go.id/berita.html"><i class="fas fa-newspaper"></i><small>Berita</small></button>
+      <button id="mb-berita" data-href="{{ route('berita.berita')}}"><i class="fas fa-newspaper"></i><small>Berita</small></button>
       
       <button id="mb-bukutamu" data-href="{{ route('kunjungan.index')}}"><i class="fas fa-pen"></i><small>Buku Tamu</small></button>
       
@@ -12,7 +12,7 @@
     </div>
 
     <div class="mobile-submenu" id="mobileSubmenu" role="menu" aria-hidden="true">
-      <div class="item" onclick="location.href='https://bualkawan.siakkab.go.id/profil.html'"><i class="fas fa-user"></i> Profil</div>
-      <div class="item" onclick="location.href='https://bualkawan.siakkab.go.id/visi-misi.html'"><i class="fas fa-bullseye"></i> Visi Misi</div>
+      <div class="item" onclick="location.href='{{ route('tentang.profil')}}'"><i class="fas fa-user"></i> Profil</div>
+      <div class="item" onclick="location.href='{{ route('tentang.visi-misi')}}'"><i class="fas fa-bullseye"></i> Visi Misi</div>
     </div>
 </div>

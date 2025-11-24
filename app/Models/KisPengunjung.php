@@ -20,6 +20,7 @@ class KisPengunjung extends Model
 
     protected $fillable = [
         'uid',
+        'tipe_pengunjung',
         'kode_daerah',
         'nama_instansi',
         'satuan_kerja',

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('kis_pengunjung', function (Blueprint $table) {
             $table->char('uid', 36)->primary(); // CHAR(36) UUID
+            $table->string('tipe_pengunjung', 50); // e.g., 'instansi pemerintah', 'perorangan', etc.
             $table->string('kode_daerah', 50)->nullable();
             $table->string('nama_instansi', 150);
             $table->string('satuan_kerja', 150)->nullable();
