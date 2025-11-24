@@ -41,6 +41,13 @@ class TrackingExport implements FromCollection, WithHeadings, WithMapping, Shoul
             $query->whereYear('created_at', $this->tahun);
         }
 
+        // Filter Tipe Pengunjung
+        if ($this->tipe) {
+            $query->whereHas('pengunjung', function ($q) {
+                $q->where('tipe_pengunjung', $this->tipe);
+            });
+        }
+
         return $query->get();
     }
 

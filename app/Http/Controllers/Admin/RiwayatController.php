@@ -32,6 +32,16 @@ class RiwayatController extends Controller
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+            
+        // Filter Tipe Pengunjung (DIPERBARUI)
+        if ($request->has('tipe') && $request->tipe != '') {
+            $tipe = $request->tipe;
+
+            // Filter berdasarkan kolom 'tipe_pengunjung' di tabel relasi 'pengunjung'
+            $query->whereHas('pengunjung', function ($q) use ($tipe) {
+                $q->where('tipe_pengunjung', $tipe);
+            });
+        }    
 
         return view('admin.riwayat', compact('trackings', 'data'));
     }
