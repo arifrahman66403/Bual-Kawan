@@ -42,10 +42,10 @@
                   <i class="bi bi-file-earmark-excel"></i> Export
               </button>
 
-              {{-- 3. TOMBOL REFRESH --}}
-              <button class="btn btn-sm btn-genz" onclick="window.location.reload()">
-                  <i class="bi bi-clock-history"></i>
-              </button>
+              {{-- 3. Tombol Reset Filter --}}
+                <a href="{{ route('admin.riwayat') }}" class="btn btn-sm btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
           </div>
       </div>
   
@@ -122,8 +122,8 @@
                           <label for="export_tipe" class="form-label small fw-semibold">Tipe Pengunjung</label>
                           <select class="form-select form-select-sm" name="tipe" id="export_tipe">
                               <option value="">Semua Tipe</option>
-                              <option value="instansi" {{ request('tipe') == 'instansi' ? 'selected' : '' }}>Instansi Pemerintah</option>
-                              <option value="umum" {{ request('tipe') == 'umum' ? 'selected' : '' }}>Masyarakat Umum</option>
+                              <option value="instansi pemerintah" {{ request('tipe') == 'instansi pemerintah' ? 'selected' : '' }}>Instansi Pemerintah</option>
+                              <option value="masyarakat umum" {{ request('tipe') == 'masyarakat umum' ? 'selected' : '' }}>Masyarakat Umum</option>
                           </select>
                       </div>
 

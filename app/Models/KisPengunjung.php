@@ -26,6 +26,7 @@ class KisPengunjung extends Model
         'satuan_kerja',
         'tujuan',
         'tgl_kunjungan',
+        'file_kunjungan',
         'nama_perwakilan',
         'email_perwakilan',
         'wa_perwakilan',

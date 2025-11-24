@@ -29,6 +29,7 @@ class KisPengunjungFactory extends Factory
             'satuan_kerja' => $this->faker->company(),
             'tujuan' => $this->faker->sentence(),
             'tgl_kunjungan' => $this->faker->dateTimeBetween('-1 month', '+1 month'),
+            'file_kunjungan' => $this->faker->optional()->filePath(),
             'nama_perwakilan' => $this->faker->name(),
             'email_perwakilan' => $this->faker->safeEmail(),
             'wa_perwakilan' => $this->faker->numerify('08##########'),

@@ -3,6 +3,9 @@
 namespace App\Exports;
 
 use App\Models\KisTracking;
+use App\Models\KisPengunjung;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -15,13 +18,14 @@ class TrackingExport implements FromCollection, WithHeadings, WithMapping, Shoul
 {
     protected $bulan;
     protected $tahun;
+    protected $tipe;
 
     // Constructor untuk menerima filter
-    public function __construct($bulan = null, $tahun = null)
+    public function __construct($bulan = null, $tahun = null, $tipe = null)
     {
         $this->bulan = $bulan;
         $this->tahun = $tahun;
-        $this->tipe = request('tipe'); // Ambil filter tipe pengunjung dari request
+        $this->tipe = $tipe; // Ambil filter tipe pengunjung dari request
     }
 
     /**

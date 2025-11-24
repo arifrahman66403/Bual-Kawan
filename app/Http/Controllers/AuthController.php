@@ -38,23 +38,7 @@ class AuthController extends Controller
     $request->validate([
         'email'    => 'required|email',
         'password' => 'required',
-        'g-recaptcha-response' => 'required',
-    ], [
-        // Custom pesan error
-        'g-recaptcha-response.required' => 'Silakan centang kotak reCAPTCHA',
     ]);
-
-    // ✅ Verifikasi ke Google reCAPTCHA
-    $response = file_get_contents(
-        'https://www.google.com/recaptcha/api/siteverify?secret='
-        . env('NOCAPTCHA_SECRET')
-        . '&response=' . $request->input('g-recaptcha-response')
-    );
-    $responseKeys = json_decode($response, true);
-
-    if (!$responseKeys["success"]) {
-        return back()->withErrors(['captcha' => 'Captcha tidak valid, coba lagi.']);
-    }
 
         // 1. Validasi input email dan password
         $credentials = $request->validate([

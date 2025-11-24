@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('satuan_kerja', 150)->nullable();
             $table->text('tujuan')->nullable();
             $table->date('tgl_kunjungan')->nullable();
+            $table->string('file_kunjungan', 255)->nullable(); // path/file name
             $table->string('nama_perwakilan', 100)->nullable();
             $table->string('email_perwakilan', 100)->nullable();
             $table->string('wa_perwakilan', 20)->nullable();

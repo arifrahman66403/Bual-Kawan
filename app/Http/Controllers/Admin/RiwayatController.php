@@ -68,25 +68,34 @@ class RiwayatController extends Controller
      */
     public function exportTracking(Request $request)
     {
-        // 1. Ambil input dan ubah ke Integer (int)
-        // Jika kosong, biarkan null
+        // 1. Ambil input dan olah
         $bulan = $request->input('bulan') ? (int) $request->input('bulan') : null;
         $tahun = $request->input('tahun') ? (int) $request->input('tahun') : null;
+        $tipe = $request->input('tipe'); // 🆕 Ambil input 'tipe'
         
-        // Buat nama file yang dinamis
+        // --- 2. Logika Penamaan File Dinamis ---
+        
         $periode = 'Semua_Data';
+        $filterTipe = '';
         
+        // a. Tipe Pengunjung (Tambahkan ke nama file jika spesifik)
+        if ($tipe && $tipe !== 'all') {
+            // Bersihkan string (misal: 'masyarakat umum' menjadi 'Masyarakat_Umum')
+            $filterTipe = '_' . str_replace(' ', '_', ucwords($tipe)); 
+        }
+        
+        // b. Periode Waktu
         if ($bulan && $tahun) {
-            // Karena $bulan sudah (int), Carbon akan menerimanya tanpa error
-            $namaBulan = \Carbon\Carbon::create()->month($bulan)->locale('id')->monthName;
+            $namaBulan = Carbon::create()->month($bulan)->locale('id')->monthName;
             $periode = $namaBulan . '_' . $tahun;
         } elseif ($tahun) {
             $periode = 'Tahun_' . $tahun;
         }
 
-        $fileName = 'Riwayat_Tracking_' . $periode . '_' . date('Ymd_His') . '.xlsx';
+        // c. Gabungkan semua bagian
+        $fileName = 'Riwayat_Tracking' . $filterTipe . '_' . $periode . '_' . date('Ymd_His') . '.xlsx';
 
-        // Panggil Export Class dengan parameter yang sudah di-cast
-        return Excel::download(new TrackingExport($bulan, $tahun), $fileName);
+        // 3. Panggil Export Class dengan parameter lengkap
+        return Excel::download(new TrackingExport($bulan, $tahun, $tipe), $fileName);
     }
 }

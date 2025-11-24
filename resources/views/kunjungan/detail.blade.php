@@ -49,6 +49,19 @@
                         <div class="detail-label">Tanggal Kunjangan:</div>
                         <div class="detail-value">{{ \Carbon\Carbon::parse($pengunjung->tgl_kunjungan)->format('Y-m-d') }}</div>
                     </div>
+
+                    <div class="mb-3">
+                        <div class="detail-label">File Kunjungan:</div>
+                        <div class="detail-value">
+                            @if ($pengunjung->file_kunjungan)
+                                <a href="{{ Storage::url($pengunjung->file_kunjungan) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-file-earmark-arrow-down-fill me-1"></i> Lihat File Kunjungan
+                                </a>
+                            @else
+                                <span class="text-muted">Tidak ada file kunjungan yang terlampir.</span>
+                            @endif
+                        </div>
+                    </div>
                     
                     {{-- Blok untuk menampilkan status SPT dan tombol upload --}}
                     <div class="mb-3">

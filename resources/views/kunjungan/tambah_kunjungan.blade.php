@@ -66,6 +66,12 @@
                             <label for="tgl_kunjungan" class="form-label">Tanggal Kunjungan</label>
                             <input type="date" class="form-control" id="tgl_kunjungan" name="tgl_kunjungan" value="{{ old('tgl_kunjungan') }}" placeholder="dd / mm / yyyy">
                         </div>
+
+                        {{-- File Kunjungan (kis_pengunjung.file_kunjungan) --}}
+                        <div class="mb-3">
+                            <label for="file_kunjungan" class="form-label">File Kunjungan (PDF/JPG/PNG)</label>
+                            <input class="form-control @error('file_kunjungan') is-invalid @enderror" type="file" id="file_kunjungan" name="file_kunjungan" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
                         
                         {{-- File SPT (kis_dokumen.file_spt) --}}
                         <div class="mb-3">
