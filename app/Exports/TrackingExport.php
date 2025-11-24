@@ -21,6 +21,7 @@ class TrackingExport implements FromCollection, WithHeadings, WithMapping, Shoul
     {
         $this->bulan = $bulan;
         $this->tahun = $tahun;
+        $this->tipe = request('tipe'); // Ambil filter tipe pengunjung dari request
     }
 
     /**
