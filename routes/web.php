@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Auth;
 
 
 // Route Beranda (Area publik)
-Route::view('/', 'beranda')->name('beranda');
 Route::get('/', [HomeController::class, 'index'])->name('beranda');
 Route::view('/statistik', 'statistik')->name('statistik');
 Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
