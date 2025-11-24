@@ -141,8 +141,6 @@
             
             // Status yang valid untuk menampilkan QR Code
             const statusValid = ['disetujui', 'kunjungan']; 
-            // Daftar peran yang diizinkan untuk melihat QR Code
-            const authorizedRoles = ['operator', 'admin', 'superadmin']; 
 
             if (qrModal) {
                 qrModal.addEventListener('show.bs.modal', function (event) {
@@ -152,9 +150,6 @@
                     const detailLink = button.getAttribute('data-detail-link'); 
                     const qrImageUrl = button.getAttribute('data-qr-url'); 
                     const kunjunganStatus = button.getAttribute('data-kunjungan-status');
-                    
-                    // ASUMSI: Tambahkan atribut data-user-role pada tombol Blade Anda (misalnya: data-user-role="{{ Auth::user()->role ?? 'guest' }}")
-                    const userRole = button.getAttribute('data-user-role'); 
 
                     // 1. Atur Nama Instansi
                     document.getElementById('kunjunganNamaDisplay').textContent = kunjunganNama;
@@ -162,31 +157,20 @@
                     // 2. Atur Link Langsung
                     if (qrLinkDisplay) {
                         qrLinkDisplay.href = detailLink;
-                        qrLinkDisplay.classList.remove('d-none'); 
+                        qrLinkDisplay.classList.remove('d-none'); // Pastikan link terlihat
                     }
 
-                    // 3. Pengecekan Otorisasi Berdasarkan Peran
-                    if (userRole && authorizedRoles.includes(userRole.toLowerCase())) {
+                    // 3. Atur Tampilan Gambar QR
+                    if (qrImageUrl && statusValid.includes(kunjunganStatus.toLowerCase())) {
                         
-                        // Jika peran diizinkan, cek status kunjungan
-                        if (qrImageUrl && statusValid.includes(kunjunganStatus.toLowerCase())) {
-                            
-                            // Tampilkan gambar QR dari storage
-                            qrcodeDiv.innerHTML = `<img src="${qrImageUrl}" alt="QR Code Kunjungan" style="width: 200px; height: 200px;">`;
-                            
-                        } else {
-                            // Tampilkan pesan jika status belum disetujui (tapi user berhak lihat)
-                            qrcodeDiv.innerHTML = `<div class="alert alert-warning">
-                                QR Code akan tersedia setelah disetujui Admin. Status saat ini: <strong>${kunjunganStatus.toUpperCase()}</strong>
-                            </div>`;
-                        }
-
+                        // Tampilkan gambar QR dari storage
+                        qrcodeDiv.innerHTML = `<img src="${qrImageUrl}" alt="QR Code Kunjungan" style="width: 200px; height: 200px;">`;
+                        
                     } else {
-                        // Tampilkan pesan pembatasan akses untuk Guest/Pengguna yang tidak berhak
-                        qrcodeDiv.innerHTML = `<div class="alert alert-danger" role="alert">
-                            <h5 class="alert-heading">Akses Dibatasi!</h5>
-                            <p>Kode QR hanya dapat dilihat oleh pengguna dengan peran **Operator, Admin, atau Superadmin**.</p>
-                        </div>`;
+                        // Tampilkan pesan error/warning
+                        qrcodeDiv.innerHTML = `<div class="alert alert-warning">
+                                                    QR Code akan tersedia setelah disetujui Admin. Status saat ini: <strong>${kunjunganStatus.toUpperCase()}</strong>
+                                                </div>`;
                     }
                 });
                 

@@ -43,10 +43,25 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5>Dokumen / File</h5>
+                        {{---- Tampilkan link download untuk file_kunjungan dari kis_pengunjung ---}}
+                        <h6 class="mt-2">File Kunjungan</h6>
+                        @if ($pengunjung->file_kunjungan)
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <a href="{{ Storage::url($pengunjung->file_kunjungan) }}" target="_blank" class="fw-semibold">
+                                        <i class="bi bi-file-earmark-arrow-down me-1"></i> Download File Kunjungan
+                                    </a>
+                                </li>
+                            </ul>
+                        @else
+                            <div class="text-muted">
+                                <i class="bi bi-x-circle-fill text-danger me-1"></i> Belum ada file kunjungan yang terlampir.
+                            </div>
+                        @endif
                         
                         {{-- Cek apakah objek dokumen ada DAN memiliki path file SPT --}}
+                        <h6 class="mt-4">Surat Perintah Tugas (SPT)</h6>
                         @if ($pengunjung->dokumen && $pengunjung->dokumen->file_spt)
-                            
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
                                     {{-- Langsung akses objek dokumen --}}

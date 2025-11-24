@@ -177,39 +177,47 @@ class KisPengunjungController extends Controller
      */
     public function showDetail($id)
     {
+        // 1. Tentukan peran yang diizinkan & Lakukan Pengecekan Otorisasi
+        // (Diasumsikan ini adalah versi aman yang Anda inginkan kembali)
+        $allowedRoles = ['admin', 'superadmin', 'operator'];
+        
+        if (!Auth::check() || !in_array(Auth::user()->role, $allowedRoles)) {
+            Log::warning('Akses Detail Kunjungan Ditolak: User ID ' . (Auth::id() ?? 'Guest') . ' mencoba mengakses UID: ' . $id);
+            abort(403, 'Anda tidak memiliki izin untuk melihat detail kunjungan ini.');
+        }
+
         try {
-            // 1. Ambil data kunjungan dengan relasi dokumen dan peserta.
-            // Data Perwakilan diambil dari kolom utama KisPengunjung.
+            // 2. Ambil data kunjungan dengan relasi dokumen dan peserta.
             $pengunjung = KisPengunjung::where('uid', $id)
                 ->with(['peserta', 'dokumen']) 
                 ->firstOrFail();
 
-            // 2. Siapkan Objek Data Perwakilan ($perwakilanPeserta)
-            // Data perwakilan diambil langsung dari kolom utama model KisPengunjung.
+            // 3. Siapkan Objek Data Perwakilan ($perwakilanPeserta)
+            // Penggunaan (object) cast di sini sudah benar dan efisien untuk memformat data perwakilan.
             $perwakilanPeserta = (object) [
                 'nama' => $pengunjung->nama_perwakilan,
                 'email' => $pengunjung->email_perwakilan,
                 'wa' => $pengunjung->wa_perwakilan,
-                'jabatan' => $pengunjung->jabatan_perwakilan, // diambil dari kolom jabatan di KisPengunjung
+                'jabatan' => $pengunjung->jabatan_perwakilan,
             ];
 
 
-            // 3. Siapkan Koleksi Anggota Rombongan ($anggotaRombongan)
-            // Karena kolom 'is_perwakilan' diabaikan/dihapus, kita asumsikan 
-            // SEMUA data di relasi 'peserta' adalah anggota rombongan tambahan.
-            // Kita tidak perlu lagi memfilter.
+            // 4. Siapkan Koleksi Anggota Rombongan ($anggotaRombongan)
             $anggotaRombongan = $pengunjung->peserta; 
 
-            // 4. Kirim data yang dibutuhkan ke View
+            // 5. Kirim data yang dibutuhkan ke View
             return view('kunjungan.detail', [
-                'perwakilanPeserta' => $perwakilanPeserta, // Objek Data Perwakilan (dari KisPengunjung)
-                'anggotaRombongan' => $anggotaRombongan, // Koleksi Rombongan (Seluruh relasi peserta)
-                'pengunjung' => $pengunjung, // Data utama (Instansi, Tanggal, Status, Dokumen, QR)
+                'perwakilanPeserta' => $perwakilanPeserta,
+                'anggotaRombongan' => $anggotaRombongan,
+                'pengunjung' => $pengunjung,
                 'title' => 'Detail Kunjungan',
             ]);
 
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('kunjungan.detail')->with('error', 'Kunjungan tidak ditemukan atau URL tidak valid.');
+            // Jika data tidak ditemukan, redirect ke route index atau daftar kunjungan, 
+            // bukan ke 'kunjungan.detail' lagi (karena itu akan mengulang error).
+            // Saya asumsikan route index adalah 'admin.kunjungan.index'.
+            return redirect()->route('admin.kunjungan.index')->with('error', 'Kunjungan tidak ditemukan atau URL tidak valid.');
         }
     }
 
