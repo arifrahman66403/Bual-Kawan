@@ -350,6 +350,14 @@
                         </div>
                     </div>
 
+                            <!-- ✅ reCAPTCHA -->
+            <div class="mt-4">
+                <div class="g-recaptcha" data-sitekey="{{ env('NOCAPTCHA_SITEKEY') }}"></div>
+                @error('g-recaptcha-response')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
                     <!-- Submit Button -->
                     <button 
                         id="submitBtn" 
@@ -373,6 +381,10 @@
         </div>
     </div>
 
+    <!-- ✅ reCAPTCHA Script -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         (function() {
