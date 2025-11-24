@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Auth;
 
 
 // Route Beranda (Area publik)
-Route::view('/', 'beranda')->name('beranda');
 Route::get('/', [HomeController::class, 'index'])->name('beranda');
 Route::view('/statistik', 'statistik')->name('statistik');
 Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
@@ -40,15 +39,6 @@ Route::post('/kunjungan/upload-spt/{uid}', [KisPengunjungController::class, 'upl
 Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
 Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
 
-// Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
-// // Form Pengajuan Kunjungan (Tambah Kunjungan)
-// Route::get('/kunjungan/create', [GuestController::class, 'showCreateForm'])->name('kunjungan.create');
-// Route::post('/kunjungan', [GuestController::class, 'storeKunjungan'])->name('kunjungan.store');
-// Route::get('/kunjungan/detail/{id}', [GuestController::class, 'showDetail'])->name('kunjungan.detail');
-// Route::post('/kunjungan/upload-spt/{uid}', [GuestController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
-// Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
-// Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
-
 // Route Login Admin (Area publik)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -60,20 +50,6 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::get('/log', [LogController::class, 'index'])->name('log.index');
     // Tambahkan route CRUD untuk user di sini
 });
-
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    
-    // Manajemen Pengajuan dan Data Master Pengunjung
-    Route::get('/pengajuan', [AdminController::class, 'pendingList'])->name('pengajuan.index');
-    Route::post('/pengajuan/approve/{id}', [AdminController::class, 'approvePengunjung'])->name('pengajuan.approve');
-    
-    // Data Master Pengunjung
-    Route::get('/pengunjung', [AdminController::class, 'allPengunjung'])->name('pengunjung.index');
-    // Route CRUD lainnya
-});
-
-
 
 Route::middleware(['auth', 'role:operator,admin'])->prefix('/operator')->name('operator.')->group(function () {
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
@@ -88,6 +64,7 @@ Route::middleware(['auth', 'role:operator,admin'])->prefix('/operator')->name('o
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     // Menampilkan daftar galeri
     Route::get('/gallery', [GalleryController::class, 'index'])->name('admin.gallery.index');
     Route::get('/gallery/create', [GalleryController::class, 'create'])->name('admin.gallery.create');
@@ -123,17 +100,4 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/users/{id}', [KisUserController::class, 'update'])->name('admin.users.update');
     Route::delete('/users/{id}', [KisUserController::class, 'destroy'])->name('admin.users.destroy');
     Route::patch('/users/{id}/toggle', [KisUserController::class, 'toggleStatus'])->name('admin.users.toggle');
-});
-
-Route::prefix('admin')->group(function () {
-    Route::get('/qr', [QrCodeController::class, 'index']);
-    Route::post('/qr', [QrCodeController::class, 'store']);
-    Route::get('/qr/{id}', [QrCodeController::class, 'show']);
-    Route::put('/qr/{id}', [QrCodeController::class, 'update']);
-    Route::delete('/qr/{id}', [QrCodeController::class, 'destroy']);
-
-    Route::get('/tracking', [TrackingController::class, 'index']);
-    Route::post('/tracking', [TrackingController::class, 'store']);
-    Route::put('/tracking/{id}', [TrackingController::class, 'update']);
-    Route::delete('/tracking/{id}', [TrackingController::class, 'destroy']);
 });
