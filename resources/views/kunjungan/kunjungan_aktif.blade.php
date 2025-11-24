@@ -64,20 +64,27 @@
                                 <td class="d-none d-md-table-cell">{{ $kunjungan->satuan_kerja }}</td>
                                 <td class="d-none d-lg-table-cell">{{ $kunjungan->tujuan ?? 'Koordinasi' }}</td> 
                                 <td class="d-none d-sm-table-cell">{{ \Carbon\Carbon::parse($kunjungan->tgl_kunjungan)->format('d-m-Y') }}</td>
+                                {{-- Di dalam loop foreach --}}
                                 <td>
-                                    {{-- TOMBOL TUNGGAL: Ikon Mata yang memicu Modal QR --}}
-                                    <button 
-                                        type="button" 
-                                        class="btn btn-sm btn-outline-primary" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#qrModal"
-                                        data-kunjungan-nama="{{ $kunjungan->nama_instansi }}"
-                                        data-detail-link="{{ route('kunjungan.detail', $kunjungan->uid) }}"
-                                        data-qr-url="{{ $kunjungan->qr_detail_url }}" 
-                                        data-kunjungan-status="{{ $kunjungan->status }}"
-                                        title="Tampilkan QR Code & Detail Kunjungan">
+                                    @if(Auth::check() && Auth::user()->role === 'operator') 
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#qrModal"
+                                            data-kunjungan-nama="{{ $kunjungan->nama_instansi }}"
+                                            data-qr-link="{{ route('kunjungan.detail', $kunjungan->uid) }}"
+                                            data-qr-url="{{ $kunjungan->qr_code_url }}"
+                                            data-kunjungan-status="{{ $kunjungan->status }}"
+                                            title="Tampilkan QR Code & Detail Kunjungan">
                                             <i class="bi bi-eye"></i> 
-                                    </button>
+                                        </button>
+                                    @else
+                                        {{-- JIKA BELUM LOGIN ATAU BUKAN OPERATOR: Tampilkan tombol yang mengarahkan ke login --}}
+                                        <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary" onclick="return confirm('Silahkan hubungi admin/operator untuk melihat detail ini.')">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                             @empty

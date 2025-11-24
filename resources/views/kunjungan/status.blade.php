@@ -49,8 +49,8 @@
                         @endif
                     </p>
 
-                    <a href="{{ route('kunjungan.index')}}" class="btn btn-outline-secondary mt-4">
-                        <i class="bi bi-house"></i> Kembali ke Buku Tamu
+                    <a href="{{ route('kunjungan.detail', $pengunjung->uid) }}" class="btn btn-outline-secondary mt-4">
+                        <i class="bi bi-arrow-left-circle me-1"></i> Kembali ke Detail Kunjungan
                     </a>
                 </div>
             </div>

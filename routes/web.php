@@ -33,7 +33,6 @@ Route::view('/berita-detail', 'berita.berita-detail')->name('berita-detail');
 
 Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
 Route::get('/kunjungan/create', [KisPengunjungController::class, 'showCreateForm'])->name('kunjungan.create');
-Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
 Route::post('/kunjungan', [KisPengunjungController::class, 'storeKunjungan'])->name('kunjungan.store');
 Route::post('/kunjungan/upload-spt/{uid}', [KisPengunjungController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
 Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
@@ -55,6 +54,7 @@ Route::middleware(['auth', 'role:operator,admin'])->prefix('/operator')->name('o
     Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
     Route::get('/pengunjung', [KisPengunjungController::class, 'create'])->name('pengunjung.create');
     Route::post('/pengunjung', [KisPengunjungController::class, 'store'])->name('pengunjung.store');
+    Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
     
     // Fungsi Scan QR
     Route::post('/scan', [OperatorController::class, 'processScan'])->name('scan');
@@ -87,6 +87,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/pengajuan/export', [PengajuanController::class, 'exportPengunjung'])->name('admin.pengajuan.export');
     Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
     Route::get('/admin/riwayat/export', [RiwayatController::class, 'exportTracking'])->name('admin.riwayat.export');
+    Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');
