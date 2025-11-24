@@ -17,33 +17,51 @@ use Carbon\Carbon;
 class RiwayatController extends Controller
 {
     // Menampilkan semua tracking
-    public function index()
+    public function index(Request $request)
     {
-        $data = KisTracking::with('pengunjung')->get();
+        // Ambil data tracking dengan relasi
+        $query = KisTracking::with(['pengunjung', 'createdBy']);
 
-        $trackings = KisTracking::when(request('minggu'), function ($query) {
-                $query->whereRaw("WEEK(created_at) = ?", [request('minggu')]);
-            })
-            ->when(request('bulan'), function ($query) {
-                $query->whereMonth('created_at', request('bulan'));
-            })
-            ->when(request('tahun'), function ($query) {
-                $query->whereYear('created_at', request('tahun'));
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-            
-        // Filter Tipe Pengunjung (DIPERBARUI)
+        // --- Filter Waktu ---
+        
+        // Filter Minggu
+        if ($request->has('minggu') && $request->minggu != '') {
+            // WEEK(date, mode): Mode 1 dimulai Senin
+            $query->whereRaw("WEEK(created_at, 1) = ?", [$request->minggu]);
+        }
+
+        // Filter Bulan
+        if ($request->has('bulan') && $request->bulan != '') {
+            $query->whereMonth('created_at', $request->bulan);
+        }
+
+        // Filter Tahun
+        if ($request->has('tahun') && $request->tahun != '') {
+            $query->whereYear('created_at', $request->tahun);
+        }
+
+        // --- Filter Tipe Pengunjung ---
+        
         if ($request->has('tipe') && $request->tipe != '') {
             $tipe = $request->tipe;
 
-            // Filter berdasarkan kolom 'tipe_pengunjung' di tabel relasi 'pengunjung'
+            // Filter berdasarkan relasi 'pengunjung'
             $query->whereHas('pengunjung', function ($q) use ($tipe) {
+                // Pastikan variabel $tipe dilewatkan ke dalam closure dengan 'use'
                 $q->where('tipe_pengunjung', $tipe);
             });
-        }    
+        }
 
-        return view('admin.riwayat', compact('trackings', 'data'));
+        // Urutkan dan Paginate
+        $trackings = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        // Pertahankan query string saat pagination (supaya filter tidak hilang saat pindah halaman)
+        $trackings->appends($request->all());
+
+        // Jika Anda butuh data lain (opsional)
+        // $data = KisTracking::with('pengunjung')->get(); 
+
+        return view('admin.riwayat', compact('trackings'));
     }
     /**
      * Mengekspor data riwayat tracking ke file Excel dengan filter.
