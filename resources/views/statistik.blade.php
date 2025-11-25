@@ -8,9 +8,9 @@
 
         <div class="stats-grid" id="statsGrid">
           <div class="stat-card c-green" aria-hidden="false">
-            <div class="stat-icon"><i class="fas fa-users" style="color:#fff;font-size:26px"></i></div>
+            <div class="stat-icon"><i class="bi bi-people" style="color:#fff;font-size:26px"></i></div>
             <div class="stat-body">
-              <h3 id="stat-total">2.345</h3>
+              <h3 id="stat-total">{{ $total_tamu_semua }}</h3>
               <p>Total Pengunjung</p>
             </div>
           </div>
@@ -18,52 +18,26 @@
           <div class="stat-card c-blue">
             <div class="stat-icon"><i class="fas fa-book-open" style="color:#fff;font-size:26px"></i></div>
             <div class="stat-body">
-              <h3 id="stat-today">28</h3>
-              <p>Buku Tamu Hari Ini</p>
+              <h3 id="stat-today">{{$total_tamu_hari_ini}}</h3>
+              <p>Total Tamu Hari Ini</p>
             </div>
           </div>
 
           <div class="stat-card c-purple">
-            <div class="stat-icon"><i class="fas fa-chart-line" style="color:#fff;font-size:26px"></i></div>
+            <div class="stat-icon"><i class="bi bi-calendar-month" style="color:#fff;font-size:26px"></i></div>
             <div class="stat-body">
-              <h3 id="stat-avg">4.2</h3>
-              <p>Rata-rata Kunjungan / Hari</p>
+              <h3 id="stat-avg"><{{ $total_tamu_bulan_ini }}</h3>
+              <p>Total Tamu Bulan Ini</p>
             </div>
           </div>
 
           <div class="stat-card c-orange">
-            <div class="stat-icon"><i class="fas fa-globe-asia" style="color:#fff;font-size:26px"></i></div>
+            <div class="stat-icon"><i class="bi bi-calendar-check" style="color:#fff;font-size:26px"></i></div>
             <div class="stat-body">
-              <h3 id="stat-outside">512</h3>
-              <p>Tamu Luar Daerah</p>
-            </div>
-          </div>
-
-          <div class="stat-card c-pink">
-            <div class="stat-icon"><i class="fas fa-thumbs-up" style="color:#fff;font-size:26px"></i></div>
-            <div class="stat-body">
-              <h3 id="stat-feedback">89%</h3>
-              <p>Feedback Positif</p>
+              <h3 id="stat-outside">{{ $total_tamu_tahun_ini}}</h3>
+              <p>Total Tamu Tahun Ini</p>
             </div>
           </div>
         </div>
       </section>
-
-      <section aria-labelledby="chartsTitle">
-        <h3 id="chartsTitle" style="margin:8px 0 12px">Grafik Kunjungan</h3>
-        <div class="charts-grid">
-          <div class="chart-card">
-            <h4>Pengunjung per Bulan</h4>
-            <div class="canvas-wrap"><canvas id="chartMonthly"></canvas></div>
-          </div>
-          <div class="chart-card">
-            <h4>Asal Daerah (Top 5)</h4>
-            <div class="canvas-wrap"><canvas id="chartOrigin"></canvas></div>
-          </div>
-          <div class="chart-card">
-            <h4>Rating Feedback</h4>
-            <div class="canvas-wrap"><canvas id="chartFeedback"></canvas></div>
-          </div>
-      </div>
-  </section>
 </x-layout>
