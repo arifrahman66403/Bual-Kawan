@@ -109,7 +109,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Silakan scan kode di bawah untuk menuju halaman detail:</p>
+                    <p>Silakan *scan* kode di bawah untuk menuju halaman detail:</p>
                     <h6 id="kunjunganNamaDisplay" class="fw-bold mb-3 text-primary"></h6>
                     
                     {{-- DIV TEMPAT QR CODE AKAN DIMUAT DARI SERVER --}}
@@ -141,9 +141,6 @@
             
             // Status yang valid untuk menampilkan QR Code
             const statusValid = ['disetujui', 'kunjungan']; 
-            
-            // DAFTAR PERAN YANG DIIZINKAN untuk melihat QR Code
-            const authorizedRoles = ['admin', 'superadmin', 'operator']; 
 
             if (qrModal) {
                 qrModal.addEventListener('show.bs.modal', function (event) {
@@ -153,9 +150,6 @@
                     const detailLink = button.getAttribute('data-detail-link'); 
                     const qrImageUrl = button.getAttribute('data-qr-url'); 
                     const kunjunganStatus = button.getAttribute('data-kunjungan-status');
-                    
-                    // PENTING: Ambil peran pengguna dari atribut data-user-role pada tombol
-                    const userRole = button.getAttribute('data-user-role'); 
 
                     // 1. Atur Nama Instansi
                     document.getElementById('kunjunganNamaDisplay').textContent = kunjunganNama;
@@ -163,31 +157,20 @@
                     // 2. Atur Link Langsung
                     if (qrLinkDisplay) {
                         qrLinkDisplay.href = detailLink;
-                        qrLinkDisplay.classList.remove('d-none');
+                        qrLinkDisplay.classList.remove('d-none'); // Pastikan link terlihat
                     }
 
-                    // --- Pengecekan Otorisasi di JavaScript ---
-                    if (userRole && authorizedRoles.includes(userRole.toLowerCase())) {
+                    // 3. Atur Tampilan Gambar QR
+                    if (qrImageUrl && statusValid.includes(kunjunganStatus.toLowerCase())) {
                         
-                        // JIKA PERAN DIIZINKAN (admin, superadmin, operator)
-                        if (qrImageUrl && statusValid.includes(kunjunganStatus.toLowerCase())) {
-                            
-                            // Tampilkan gambar QR
-                            qrcodeDiv.innerHTML = <img src="${qrImageUrl}" alt="QR Code Kunjungan" style="width: 200px; height: 200px;">;
-                            
-                        } else {
-                            // Tampilkan pesan status belum valid
-                            qrcodeDiv.innerHTML = `<div class="alert alert-warning">
-                                QR Code akan tersedia setelah disetujui Admin. Status saat ini: <strong>${kunjunganStatus.toUpperCase()}</strong>
-                            </div>`;
-                        }
+                        // Tampilkan gambar QR dari storage
+                        qrcodeDiv.innerHTML = `<img src="${qrImageUrl}" alt="QR Code Kunjungan" style="width: 200px; height: 200px;">`;
+                        
                     } else {
-                        // JIKA BUKAN PERAN YANG DIIZINKAN (guest/tamu)
-                        // QR code tidak muncul, diganti dengan pesan peringatan
-                        qrcodeDiv.innerHTML = `<div class="alert alert-danger" role="alert">
-                            <h5 class="alert-heading">Akses Dibatasi!</h5>
-                            <p>Kode QR hanya dapat dilihat oleh pengguna yang sudah *Login* dengan peran *Operator, Admin, atau Superadmin*.</p>
-                        </div>`;
+                        // Tampilkan pesan error/warning
+                        qrcodeDiv.innerHTML = `<div class="alert alert-warning">
+                                                    QR Code akan tersedia setelah disetujui Admin. Status saat ini: <strong>${kunjunganStatus.toUpperCase()}</strong>
+                                                </div>`;
                     }
                 });
                 

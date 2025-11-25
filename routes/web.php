@@ -34,6 +34,7 @@ Route::view('/berita-detail', 'berita.berita-detail')->name('berita-detail');
 Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
 Route::get('/kunjungan/create', [KisPengunjungController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [KisPengunjungController::class, 'storeKunjungan'])->name('kunjungan.store');
+Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
 Route::post('/kunjungan/upload-spt/{uid}', [KisPengunjungController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
 Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
 Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
