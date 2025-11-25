@@ -173,7 +173,7 @@
                         if (qrImageUrl && statusValid.includes(kunjunganStatus.toLowerCase())) {
                             
                             // Tampilkan gambar QR
-                            qrcodeDiv.innerHTML = <img src="${qrImageUrl}" alt="QR Code Kunjungan" style="width: 200px; height: 200px;">;
+                            qrcodeDiv.innerHTML = `<img src="${qrImageUrl}" alt="QR Code Kunjungan" style="width: 200px; height: 200px;">`;
                             
                         } else {
                             // Tampilkan pesan status belum valid
@@ -186,7 +186,7 @@
                         // QR code tidak muncul, diganti dengan pesan peringatan
                         qrcodeDiv.innerHTML = `<div class="alert alert-danger" role="alert">
                             <h5 class="alert-heading">Akses Dibatasi!</h5>
-                            <p>Kode QR hanya dapat dilihat oleh pengguna yang sudah *Login* dengan peran *Operator, Admin, atau Superadmin*.</p>
+                            <p>Kode QR hanya dapat dilihat oleh pengguna yang sudah **Login** dengan peran **Operator, Admin, atau Superadmin**.</p>
                         </div>`;
                     }
                 });
