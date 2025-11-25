@@ -1,3 +1,8 @@
+@php
+    // 1. Dapatkan peran pengguna saat ini. Jika belum login, set default ke 'guest'.
+    $userRole = Auth::check() ? Auth::user()->role : 'guest';
+@endphp
+
 <x-breadcrumb :title="$title" />
 <x-layout title="Daftar Kunjungan">
     {{-- Hapus script qrcode.js karena kita menggunakan QR code yang sudah dibuat di server --}}
@@ -75,6 +80,7 @@
                                         data-detail-link="{{ route('kunjungan.detail', $kunjungan->uid) }}"
                                         data-qr-url="{{ $kunjungan->qr_detail_url }}" 
                                         data-kunjungan-status="{{ $kunjungan->status }}"
+                                        data-user-role="{{ $userRole }}" {{-- <<< BARIS PENTING DITAMBAHKAN --}}
                                         title="Tampilkan QR Code & Detail Kunjungan">
                                             <i class="bi bi-eye"></i> 
                                     </button>
@@ -112,12 +118,11 @@
                     <p>Silakan *scan* kode di bawah untuk menuju halaman detail:</p>
                     <h6 id="kunjunganNamaDisplay" class="fw-bold mb-3 text-primary"></h6>
                     
-                    {{-- DIV TEMPAT QR CODE AKAN DIMUAT DARI SERVER --}}
+                    {{-- DIV TEMPAT QR CODE AKAN DIMUAT DARI SERVER/JS --}}
                     <div id="qrcode" class="d-flex justify-content-center mb-3">
                         <span class="text-muted">Memuat QR Code...</span>
                     </div> 
                     
-                    {{-- Perbaikan: Menambahkan ID agar bisa diakses JS --}}
                     <a id="qrLinkDisplay" href="#" target="_blank" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-link-45deg"></i> Buka Halaman Detail Langsung
                     </a>
@@ -130,8 +135,7 @@
     </div>
 
     {{-- ---------------------------------------------------------------- --}}
-    {{-- JAVASCRIPT (MEMUAT QR CODE DAN MENGATUR LINK) --}}
-    {{-- Tidak ada perubahan fungsional di JS karena sudah cukup responsif --}}
+    {{-- JAVASCRIPT (MEMUAT QR CODE DAN MENGATUR LINK DENGAN PENGECKAN PERAN) --}}
     {{-- ---------------------------------------------------------------- --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -154,7 +158,7 @@
                     const qrImageUrl = button.getAttribute('data-qr-url'); 
                     const kunjunganStatus = button.getAttribute('data-kunjungan-status');
                     
-                    // PENTING: Ambil peran pengguna dari atribut data-user-role pada tombol
+                    // MENGAMBIL PERAN PENGGUNA DARI ATRIBUT DATA
                     const userRole = button.getAttribute('data-user-role'); 
 
                     // 1. Atur Nama Instansi
