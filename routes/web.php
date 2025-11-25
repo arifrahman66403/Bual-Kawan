@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 // Route Beranda (Area publik)
-Route::get('/', [HomeController::class, 'index'])->name('beranda');
+Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
 Route::view('/statistik', 'statistik')->name('statistik');
 Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
 Route::view('/tentang/visi-misi', 'tentang.visi-misi')->name('tentang.visi-misi');
@@ -44,6 +44,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout'); // Gunakan nama route 'logout'
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Profil Admin
+    Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::put('/admin/profile/password', [AdminController::class, 'updatePassword'])->name('admin.profile.password');
+
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     // Menampilkan daftar galeri
     Route::get('/gallery', [GalleryController::class, 'index'])->name('admin.gallery.index');
