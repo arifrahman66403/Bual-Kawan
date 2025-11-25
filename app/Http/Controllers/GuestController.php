@@ -15,18 +15,33 @@ class GuestController extends Controller
     /**
      * Menampilkan Daftar Kunjungan Aktif (Landing Page).
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Menggunakan view namespace 'kunjungan' sesuai preferensi Anda
-        $kunjunganAktif = KisPengunjung::whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
-                                    ->with('qrCode')
-                                    ->latest()
-                                    ->paginate(5);
-                                       
-        return view('kunjungan.kunjungan_aktif', [
-            'kunjunganAktif' => $kunjunganAktif,
-            'title' => 'Daftar',
-            'breadcrumb' => 'Daftar Kunjungan'
+        // 1. Ambil kata kunci pencarian
+        $search = $request->input('search');
+
+        // 2. Query dengan filter pencarian
+        $kunjunganAktif = Kunjungan::query()
+            // Filter hanya jika ada input 'search'
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    // Cari berdasarkan Nama Instansi
+                    $q->where('nama_instansi', 'like', "%{$search}%")
+                    // ATAU cari berdasarkan Satuan Kerja
+                    ->orWhere('satuan_kerja', 'like', "%{$search}%")
+                    // ATAU cari berdasarkan Tujuan (opsional)
+                    ->orWhere('tujuan', 'like', "%{$search}%");
+                });
+            })
+            // Tambahkan kondisi lain jika perlu (misal: status aktif)
+            // ->where('status', 'aktif') 
+            ->latest('tgl_kunjungan') // Urutkan dari yang terbaru
+            ->paginate(10) // Batasi 10 per halaman
+            ->withQueryString(); // PENTING: Agar pencarian tidak hilang saat pindah halaman (page 2, dst)
+
+        return view('kunjungan.index', [
+            'title' => 'Daftar Kunjungan',
+            'kunjunganAktif' => $kunjunganAktif
         ]);
     }
 

@@ -154,14 +154,6 @@
                                     <br>Berlaku hingga: 
                                     <span class="fw-semibold">{{ \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('d M Y H:i') }}</span>
                                 </p>
-
-                                {{-- 3. Tombol/Link Input Peserta --}}
-                                <a href="{{ route('pengunjung.scan', $pengunjung->uid) }}" 
-                                target="_blank" 
-                                class="btn btn-sm btn-outline-genz mt-2">
-                                    <i class="bi bi-link-45deg"></i> Input Peserta via Link
-                                </a>
-                                
                             @else
                                 <div class="alert alert-warning py-2">
                                     QR Code belum dibuat. silahkan hubungi admin untuk pembuatan QR Code.

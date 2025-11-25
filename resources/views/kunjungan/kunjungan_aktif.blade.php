@@ -80,7 +80,7 @@
                                         data-detail-link="{{ route('kunjungan.detail', $kunjungan->uid) }}"
                                         data-qr-url="{{ $kunjungan->qr_detail_url }}" 
                                         data-kunjungan-status="{{ $kunjungan->status }}"
-                                        data-user-role="{{ $userRole }}" {{-- <<< BARIS PENTING DITAMBAHKAN --}}
+                                        data-user-role="{{ $userRole }}" {{-- BARIS PENTING DITAMBAHKAN --}}
                                         title="Tampilkan QR Code & Detail Kunjungan">
                                             <i class="bi bi-eye"></i> 
                                     </button>
@@ -122,10 +122,6 @@
                     <div id="qrcode" class="d-flex justify-content-center mb-3">
                         <span class="text-muted">Memuat QR Code...</span>
                     </div> 
-                    
-                    <a id="qrLinkDisplay" href="#" target="_blank" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-link-45deg"></i> Buka Halaman Detail Langsung
-                    </a>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -154,7 +150,6 @@
                     
                     const button = event.relatedTarget; 
                     const kunjunganNama = button.getAttribute('data-kunjungan-nama');
-                    const detailLink = button.getAttribute('data-detail-link'); 
                     const qrImageUrl = button.getAttribute('data-qr-url'); 
                     const kunjunganStatus = button.getAttribute('data-kunjungan-status');
                     
@@ -163,12 +158,6 @@
 
                     // 1. Atur Nama Instansi
                     document.getElementById('kunjunganNamaDisplay').textContent = kunjunganNama;
-
-                    // 2. Atur Link Langsung
-                    if (qrLinkDisplay) {
-                        qrLinkDisplay.href = detailLink;
-                        qrLinkDisplay.classList.remove('d-none');
-                    }
 
                     // --- Pengecekan Otorisasi di JavaScript ---
                     if (userRole && authorizedRoles.includes(userRole.toLowerCase())) {
@@ -190,7 +179,7 @@
                         // QR code tidak muncul, diganti dengan pesan peringatan
                         qrcodeDiv.innerHTML = `<div class="alert alert-danger" role="alert">
                             <h5 class="alert-heading">Akses Dibatasi!</h5>
-                            <p>Kode QR hanya dapat dilihat oleh pengguna yang sudah **Login** dengan peran **Operator, Admin, atau Superadmin**.</p>
+                            <p>Kode QR hanya dapat dilihat oleh pengguna yang sudah **Login**.</p>
                         </div>`;
                     }
                 });

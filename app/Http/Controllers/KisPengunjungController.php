@@ -13,10 +13,37 @@ use Illuminate\Support\Str;
 
 class KisPengunjungController extends Controller
 {
-    public function index()
+    /**
+     * Menampilkan Daftar Kunjungan Aktif (Landing Page).
+     */
+    public function index(Request $request)
     {
-        $pengunjungs = KisPengunjung::orderBy('created_at', 'desc')->get();
-        return view('pengunjung.index', compact('pengunjungs'));
+        // 1. Ambil kata kunci pencarian
+        $search = $request->input('search');
+
+        // 2. Query dengan filter pencarian
+        $kunjunganAktif = KisPengunjung::query()
+            // Filter hanya jika ada input 'search'
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    // Cari berdasarkan Nama Instansi
+                    $q->where('nama_instansi', 'like', "%{$search}%")
+                    // ATAU cari berdasarkan Satuan Kerja
+                    ->orWhere('satuan_kerja', 'like', "%{$search}%")
+                    // ATAU cari berdasarkan Tujuan (opsional)
+                    ->orWhere('tujuan', 'like', "%{$search}%");
+                });
+            })
+            // Tambahkan kondisi lain jika perlu (misal: status aktif)
+            // ->where('status', 'aktif') 
+            ->latest() // Urutkan dari yang terbaru
+            ->paginate(10) // Batasi 10 per halaman
+            ->withQueryString(); // PENTING: Agar pencarian tidak hilang saat pindah halaman (page 2, dst)
+
+        return view('kunjungan.kunjungan_aktif', [
+            'title' => 'Daftar Kunjungan',
+            'kunjunganAktif' => $kunjunganAktif
+        ]);
     }
 
     public function create()

@@ -10,7 +10,6 @@ use App\Http\Controllers\KisTrackingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GuestController;
-use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\Admin\RiwayatController;
@@ -31,7 +30,7 @@ Route::view('/tentang/visi-misi', 'tentang.visi-misi')->name('tentang.visi-misi'
 Route::view('/berita', 'berita.berita')->name('berita.berita');
 Route::view('/berita-detail', 'berita.berita-detail')->name('berita-detail');   
 
-Route::get('/kunjungan', [GuestController::class, 'index'])->name('kunjungan.index');
+Route::get('/kunjungan', [KisPengunjungController::class, 'index'])->name('kunjungan.index');
 Route::get('/kunjungan/create', [KisPengunjungController::class, 'showCreateForm'])->name('kunjungan.create');
 Route::post('/kunjungan', [KisPengunjungController::class, 'storeKunjungan'])->name('kunjungan.store');
 Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
@@ -43,26 +42,6 @@ Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'stor
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout'); // Gunakan nama route 'logout'
-
-Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
-    Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
-    Route::get('/users', [SuperAdminController::class, 'manageUsers'])->name('users.index');
-    Route::get('/log', [LogController::class, 'index'])->name('log.index');
-    // Tambahkan route CRUD untuk user di sini
-});
-
-Route::middleware(['auth', 'role:operator,admin'])->prefix('/operator')->name('operator.')->group(function () {
-    Route::get('/dashboard', [OperatorController::class, 'index'])->name('dashboard');
-    Route::get('/pengunjung', [KisPengunjungController::class, 'create'])->name('pengunjung.create');
-    Route::post('/pengunjung', [KisPengunjungController::class, 'store'])->name('pengunjung.store');
-    Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
-    
-    // Fungsi Scan QR
-    Route::post('/scan', [OperatorController::class, 'processScan'])->name('scan');
-    
-    // Riwayat
-    Route::get('/riwayat', [OperatorController::class, 'riwayatScan'])->name('riwayat');
-});
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -88,7 +67,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/pengajuan/export', [PengajuanController::class, 'exportPengunjung'])->name('admin.pengajuan.export');
     Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
     Route::get('/admin/riwayat/export', [RiwayatController::class, 'exportTracking'])->name('admin.riwayat.export');
-    Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
 
     // === TRACKING ===
     Route::get('/tracking', [KisTrackingController::class, 'index'])->name('tracking.index');

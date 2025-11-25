@@ -62,7 +62,7 @@ class AuthController extends Controller
             if ($role === 'superadmin' || $role === 'admin') {
                 return redirect()->route('admin.dashboard')->with('success', "Selamat datang, {$user->name}!");
             } elseif ($role === 'operator') {
-                return redirect()->route('operator.dashboard')->with('success', "Selamat datang, {$user->name}!");
+                return redirect()->route('beranda')->with('success', "Selamat datang, {$user->name}!");
             } else {
                 // Role tidak diizinkan
                 Auth::logout(); 
@@ -108,7 +108,7 @@ class AuthController extends Controller
         } elseif ($role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($role === 'operator') {
-            return redirect()->route('operator.dashboard');
+            return redirect()->route('beranda');
         }
         
         // Default, alihkan ke login jika rolenya tidak termasuk kategori admin
