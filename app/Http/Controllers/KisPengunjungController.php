@@ -177,14 +177,14 @@ class KisPengunjungController extends Controller
      */
     public function showDetail($id)
     {
-        // 1. Tentukan peran yang diizinkan & Lakukan Pengecekan Otorisasi
-        // (Diasumsikan ini adalah versi aman yang Anda inginkan kembali)
-        $allowedRoles = ['admin', 'superadmin', 'operator'];
+        // // 1. Tentukan peran yang diizinkan & Lakukan Pengecekan Otorisasi
+        // // (Diasumsikan ini adalah versi aman yang Anda inginkan kembali)
+        // $allowedRoles = ['admin', 'superadmin', 'operator'];
         
-        if (!Auth::check() || !in_array(Auth::user()->role, $allowedRoles)) {
-            Log::warning('Akses Detail Kunjungan Ditolak: User ID ' . (Auth::id() ?? 'Guest') . ' mencoba mengakses UID: ' . $id);
-            abort(403, 'Anda tidak memiliki izin untuk melihat detail kunjungan ini.');
-        }
+        // if (!Auth::check() || !in_array(Auth::user()->role, $allowedRoles)) {
+        //     Log::warning('Akses Detail Kunjungan Ditolak: User ID ' . (Auth::id() ?? 'Guest') . ' mencoba mengakses UID: ' . $id);
+        //     abort(403, 'Anda tidak memiliki izin untuk melihat detail kunjungan ini.');
+        // }
 
         try {
             // 2. Ambil data kunjungan dengan relasi dokumen dan peserta.
