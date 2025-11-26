@@ -253,4 +253,12 @@ class KisPengunjungController extends Controller
         $pengunjungs = KisPengunjung::orderBy('created_at', 'desc')->get();
         return view('admin.verify', compact('pengunjungs'));
     }
+
+    public function showQrCode($uid) 
+    {
+        $pengunjung = KisPengunjung::where('uid', $uid)->firstOrFail();
+
+        // Pastikan objek 'pengunjung' dilewatkan ke view
+        return view('kunjungan.detail', compact('pengunjung')); 
+    }
 }

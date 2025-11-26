@@ -49,9 +49,17 @@
                         @endif
                     </p>
 
+                    @if (isset($pengunjung) && $pengunjung->uid)
                     <a href="{{ route('kunjungan.detail', $pengunjung->uid) }}" class="btn btn-outline-secondary mt-4">
                         <i class="bi bi-arrow-left-circle me-1"></i> Kembali ke Detail Kunjungan
                     </a>
+                    @else
+                    {{-- Tampilkan pesan error atau tautan alternatif jika data pengunjung tidak ditemukan --}}
+                    <p class="text-danger mt-4">Error: Data kunjungan tidak ditemukan.</p>
+                    <a href="{{ route('kunjungan.index') }}" class="btn btn-outline-secondary mt-4">
+                        <i class="bi bi-list me-1"></i> Kembali ke Daftar Kunjungan
+                    </a>
+                    @endif
                 </div>
             </div>
         </div>
