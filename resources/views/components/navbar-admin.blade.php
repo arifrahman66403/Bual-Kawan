@@ -1,8 +1,7 @@
 <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="{{ route('beranda') }}">
-            <img src="https://bualkawan.siakkab.go.id/logo-bualkawan2.png" alt="Bual Kawan Logo" height="30" class="me-2">
-            <span class="text-color">E-Singgah</span>
+            <img src="{{ asset('logosinggahlandscape.png') }}" alt="Singgah Logo" height="50" class="me-2">
         </a>
         
         <div class="d-flex align-items-center ms-auto">

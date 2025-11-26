@@ -77,7 +77,7 @@
                                         data-bs-toggle="modal" 
                                         data-bs-target="#qrModal"
                                         data-kunjungan-nama="{{ $kunjungan->nama_instansi }}"
-                                        data-detail-link="{{ route('kunjungan.detail', $kunjungan->uid) }}"
+                                        data-detail-link="{{ route('kunjungan.qrcode', $kunjungan->uid) }}"
                                         data-qr-url="{{ $kunjungan->qr_detail_url }}" 
                                         data-kunjungan-status="{{ $kunjungan->status }}"
                                         data-user-role="{{ $userRole }}" {{-- BARIS PENTING DITAMBAHKAN --}}

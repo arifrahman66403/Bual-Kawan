@@ -1,8 +1,7 @@
 <header class="header-full">
 <div class="header-inner">
     <div class="logo">
-    <img src="https://bualkawan.siakkab.go.id/logo-bualkawan.png" alt="logo">
-    <div class="brand">E-Singgah</div>
+    <img src="{{ asset('logosinggahlandscape.png') }}" alt="logo">
     </div>
 
     <div class="header-spacer"></div>

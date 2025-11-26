@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Singgah - Dashboard Admin</title>
+    <title>Singgah - Dashboard Admin</title>
     
-    <link rel="icon" type="image/png" href="https://bualkawan.siakkab.go.id/logo-bualkawan2.png">
+    <link rel="icon" type="image/png" href="{{ asset('logosinggah.png') }}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">

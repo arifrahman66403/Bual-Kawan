@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 // Route Beranda (Area publik)
-Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
+Route::get('/', [HomeController::class, 'index'])->name('beranda');
 Route::get('/statistik', [HomeController::class, 'infos'])->name('statistik');
 Route::view('/tentang/profil', 'tentang.profil')->name('tentang.profil');
 Route::view('/tentang/visi-misi', 'tentang.visi-misi')->name('tentang.visi-misi');
@@ -35,7 +35,7 @@ Route::get('/kunjungan/create', [KisPengunjungController::class, 'showCreateForm
 Route::post('/kunjungan', [KisPengunjungController::class, 'storeKunjungan'])->name('kunjungan.store');
 Route::get('/kunjungan/detail/{id}', [KisPengunjungController::class, 'showDetail'])->name('kunjungan.detail');
 Route::post('/kunjungan/upload-spt/{uid}', [KisPengunjungController::class, 'uploadSpt'])->name('kunjungan.upload.spt');
-Route::get('/kunjungan/{uid}', [KisPengunjungController::class, 'showQrCode'])->name('kunjungan.detail');
+Route::get('/kunjungan/{uid}', [KisPengunjungController::class, 'showQrCode'])->name('kunjungan.qrcode');
 Route::get('pengunjung/scan/{uid}', [KisQrCodeController::class, 'showParticipantForm'])->name('pengunjung.scan');
 Route::post('pengunjung/store-peserta/{uid}', [KisQrCodeController::class, 'storeParticipantData'])->name('pengunjung.store.peserta');
 
