@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="dashboard.php">
+        <a class="navbar-brand fw-bold" href="{{ route('beranda') }}">
             <img src="https://bualkawan.siakkab.go.id/logo-bualkawan2.png" alt="Bual Kawan Logo" height="30" class="me-2">
-            <span class="text-color">Bual Kawan</span>
+            <span class="text-color">E-Singgah</span>
         </a>
         
         <div class="d-flex align-items-center ms-auto">
@@ -13,7 +13,7 @@
             <div class="dropdown">
                 <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="d-none d-md-inline me-2 text-color fw-semibold">Halo, {{ Auth::user()->nama }}!</span>
-                    <img src="https://i.pravatar.cc/150?img=68" class="rounded-circle avatar-sm" alt="Admin Avatar">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->nama) }}&background=0d6efd&color=fff&size=128" class="rounded-circle avatar-sm" alt="Admin Avatar">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
                     <li>

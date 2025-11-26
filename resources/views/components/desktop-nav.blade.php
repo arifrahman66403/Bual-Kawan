@@ -14,4 +14,8 @@
     <div class="nav-item"><a href="{{ route('kunjungan.index')}}"><i class="fas fa-pen"></i> Buku Tamu</a></div>
 
     <div class="nav-item"><a href="{{ route('statistik')}}"><i class="fas fa-chart-bar"></i> Statistik</a></div>
+
+    @auth
+    <div class="nav-item"><a href="{{ route('logout')}}"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+    @endauth
 </nav>

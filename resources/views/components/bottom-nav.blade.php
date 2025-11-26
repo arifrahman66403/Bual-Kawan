@@ -9,6 +9,10 @@
       <button id="mb-bukutamu" data-href="{{ route('kunjungan.index')}}"><i class="fas fa-pen"></i><small>Buku Tamu</small></button>
       
       <button id="mb-stat" data-href="{{ route('statistik')}}"><i class="fas fa-chart-bar"></i><small>Statistik</small></button>
+
+      @auth
+      <button id="mb-logout" data-href="{{ route('logout')}}"><i class="fas fa-sign-out-alt"></i><small>Logout</small></button>
+      @endauth
     </div>
 
     <div class="mobile-submenu" id="mobileSubmenu" role="menu" aria-hidden="true">

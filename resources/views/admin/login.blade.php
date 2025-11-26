@@ -3,263 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - Bual Kawan</title>
+    <title>Login Admin - Sederhana</title>
+    <link rel="icon" type="image/png" href="https://bualkawan.siakkab.go.id/logo-bualkawan2.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-
+        /* Gaya Sederhana dan Minimalis */
         body {
+            background-color: #f8f9fa; /* Latar belakang sangat terang */
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
-        .login-wrapper {
+        .login-container {
             width: 100%;
-            max-width: 450px;
-            padding: 15px;
+            max-width: 400px; /* Ukuran lebih kecil */
+            padding: 20px;
         }
 
         .login-card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .login-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 50px 30px;
-            text-align: center;
-            color: white;
-        }
-
-        .login-header .logo-box {
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 36px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
+            border: 1px solid #dee2e6; /* Border tipis */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Shadow lembut */
+            padding: 30px;
         }
 
         .login-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 5px;
         }
 
         .login-header p {
             font-size: 14px;
-            opacity: 0.9;
-            margin: 0;
-            font-weight: 400;
-        }
-
-        .login-body {
-            padding: 45px 35px;
-        }
-
-        .form-group {
+            color: #6c757d;
             margin-bottom: 25px;
         }
 
-        .form-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 10px;
-            display: block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .input-group {
-            position: relative;
+        .form-control, .input-group-text, .btn-primary {
+            border-radius: 6px;
         }
 
         .input-group-text {
-            background: transparent;
-            border: 1.5px solid #e2e8f0;
-            color: #667eea;
-            font-size: 18px;
-            padding: 12px 15px;
-            transition: all 0.3s ease;
+            background-color: #e9ecef;
+            border-right: none;
         }
-
-        .form-control {
-            border: 1.5px solid #e2e8f0;
-            padding: 12px 15px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            color: #2d3748;
-            background: #f7fafc;
+        
+        .form-control:focus + .input-group-text {
+            border-color: #86b7fe; /* Warna fokus Bootstrap default */
         }
-
+        
         .form-control:focus {
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            color: #2d3748;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
         }
-
-        .form-control::placeholder {
-            color: #a0aec0;
-            font-weight: 400;
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
         }
-
-        .input-group:focus-within .input-group-text {
-            border-color: #667eea;
-            background: #f7fafc;
-        }
-
-        .toggle-password {
-            background: transparent;
-            border: 1.5px solid #e2e8f0;
-            color: #667eea;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 12px 15px;
-            font-size: 16px;
-        }
-
-        .toggle-password:hover {
-            color: #764ba2;
-            background: #f7fafc;
-        }
-
-        .toggle-password:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
+        
         .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 12px 20px;
-            font-size: 15px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
             width: 100%;
-            margin-top: 15px;
-            letter-spacing: 0.3px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            padding: 10px 15px;
+            font-weight: 600;
+            background-color: #0d6efd; /* Warna biru Bootstrap default */
+            border-color: #0d6efd;
+            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
         }
 
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            color: white;
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .btn-login:disabled {
-            opacity: 0.8;
-            cursor: not-allowed;
-        }
-
-        .alert {
-            border-radius: 8px;
-            margin-bottom: 25px;
-            font-size: 13px;
-            border: none;
-            padding: 12px 16px;
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
         }
 
         .alert-danger {
-            background: #fed7d7;
-            color: #742a2a;
+            background-color: #f8d7da;
+            color: #842029;
+            border-color: #f5c2c7;
+            font-size: 14px;
         }
 
         .invalid-feedback {
-            font-size: 12px;
-            margin-top: 6px;
-            color: #e53e3e;
-            display: block;
+            font-size: 13px;
         }
-
-        .shake {
-            animation: shake 0.4s;
+        
+        .toggle-password {
+            background: #e9ecef;
+            border-left: none;
+            color: #6c757d;
         }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
+        
+        .toggle-password:hover {
+            color: #495057;
+            background: #e2e6ea;
         }
-
+        
         .login-footer {
             text-align: center;
-            padding: 20px 35px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 12px;
-            color: #718096;
-        }
-
-        .login-footer a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .login-footer a:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-
-        @media (max-width: 480px) {
-            .login-body {
-                padding: 35px 25px;
-            }
-
-            .login-header {
-                padding: 40px 25px;
-            }
-
-            .login-header h1 {
-                font-size: 24px;
-            }
-
-            .login-header .logo-box {
-                width: 60px;
-                height: 60px;
-                font-size: 30px;
-            }
-
-            .login-footer {
-                padding: 15px 25px;
-            }
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+            font-size: 13px;
+            color: #6c757d;
         }
 
         /* Loading spinner */
@@ -268,107 +119,103 @@
             height: 14px;
             border-width: 2px;
         }
+        /* Tambahkan kelas shake agar tidak merusak style minimalis */
+        .shake {
+             animation: shake 0.4s;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
-    <div class="login-wrapper">
+    <div class="login-container">
         <div class="login-card">
-            <!-- Header -->
-            <div class="login-header">
-                <div class="logo-box">
-                    <i class="bi bi-shield-lock"></i>
+            <div class="login-header text-center">
+                <i class="bi bi-shield-lock fs-1 text-primary mb-2"></i>
+                <h1>Login Admin</h1>
+                <p>Silakan masukkan detail akun Anda.</p>
+            </div>
+
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <strong>Gagal!</strong> {{ $errors->first() }}
                 </div>
-                <h1>Bual Kawan</h1>
-                <p>Admin Portal</p>
-            </div>
+            @endif
 
-            <!-- Body -->
-            <div class="login-body">
-                <!-- Error Message -->
-                @if ($errors->any())
-                    <div class="alert alert-danger" role="alert">
-                        <i class="bi bi-exclamation-circle me-2"></i>
-                        <strong>Login Gagal!</strong> {{ $errors->first() }}
-                    </div>
-                @endif
+            <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
+                @csrf
 
-                <!-- Form -->
-                <form id="loginForm" method="POST" action="{{ route('login') }}" novalidate>
-                    @csrf
-
-                    <!-- Email Field -->
-                    <div class="form-group">
-                        <label for="email" class="form-label">
-                            <i class="bi bi-envelope"></i> Email
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-at"></i>
-                            </span>
-                            <input 
-                                id="email" 
-                                type="email" 
-                                name="email" 
-                                class="form-control" 
-                                placeholder="admin@example.com" 
-                                required 
-                                autofocus
-                                value="{{ old('email') }}">
-                        </div>
-                        <div class="invalid-feedback">
-                            <i class="bi bi-info-circle me-1"></i>Masukkan email yang valid
-                        </div>
-                    </div>
-
-                    <!-- Password Field -->
-                    <div class="form-group">
-                        <label for="password" class="form-label">
-                            <i class="bi bi-lock"></i> Password
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-key"></i>
-                            </span>
-                            <input 
-                                id="password" 
-                                type="password" 
-                                name="password" 
-                                class="form-control" 
-                                placeholder="Masukkan password" 
-                                required>
-                            <button 
-                                type="button" 
-                                class="toggle-password" 
-                                id="togglePassword" 
-                                title="Tampilkan/Sembunyikan password"
-                                tabindex="-1">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                        <div class="invalid-feedback">
-                            <i class="bi bi-info-circle me-1"></i>Password tidak boleh kosong
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button 
-                        id="submitBtn" 
-                        type="submit" 
-                        class="btn btn-login">
-                        <span id="btnText">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-person"></i>
                         </span>
-                    </button>
-                </form>
-            </div>
+                        <input 
+                            id="email" 
+                            type="email" 
+                            name="email" 
+                            class="form-control" 
+                            placeholder="Alamat Email" 
+                            required 
+                            autofocus
+                            value="{{ old('email') }}">
+                    </div>
+                    <div class="invalid-feedback">
+                        <i class="bi bi-info-circle me-1"></i>Masukkan email yang valid
+                    </div>
+                </div>
 
-            <!-- Footer -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        <input 
+                            id="password" 
+                            type="password" 
+                            name="password" 
+                            class="form-control" 
+                            placeholder="Password" 
+                            required>
+                        <button 
+                            type="button" 
+                            class="btn toggle-password" 
+                            id="togglePassword" 
+                            title="Tampilkan/Sembunyikan password"
+                            tabindex="-1">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback">
+                        <i class="bi bi-info-circle me-1"></i>Password tidak boleh kosong
+                    </div>
+                </div>
+
+                <button 
+                    id="submitBtn" 
+                    type="submit" 
+                    class="btn btn-primary btn-login mt-3">
+                    <span id="btnText">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
+                    </span>
+                </button>
+            </form>
+            
             <div class="login-footer">
-                <p class="mb-2">
-                    <i class="bi bi-question-circle me-1"></i>
-                    Kembali ke <a href="/">Beranda</a>
+                <a href="{{ route('beranda') }}" class="text-decoration-none">
+                    <i class="bi bi-question-circle me-1"></i>Kembali ke Beranda
+                </a>
+                <p class="mt-2 mb-0">
+                    <small>&copy; {{ date('Y') }} Bual Kawan.</small>
                 </p>
-                <small>© {{ date('Y') }} Bual Kawan. All rights reserved.</small>
             </div>
         </div>
     </div>
@@ -394,7 +241,7 @@
                 icon.classList.add(isHidden ? 'bi-eye-slash' : 'bi-eye');
             });
 
-            // Form validation
+            // Form validation and loading state
             form.addEventListener('submit', function(e) {
                 if (!form.checkValidity()) {
                     e.preventDefault();
@@ -412,6 +259,8 @@
 
                 // Disable button & show loading state
                 submitBtn.disabled = true;
+                submitBtn.classList.add('btn-secondary'); // Ubah warna saat loading
+                submitBtn.classList.remove('btn-primary');
                 btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Memproses...';
             });
 

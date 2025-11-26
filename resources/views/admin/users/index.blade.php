@@ -30,6 +30,7 @@
         <thead class="table-primary">
           <tr>
             <th>No</th>
+            <th>Profil</th>
             <th>Nama & Kontak</th>
             <th>Username / Role</th>
             <th>Status</th>
@@ -40,6 +41,12 @@
           @forelse($users as $no => $user)
           <tr>
             <td>{{ $users->firstItem() + $no }}</td>
+            <td>
+              <img src="https://ui-avatars.com/api/?name={{ urlencode($user->nama) }}&background=0d6efd&color=fff&size=128" 
+                                 class="rounded-circle img-thumbnail shadow-sm" 
+                                 style="width: 60px; height: 60px;" 
+                                 alt="Avatar">
+            </td>
             <td>
               <span class="fw-bold text-color">{{ $user->nama }}</span><br>
               <small class="text-muted">{{ $user->email }}</small>
