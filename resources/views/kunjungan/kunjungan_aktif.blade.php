@@ -1,11 +1,17 @@
 @php
     // 1. Dapatkan peran pengguna saat ini. Jika belum login, set default ke 'guest'.
     $userRole = Auth::check() ? Auth::user()->role : 'guest';
+    // 2. Dapatkan status aktif pengguna saat ini. Jika belum login, set default ke '0' (non-aktif).
+    $userActive = Auth::check() ? Auth::user()->is_active : '0';
 @endphp
 
-<x-breadcrumb :title="$title" />
 <x-layout title="Daftar Kunjungan">
     {{-- Hapus script qrcode.js karena kita menggunakan QR code yang sudah dibuat di server --}}
+    <x-slot name="breadcrumb">
+        <x-breadcrumb title="Buku Tamu">
+            Selamat Datang — Buku Tamu Singgah
+        </x-breadcrumb>
+    </x-slot>
 
     <div class="container py-3 py-md-5">
         <div class="card shadow-lg border-0">
@@ -81,6 +87,7 @@
                                         data-qr-url="{{ $kunjungan->qr_detail_url }}" 
                                         data-kunjungan-status="{{ $kunjungan->status }}"
                                         data-user-role="{{ $userRole }}" {{-- BARIS PENTING DITAMBAHKAN --}}
+                                        data-user-active="{{ $userActive ?? '0' }}" {{-- BARIS PENTING DITAMBAHKAN --}}
                                         title="Tampilkan QR Code & Detail Kunjungan">
                                             <i class="bi bi-eye"></i> 
                                     </button>
@@ -137,12 +144,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             const qrModal = document.getElementById('qrModal');
             const qrcodeDiv = document.getElementById('qrcode');
-            const qrLinkDisplay = document.getElementById('qrLinkDisplay'); 
             
             // Status yang valid untuk menampilkan QR Code
             const statusValid = ['disetujui', 'kunjungan']; 
             
-            // DAFTAR PERAN YANG DIIZINKAN untuk melihat QR Code
+            // DAFTAR PERAN YANG DIIZINKAN
             const authorizedRoles = ['admin', 'superadmin', 'operator']; 
 
             if (qrModal) {
@@ -153,16 +159,28 @@
                     const qrImageUrl = button.getAttribute('data-qr-url'); 
                     const kunjunganStatus = button.getAttribute('data-kunjungan-status');
                     
-                    // MENGAMBIL PERAN PENGGUNA DARI ATRIBUT DATA
+                    // MENGAMBIL PERAN DAN STATUS DARI ATRIBUT DATA
                     const userRole = button.getAttribute('data-user-role'); 
+                    const userActive = button.getAttribute('data-user-active'); // BARIS BARU: Ambil status aktif
+                    
+                    // Konversi status aktif menjadi boolean (misal: '1' -> true)
+                    const isActive = (userActive === '1'); 
 
                     // 1. Atur Nama Instansi
                     document.getElementById('kunjunganNamaDisplay').textContent = kunjunganNama;
 
-                    // --- Pengecekan Otorisasi di JavaScript ---
-                    if (userRole && authorizedRoles.includes(userRole.toLowerCase())) {
+                    // --- Pengecekan Otorisasi FINAL di JavaScript ---
+                    
+                    // Kondisi 1: Apakah peran diizinkan? (Harus admin/operator)
+                    const isAuthorizedRole = userRole && authorizedRoles.includes(userRole.toLowerCase());
+                    
+                    // Kondisi 2: Apakah pengguna AKTIF? (Harus '1' atau true)
+                    const isUserActive = isActive; 
+                    
+                    // Kondisi FINAL: Peran diizinkan DAN Pengguna harus AKTIF
+                    if (isAuthorizedRole && isUserActive) {
                         
-                        // JIKA PERAN DIIZINKAN (admin, superadmin, operator)
+                        // JIKA PERAN DIIZINKAN DAN AKTIF
                         if (qrImageUrl && statusValid.includes(kunjunganStatus.toLowerCase())) {
                             
                             // Tampilkan gambar QR
@@ -174,12 +192,19 @@
                                 QR Code akan tersedia setelah disetujui Admin. Status saat ini: <strong>${kunjunganStatus.toUpperCase()}</strong>
                             </div>`;
                         }
-                    } else {
+                    } else if (isAuthorizedRole && !isUserActive) {
+                        // JIKA PERAN DIIZINKAN TAPI AKUN NONAKTIF
+                        qrcodeDiv.innerHTML = `<div class="alert alert-danger" role="alert">
+                            <h5 class="alert-heading">Akses Ditolak!</h5>
+                            <p>Akun Anda berstatus **NONAKTIF**. Silakan hubungi Administrator untuk melihat QR Code.</p>
+                        </div>`;
+                    }
+                    else {
                         // JIKA BUKAN PERAN YANG DIIZINKAN (guest/tamu)
-                        // QR code tidak muncul, diganti dengan pesan peringatan
+                        // QR code tidak muncul, diganti dengan pesan peringatan umum
                         qrcodeDiv.innerHTML = `<div class="alert alert-danger" role="alert">
                             <h5 class="alert-heading">Akses Dibatasi!</h5>
-                            <p>Kode QR hanya dapat dilihat oleh pengguna yang sudah **Login**.</p>
+                            <p>Kode QR hanya dapat dilihat oleh pengguna yang memiliki hak akses.</p>
                         </div>`;
                     }
                 });

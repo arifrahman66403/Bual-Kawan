@@ -162,16 +162,41 @@
                     <div class="card-body text-center">
                         <h5>QR Code</h5>
                         @if($pengunjung->qrCode && !empty($pengunjung->qrCode->qr_scan_path))
+                            
+                            {{-- Tampilkan Gambar QR Code --}}
                             <img src="{{ Storage::url($pengunjung->qrCode->qr_scan_path) }}" alt="QR Code" class="img-fluid mb-2" style="max-width:220px;">
-                            <div class="d-grid gap-2">
+                            
+                            <div class="d-grid gap-2 mb-2">
+                                {{-- Tombol Buka Gambar QR --}}
                                 <a href="{{ Storage::url($pengunjung->qrCode->qr_scan_path) }}" target="_blank" class="btn btn-outline-primary btn-sm">Buka Gambar QR</a>
                             </div>
-                            <div class="small text-muted mt-2">
+
+                            {{-- FORM BARU: Tombol Regenerate QR Code --}}
+                            {{-- Pastikan hanya user yang terotentikasi yang bisa melihat tombol ini --}}
+                            @auth
+                                {{-- Gunakan route yang sudah kita buat sebelumnya --}}
+                                <form action="{{ route('admin.pengajuan.regenerateqr', ['uid' => $pengunjung->uid]) }}" 
+                                    method="POST" 
+                                    onsubmit="return confirm('Apakah Anda yakin ingin memperbarui QR Code untuk {{ $pengunjung->nama_instansi }}? Ini akan mereset masa berlaku.');">
+                                    @csrf
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Regenerate QR Code
+                                        </button>
+                                    </div>
+                                </form>
+                            @endauth
+
+                            <div class="small text-muted mt-3">
                                 Berlaku mulai: {{ $pengunjung->qrCode->berlaku_mulai ? \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_mulai)->format('Y-m-d H:i') : '-' }}<br>
                                 Berlaku sampai: {{ $pengunjung->qrCode->berlaku_sampai ? \Carbon\Carbon::parse($pengunjung->qrCode->berlaku_sampai)->format('Y-m-d H:i') : '-' }}
                             </div>
+                            
                         @else
-                            <div class="text-muted">Belum ada QR Code</div>
+                            <div class="text-muted">
+                                Belum ada QR Code untuk kunjungan ini. <br>
+                                QR Code akan dibuat otomatis saat status disetujui.
+                            </div>
                         @endif
                     </div>
                 </div>

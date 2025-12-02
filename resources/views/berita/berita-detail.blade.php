@@ -1,10 +1,10 @@
-<x-breadcrumb title="Berita Detail">
-  <li class="breadcrumb-item" aria-hidden="false">
-    <i class="fas fa-newspaper"></i>
-    <strong style="margin-left:6px">Berita Detail</strong>
-    </li>
-</x-breadcrumb>
 <x-layout title="Berita Detail">
+    <x-slot name="breadcrumb">
+        <x-breadcrumb title="Berita Detail">
+            Kunjungan Kerja Tim Kementerian Dalam Negeri ke Siak Perkuat Sinergi Daerah
+        </x-breadcrumb>
+    </x-slot>
+    
     <article class="fade-in article-detail">
         <div class="article-header">
             <h1>Kunjungan Kerja Tim Kementerian Dalam Negeri ke Siak Perkuat Sinergi Daerah</h1>

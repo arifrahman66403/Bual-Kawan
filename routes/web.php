@@ -44,7 +44,7 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout'); // Gunakan nama route 'logout'
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'active', 'role:admin'])->group(function () {
     // Profil Admin
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
@@ -69,6 +69,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/qr', [KisQrCodeController::class, 'store'])->name('qr.store');
     Route::get('/admin/pengajuan', [PengajuanController::class, 'index'])->name('admin.pengajuan');
     Route::post('/pengajuan/{uid}/status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.status');
+    Route::post('/pengajuan/{uid}/regenerate-qr', [PengajuanController::class, 'regenerateQr'])->name('admin.pengajuan.regenerateqr');
     Route::get('/pengajuan/{uid}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
     Route::get('/admin/pengajuan/export', [PengajuanController::class, 'exportPengunjung'])->name('admin.pengajuan.export');
     Route::get('/admin/riwayat', [RiwayatController::class, 'index'])->name('admin.riwayat');
@@ -87,3 +88,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/users/{id}', [KisUserController::class, 'destroy'])->name('admin.users.destroy');
     Route::patch('/users/{id}/toggle', [KisUserController::class, 'toggleStatus'])->name('admin.users.toggle');
 });
+
+Route::middleware(['auth', 'active'])->get('/akun-dinonaktifkan', function () {
+    // Pastikan kamu mengarahkan ke view yang benar
+    return view('auth.deactivated');
+})->name('account.deactivated');

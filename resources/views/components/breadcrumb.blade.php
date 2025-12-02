@@ -1,6 +1,8 @@
+@props(['title'])
+
 <section class="breadcrumb" aria-label="Breadcrumb">
     <div class="inner">
-        <h1>{{ $title }}</h1>
+        <h1>{{ $slot }}</h1>
         <div class="crumbs" aria-hidden="false">
         <i class="fas fa-home"></i>
         <span><a href="/" style="color:inherit;text-decoration:underline;font-weight:800;margin-left:6px">Beranda</a></span>

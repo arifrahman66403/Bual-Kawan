@@ -1,10 +1,10 @@
-<x-breadcrumb title="Berita">
-  <li class="breadcrumb-item" aria-hidden="false">
-    <i class="fas fa-newspaper"></i>
-    <strong style="margin-left:6px">Berita</strong>
-    </li>
-</x-breadcrumb>
 <x-layout title="Berita">
+    <x-slot name="breadcrumb">
+        <x-breadcrumb title="Berita">
+            Selamat Datang — Berita Terbaru Singgah
+        </x-breadcrumb>
+    </x-slot>
+    
   <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Cari berita berdasarkan judul atau isi..." onkeyup="window.filterNews()" />
         <button onclick="window.filterNews()"><i class="fas fa-search"></i> Cari</button>

@@ -5,11 +5,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>{{ $title }} | Singgah</title>
 
-        <link
-            rel="icon"
-            type="image/png"
-            href="{{ asset('logosinggah.png') }}"
-        />
+        <link rel="icon" type="image/png" href="{{ asset('logosinggah.png') }}">
 
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -25,9 +21,7 @@
         />
 
         <style>
-            /* ===== reset & base =====
-   Komentar: styling dasar, jangan ubah kecuali disetujui
-   Inisial: @ziedanet */
+            /* @ziedanet - CSS Global dan Variabel */
             * {
                 box-sizing: border-box;
             }
@@ -53,9 +47,24 @@
                 -webkit-font-smoothing: antialiased;
             }
 
-            /* ===== header =====
-   Komentar: header memakai motif pucuk rebung lokal
-   Inisial: @ziedanet */
+            /* KUNCI: Membuat guliran (scroll) menjadi halus */
+            html {
+                scroll-behavior: smooth;
+            }
+
+            /* @ziedanet - Struktur Section */
+            section {
+                padding: 40px 18px;
+            }
+            h2 {
+                text-align: center;
+                margin-bottom: 20px;
+                font-size: 1.6rem;
+                font-weight: 800;
+                color: #102121;
+            }
+
+            /* HEADER */
             .header-full {
                 background: rgba(0, 0, 0, 0.86);
                 position: fixed;
@@ -65,8 +74,6 @@
                 z-index: 1200;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             }
-
-            /* gunakan pucuk-rebung lokal (file berada di folder yang sama) @ziedanet */
             .header-full::before {
                 content: "";
                 position: absolute;
@@ -74,13 +81,13 @@
                 right: 0;
                 top: 0;
                 height: 50px;
-                background: url("pucuk-rebung.png") repeat-x;
+                background: url("{{ asset('pucuk-rebung.png') }}")
+                    repeat-x;
                 background-size: contain;
                 opacity: 0.28;
                 transform: rotate(180deg);
                 z-index: 0;
             }
-
             .header-inner {
                 max-width: var(--container);
                 margin: 0 auto;
@@ -110,8 +117,6 @@
                 font-size: 1.03rem;
                 letter-spacing: 0.2px;
             }
-
-            /* center menu area */
             .center-area {
                 display: flex;
                 align-items: center;
@@ -138,13 +143,10 @@
             nav a:hover {
                 color: var(--accent);
             }
-            /* HAPUS: nav a.active (Anda bisa mengaktifkannya lagi di HTML pada menu yang sesuai) */
             nav a.active {
                 color: var(--gold);
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
             }
-
-            /* dropdown indicator */
             .nav-item .has-sub::after {
                 content: "\f078";
                 font-family: "Font Awesome 6 Free";
@@ -154,8 +156,6 @@
                 transform: translateY(1px);
                 opacity: 0.9;
             }
-
-            /* desktop dropdown */
             .dropdown {
                 position: absolute;
                 left: 0;
@@ -178,7 +178,7 @@
                 display: block;
                 z-index: 100;
             }
-
+            
             /* ===== breadcrumb =====
    Komentar: TINGGI DITINGKATKAN (300px)
    Inisial: @ziedanet */
@@ -767,174 +767,21 @@
                 flex: 0 1 auto;
             }
 
-            /* @ziedanet - CSS Global dan Variabel */
-            * {
-                box-sizing: border-box;
-            }
-            :root {
-                --container: 1100px;
-                --bg: #f6f7f8;
-                --muted: #9aa4a4;
-                --card: #ffffff;
-                --accent: #4caf50;
-                --accent-dark: #166443;
-                --gold: #d4af37;
-                --radius: 12px;
-                --shadow: 0 8px 28px rgba(15, 20, 20, 0.06);
-                --nav-height: 78px;
-                --mobile-bottom-height: 72px;
-            }
-            body {
-                margin: 0;
-                font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
-                    "Helvetica Neue", Arial, sans-serif;
-                background: var(--bg);
-                color: #132a2a;
-                -webkit-font-smoothing: antialiased;
-            }
-
-            /* KUNCI: Membuat guliran (scroll) menjadi halus */
-            html {
-                scroll-behavior: smooth;
-            }
-
-            /* @ziedanet - Struktur Section */
-            section {
-                padding: 40px 18px;
-            }
-            h2 {
-                text-align: center;
-                margin-bottom: 20px;
-                font-size: 1.6rem;
-                font-weight: 800;
-                color: #102121;
-            }
-
-            /* HEADER */
-            .header-full {
-                background: rgba(0, 0, 0, 0.86);
-                position: fixed;
-                left: 0;
-                right: 0;
-                top: 0;
-                z-index: 1200;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            }
-            .header-full::before {
-                content: "";
-                position: absolute;
-                left: 0;
-                right: 0;
-                top: 0;
-                height: 50px;
-                background: url("https://bualkawan.siakkab.go.id/pucuk-rebung.png")
-                    repeat-x;
-                background-size: contain;
-                opacity: 0.28;
-                transform: rotate(180deg);
-                z-index: 0;
-            }
-            .header-inner {
-                max-width: var(--container);
-                margin: 0 auto;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 12px 18px;
-                height: var(--nav-height);
-                position: relative;
-                z-index: 1;
-            }
-            .logo {
-                display: flex;
-                gap: 12px;
-                align-items: center;
-            }
-            .logo img {
-                height: 44px;
-                width: 44px;
-                border-radius: 8px;
-                object-fit: cover;
-            }
-            .logo .brand {
-                font-weight: 800;
-                color: #fff;
-                font-size: 1.03rem;
-                letter-spacing: 0.2px;
-            }
-            .center-area {
-                display: flex;
-                align-items: center;
-                gap: 28px;
-            }
-            nav.main-nav {
-                display: flex;
-                gap: 18px;
-                align-items: center;
-            }
-            nav.main-nav > .nav-item {
-                position: relative;
-            }
-            nav a {
-                color: #fff;
-                text-decoration: none;
-                font-weight: 600;
-                display: inline-flex;
-                gap: 8px;
-                align-items: center;
-                padding: 8px 12px;
-                border-radius: 8px;
-            }
-            nav a:hover {
-                color: var(--accent);
-            }
-            nav a.active {
-                color: var(--gold);
-                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-            }
-            .nav-item .has-sub::after {
-                content: "\f078";
-                font-family: "Font Awesome 6 Free";
-                font-weight: 900;
-                margin-left: 6px;
-                font-size: 0.7rem;
-                transform: translateY(1px);
-                opacity: 0.9;
-            }
-            .dropdown {
-                position: absolute;
-                left: 0;
-                top: 100%;
-                background: #fff;
-                border-radius: 10px;
-                padding: 8px;
-                box-shadow: 0 8px 22px rgba(10, 20, 20, 0.12);
-                min-width: 200px;
-                display: none;
-            }
-            .dropdown a {
-                display: block;
-                color: #132a2a;
-                padding: 8px 12px;
-                border-radius: 8px;
-                font-weight: 700;
-            }
-            .nav-item:hover .dropdown {
-                display: block;
-                z-index: 100;
-            }
-
-            /* SLIDER UTAMA (HERO) - POSISI BAWAH TENGAH */
+            /* SLIDER UTAMA (HERO) - POSISI BAWAH TENGAH */            
             .slider {
-                position: relative;
-                margin-top: var(--nav-height);
-                height: 100vh;
-                overflow: hidden;
+                width: 100vw;
+                margin-left: calc(50% - 50vw);
+                margin-right: calc(50% - 50vw);
 
-                /* KUNCI LOAD AWAL: Sembunyikan dan beri posisi awal */
-                opacity: 0;
-                transform: translateY(-10px);
-                transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+                height: 100vh;
+                position: relative;
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
             }
 
             /* KUNCI LOAD AWAL: Pindahkan ke posisi akhir saat loaded */
@@ -1551,7 +1398,7 @@
                 right: 0;
                 bottom: 0;
                 height: 56px;
-                background: url("https://bualkawan.siakkab.go.id/pucuk-rebung.png")
+                background: url("{{ asset('pucuk-rebung.png') }}")
                     repeat-x;
                 background-size: contain;
                 opacity: 0.12;
@@ -1710,7 +1557,10 @@
     <body>
         <x-header />
 
-        <main class="page" role="main">{{ $slot}}</main>
+        {{-- Tempat breadcrumb, optional --}}
+        {{ $breadcrumb ?? '' }}
+
+        <main class="page" role="main">{{ $slot }}</main>
 
         <x-bottom-nav />
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - Sederhana</title>
+    <title>Login Admin - Singgah</title>
     <link rel="icon" type="image/png" href="{{ asset('logosinggah.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -144,7 +144,12 @@
             @if ($errors->any())
                 <div class="alert alert-danger" role="alert">
                     <i class="bi bi-exclamation-circle me-2"></i>
-                    <strong>Gagal!</strong> {{ $errors->first() }}
+                    {{-- Tampilkan pesan error reCAPTCHA jika ada --}}
+                    @if ($errors->has('g-recaptcha-response'))
+                        <strong>Gagal!</strong> Verifikasi reCAPTCHA wajib dicentang.
+                    @else
+                        <strong>Gagal!</strong> {{ $errors->first() }}
+                    @endif
                 </div>
             @endif
 
@@ -199,6 +204,21 @@
                     </div>
                 </div>
 
+                {{-- START: INTEGRASI RECAPTCHA --}}
+                <div class="mb-3">
+                    <label class="form-label">Verifikasi Keamanan</label>
+                    {!! NoCaptcha::display() !!}
+                    
+                    {{-- Tampilkan error reCAPTCHA secara spesifik di bawah widget --}}
+                    @error('g-recaptcha-response')
+                        <div class="text-danger mt-2">
+                            <strong><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ $message }}</strong>
+                        </div>
+                    @enderror
+                </div>
+                {{-- END: INTEGRASI RECAPTCHA --}}
+
+
                 <button 
                     id="submitBtn" 
                     type="submit" 
@@ -214,15 +234,20 @@
                     <i class="bi bi-question-circle me-1"></i>Kembali ke Beranda
                 </a>
                 <p class="mt-2 mb-0">
-                    <small>&copy; {{ date('Y') }} Bual Kawan.</small>
+                    <small>&copy; {{ date('Y') }} Singgah.</small>
                 </p>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {{-- SCRIPT WAJIB RECAPTCHA --}}
+    {!! NoCaptcha::renderJs() !!}
+    
     <script>
         (function() {
+            // ... (Kode JavaScript lainnya tetap sama)
             const form = document.getElementById('loginForm');
             const passwordInput = document.getElementById('password');
             const toggleBtn = document.getElementById('togglePassword');
@@ -243,6 +268,8 @@
 
             // Form validation and loading state
             form.addEventListener('submit', function(e) {
+                // Saat menggunakan reCAPTCHA, validasi client-side diabaikan 
+                // untuk field reCAPTCHA, biarkan validasi server yang menangani.
                 if (!form.checkValidity()) {
                     e.preventDefault();
                     e.stopPropagation();

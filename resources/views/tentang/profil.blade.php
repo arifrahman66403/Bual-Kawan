@@ -1,5 +1,9 @@
-<x-breadcrumb title="profile" />
 <x-layout title="Profil Pemerintah Kabupaten Siak">
+    <x-slot name="breadcrumb">
+        <x-breadcrumb title="Profil Pemerintah Kabupaten Siak">
+            Profil Pemerintah
+        </x-breadcrumb>
+    </x-slot>
     <article class="fade-in profile-detail">
         <div class="profile-header">
             <h1>Mengenal Lebih Dekat Pemerintah Kabupaten Siak</h1>

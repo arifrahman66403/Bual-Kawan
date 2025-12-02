@@ -21,6 +21,7 @@ class AuthController extends Controller
             return $this->redirectToDashboard(Auth::user()->role);
         }
 
+        // Jika belum login, tampilkan form login
         return view('admin.login');
     }
 
@@ -33,22 +34,24 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-
-        // 1. Validasi input + captcha
-    $request->validate([
-        'email'    => 'required|email',
-        'password' => 'required',
-    ]);
-
-        // 1. Validasi input email dan password
-        $credentials = $request->validate([
+        // 1. Validasi input: Email, Password, dan reCAPTCHA
+        $validatedData = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+            // Rule reCAPTCHA ada di sini, dan akan tervalidasi
+            'g-recaptcha-response' => ['required', 'captcha'], 
         ], [
+            // Pesan error kustom
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Kata sandi wajib diisi.',
+            'g-recaptcha-response.required' => 'Verifikasi keamanan (reCAPTCHA) wajib dilakukan.',
+            'g-recaptcha-response.captcha' => 'Verifikasi reCAPTCHA gagal. Pastikan Anda mencentang kotak "Saya bukan robot".'
         ]);
+
+        // AMBIL HANYA EMAIL DAN PASSWORD UNTUK OTENTIKASI
+        // Ini memastikan 'g-recaptcha-response' tidak masuk ke query database.
+        $credentials = $request->only('email', 'password');
 
         // 2. Coba otentikasi pengguna
         if (Auth::attempt($credentials)) {
@@ -75,7 +78,7 @@ class AuthController extends Controller
             }
         }
 
-        // 5. Otentikasi GAGAL (Email/Password salah)
+        // 4. Otentikasi GAGAL (Email/Password salah)
         return back()
             ->withInput($request->only('email'))
             ->withErrors(['email' => 'Kombinasi Email atau Kata Sandi salah. Silakan coba lagi.']);

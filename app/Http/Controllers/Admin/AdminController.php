@@ -8,6 +8,8 @@ use App\Models\KisPengunjung;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash; // Tambahan penting untuk password
 use Illuminate\Support\Facades\Storage; // Tambahan penting untuk upload foto
+use Illuminate\Support\Facades\DB; // Untuk query builder
+use Carbon\Carbon; // Untuk manipulasi tanggal
 
 class AdminController extends Controller
 {
@@ -16,37 +18,69 @@ class AdminController extends Controller
     // =========================================================================
     public function index()
     {
+        // Setup Tanggal
         $tanggal_hari_ini = date('Y-m-d');
         $bulan_tahun_ini = date('Y-m');
         $tahun_ini = date('Y');
         
+        // Array status yang dianggap valid sebagai pengunjung
+        $validStatus = ['disetujui', 'kunjungan', 'selesai'];
+
+        // --- 1. DATA KARTU STATISTIK ---
         $total_tamu_hari_ini = KisPengunjung::whereDate('tgl_kunjungan', $tanggal_hari_ini)
-                                            ->whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
+                                            ->whereIn('status', $validStatus)
                                             ->count();
         
         $total_tamu_bulan_ini = KisPengunjung::whereRaw("DATE_FORMAT(tgl_kunjungan, '%Y-%m') = ?", [$bulan_tahun_ini])
-                                             ->whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
+                                             ->whereIn('status', $validStatus)
                                              ->count();
         
         $total_tamu_tahun_ini = KisPengunjung::whereYear('tgl_kunjungan', $tahun_ini)
-                                             ->whereIn('status', ['disetujui', 'kunjungan', 'selesai'])
+                                             ->whereIn('status', $validStatus)
                                              ->count();
         
-        $total_tamu_semua = KisPengunjung::count();
+        $total_tamu_semua = KisPengunjung::count(); // Atau filter status juga jika perlu
+
+        // --- 2. DATA LINE CHART (Tren 7 Hari Terakhir) ---
+        // Kita gunakan looping agar hari yang datanya 0 tetap muncul di grafik
+        $chartLabels = [];
+        $chartData = [];
         
-        // Data 7 hari terakhir (untuk chart)
-        $chart_data = KisPengunjung::selectRaw('DATE(tgl_kunjungan) as tanggal, COUNT(*) as total')
-                                   ->where('status', 'disetujui')
-                                   ->whereBetween('tgl_kunjungan', [now()->subDays(6), now()])
-                                   ->groupBy('tanggal')
-                                   ->get();
-        
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i);
+            
+            // Format Label (Contoh: "Sen 27")
+            // Pastikan App Locale di config/app.php sudah 'id' agar bahasa Indonesia
+            $chartLabels[] = $date->isoFormat('ddd D'); 
+            
+            // Hitung data per tanggal tersebut
+            $count = KisPengunjung::whereDate('tgl_kunjungan', $date->format('Y-m-d'))
+                                  ->whereIn('status', $validStatus)
+                                  ->count();
+            
+            $chartData[] = $count;
+        }
+
+        // --- 3. DATA DONUT CHART (Distribusi Tipe Pengunjung) ---
+        // Mengelompokkan berdasarkan kolom 'tipe_pengunjung'
+        $distribusi = KisPengunjung::select('tipe_pengunjung', DB::raw('count(*) as total'))
+                                   ->whereIn('status', $validStatus) // Filter status agar relevan
+                                   ->groupBy('tipe_pengunjung')
+                                   ->pluck('total', 'tipe_pengunjung');
+
+        $tipeLabels = $distribusi->keys();   // ['Masyarakat Umum', 'Instansi Pemerintah']
+        $tipeData   = $distribusi->values(); // [150, 40]
+
         return view('admin.dashboard', compact(
             'total_tamu_hari_ini', 
             'total_tamu_bulan_ini', 
             'total_tamu_tahun_ini', 
-            'total_tamu_semua', 
-            'chart_data'
+            'total_tamu_semua',
+            // Variable baru untuk Chart.js
+            'chartLabels',
+            'chartData',
+            'tipeLabels',
+            'tipeData'
         ));
     }
 

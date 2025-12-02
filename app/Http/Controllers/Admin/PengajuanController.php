@@ -170,6 +170,70 @@ class PengajuanController extends Controller
         }
     }
 
+    public function regenerateQr($uid)
+    {
+        try {
+            $pengunjung = KisPengunjung::where('uid', $uid)->firstOrFail();
+
+            // Cek apakah status sudah 'disetujui' atau 'kunjungan'. Jika belum, QR tidak boleh dibuat.
+            if (!in_array($pengunjung->status, ['disetujui', 'kunjungan'])) {
+                return back()->with('error', '❌ QR Code hanya dapat di-*generate* untuk status DISUTUJUI atau KUNJUNGAN.');
+            }
+
+            // --- LOGIKA PEMBUATAN QR CODE (Duplikasi dari updateStatus) ---
+
+            // 1. QR CODE DETAIL KUNJUNGAN (Untuk link publik)
+            $detailUrl = route('kunjungan.detail', $pengunjung->uid); 
+            $fileNameDetail = 'qr_detail_' . $pengunjung->uid . '.png';
+            $filePathDetail = storage_path('app/public/qr_code/' . $fileNameDetail); 
+            
+            $qrCodeDetail = new QrCode(
+                data: $detailUrl, encoding: new Encoding('UTF-8'), errorCorrectionLevel: ErrorCorrectionLevel::High,
+                size: 250, margin: 10, foregroundColor: new Color(0, 0, 0), backgroundColor: new Color(255, 255, 255)
+            );
+            (new PngWriter())->write($qrCodeDetail)->saveToFile($filePathDetail);
+            
+            // 2. QR CODE SCAN PESERTA (Untuk link input/scan)
+            $scanUrl = route('pengunjung.scan', $pengunjung->uid); 
+            $fileNameScan = 'qr_scan_' . $pengunjung->uid . '.png';
+            $filePathScan = storage_path('app/public/qr_code/' . $fileNameScan);
+
+            $qrCodeScan = new QrCode(
+                data: $scanUrl, encoding: new Encoding('UTF-8'), errorCorrectionLevel: ErrorCorrectionLevel::High,
+                size: 250, margin: 10, foregroundColor: new Color(0, 0, 0), backgroundColor: new Color(255, 255, 255)
+            );
+            (new PngWriter())->write($qrCodeScan)->saveToFile($filePathScan);
+
+            // 3. Simpan Metadata Baru GABUNGAN ke KisQrCode
+            KisQrCode::updateOrCreate(
+                ['pengunjung_id' => $pengunjung->uid],
+                [
+                    'qr_detail_path' => 'qr_code/' . $fileNameDetail,
+                    'qr_scan_path'   => 'qr_code/' . $fileNameScan,
+                    'berlaku_mulai'  => now(),
+                    // Diperbarui: Tambahkan perpanjangan masa berlaku
+                    'berlaku_sampai' => now()->addDays(1), // Contoh: Diperpanjang 1 hari
+                    'created_by'     => Auth::id() ?? 1,
+                ]
+            );
+
+            // Log Aktivitas
+            KisLog::create([
+                'user_id' => Auth::id() ?? 1,
+                'pengunjung_id' => $pengunjung->uid,
+                'aksi' => 'QR Code Kunjungan (' . $pengunjung->nama_instansi . ') berhasil di-*regenerate*.',
+                'created_at' => now(),
+            ]);
+
+            return back()->with('success', '✅ QR Code berhasil diperbarui dan masa berlaku diperpanjang!');
+
+        } catch (ModelNotFoundException $e) {
+            return back()->with('error', 'Data pengajuan tidak ditemukan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan sistem saat regenerasi QR: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Tampilkan detail pengajuan berdasarkan UID (lihat, dokumen, peserta, tracking, QR).
      */

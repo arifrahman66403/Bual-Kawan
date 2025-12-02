@@ -49,6 +49,41 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
+/* 1. Atur tinggi Canvas agar proporsional */
+#donutChart {
+    /* Batasi tinggi agar legend punya ruang di bawah */
+    max-height: 250px;
+}
+
+/* 2. Style untuk Div Card (Mengatasi Legend yang panjang) */
+.col-lg-4 .card {
+    /* Pastikan card adalah container yang fleksibel */
+    display: flex;
+    flex-direction: column;
+    /* Atur tinggi maksimum card */
+    max-height: 500px; /* Sesuaikan angka ini jika kurang tinggi */
+    overflow: hidden; /* Sembunyikan konten jika melebihi batas */
+}
+
+/* 3. Style untuk Legend Bawaan Chart.js (Agar bisa di-scroll) */
+.col-lg-4 .card .chartjs-render-monitor {
+    /* Target container Legend Chart.js jika legend masih panjang */
+    max-height: 180px;
+    overflow-y: auto;
+}
+/* 1. Untuk Line Chart (col-lg-8) */
+#lineChart {
+    /* Berikan tinggi maksimum yang kamu inginkan, misal 350px */
+    max-height: 300px;
+    /* Pastikan elemen parent-nya memiliki flex-direction: column jika h-100 dipakai */
+}
+
+/* 2. Opsional: Pastikan elemen parent fleksibel */
+.col-lg-8 .card {
+    max-height: 400px; /* Batasi tinggi card container */
+    display: flex;
+    flex-direction: column;
+}
 /* --- Navbar Style Ciamik: GRADIENT --- */
 .navbar {
     /* Light Mode Gradient */

@@ -1,5 +1,10 @@
-<x-breadcrumb title="visi misi" />
 <x-layout title="Visi dan Misi">
+    <x-slot name="breadcrumb">
+        <x-breadcrumb title="Visi dan Misi">
+            Visi dan Misi Buku Tamu Digital Singgah
+        </x-breadcrumb>
+    </x-slot>
+
     <div class="content-wrapper" style="max-width:800px; margin: 0 auto;">   
         <h2 style="font-size: 1.8rem; font-weight: 800; border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 30px;">
             Visi dan Misi Layanan Buku Tamu Digital

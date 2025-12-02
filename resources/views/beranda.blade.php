@@ -1,3 +1,4 @@
+<x-layout title="Beranda">
 {{-- =========================================== --}}
 {{-- 1. SLIDER UTAMA (HERO SECTION) --}}
 {{-- Menggunakan data dinamis dari $sliders --}}
@@ -39,8 +40,6 @@
     <button class="slider-btn next"><i class="fa fa-chevron-right"></i></button>
 </div>
     
-<x-layout title="Beranda">
-
     {{-- =========================================== --}}
     {{-- 2. SEKSIN SEKAPUR SIRIH (STATIS) --}}
     {{-- =========================================== --}}
