@@ -141,7 +141,7 @@
                 border-radius: 8px;
             }
             nav a:hover {
-                color: var(--accent);
+                color: var(--gold);
             }
             nav a.active {
                 color: var(--gold);
