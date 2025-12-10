@@ -191,7 +191,7 @@
             {{-- PAGINATION --}}
             <div class="d-flex justify-content-center mt-3">
                 {{-- Memanggil template pagination Bootstrap default --}}
-                {{ $kunjunganAktif->links('vendor.pagination.bootstrap-5') }} 
+                {{ $kunjunganAktif->links() }} 
             </div>
 
         </div> 

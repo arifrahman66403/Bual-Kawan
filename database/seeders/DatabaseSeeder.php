@@ -28,12 +28,12 @@ class DatabaseSeeder extends Seeder
         KisUser::factory(5)->create();
 
         // Buat pengunjung (utama)
-        KisPengunjung::factory(10)->create();
+        KisPengunjung::factory(50)->create();
 
         // Buat relasi lainnya
         KisPesertaKunjungan::factory(20)->create();
-        KisDokumen::factory(10)->create();
-        KisQrCode::factory(10)->create();
+        KisDokumen::factory(50)->create();
+        KisQrCode::factory(50)->create();
         KisTracking::factory(15)->create();
         KisLog::factory(30)->create();
         Gallery::factory(10)->create();
